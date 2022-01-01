@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
  */
 public interface PurchaseTemplateService {
 
-	/**
+    /**
      * Get all the PurchaseTemplates.
      *
      * @param pageable the pagination information.
@@ -19,29 +19,29 @@ public interface PurchaseTemplateService {
      */
     List<PurchaseTemplateDto> findAll(Pageable pageable);
 
-	/**
+    /**
      * Create New Purchase Template
      *
      * @param purchaseTemplateDto entity to be create
      * @return the entity created
      */
-	PurchaseTemplateDto create(PurchaseTemplateDto purchaseTemplateDto);
+    PurchaseTemplateDto create(PurchaseTemplateDto purchaseTemplateDto);
 
-	/**
+    /**
      * Update Purchase Template
      *
-	 * @param purchaseTemplateId id of PurchaseTemplate to update
+     * @param purchaseTemplateId id of PurchaseTemplate to update
      * @param purchaseTemplateDto entity to be update
      * @return the entity updated
      */
-	PurchaseTemplateDto update(Long purchaseTemplateId, PurchaseTemplateDto purchaseTemplateDto);
+    PurchaseTemplateDto update(Long purchaseTemplateId, PurchaseTemplateDto purchaseTemplateDto);
 
-	/**
+    /**
      * Delete the "id" PurchaseTemplate.
      * Remove all template items tied to purchase template
-	 * 
+     * 
      * @param purchaseTemplateId the id of the entity.
      */
-	void deleteByPurchaseTemplateId(Long purchaseTemplateId);
+    void deleteByPurchaseTemplateId(Long purchaseTemplateId);
 
 }
