@@ -1,19 +1,18 @@
 package com.engseen.erp.service.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseTemplateItem} entity.
+ * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseRequestSubmissionItem} entity.
  */
 @Data
-public class PurchaseTemplateItemDto implements Serializable {
+public class PurchaseRequestSubmissionItemDto {
 
     private Long id;
 
-    private Long templateId;
+    private Long requestSubmissionId;
 
     private String componentCode;
 
@@ -23,9 +22,11 @@ public class PurchaseTemplateItemDto implements Serializable {
 
     private String vendorName;
 
+    private Double stockBalance;
+
     private Double packagingSize;
 
-    private Double sequence;
+    private Double noOfPacks;
 
     private Double quantity;
     
