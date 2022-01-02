@@ -1,5 +1,6 @@
 package com.engseen.erp.service.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import lombok.Data;
  * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseRequestSubmission} entity.
  */
 @Data
-public class PurchaseRequestSubmissionDto {
+public class PurchaseRequestSubmissionDto implements Serializable {
 
     private Long id;
 
