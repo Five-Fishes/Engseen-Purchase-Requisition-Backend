@@ -38,9 +38,11 @@ public class PurchaseRequestSubmissionController {
      * {@code GET /purchase-requisition/submission} : Get all Purchase Request Submission
      * 
      * @param pageable Pagination Info
+     * @param startDate startDate to filter based on created date of Purchase Request Submission
+     * @param endDate endDate to filter based on created date of Purchase Request Submission
      */
     @GetMapping(value="/submission")
-    public ResponseEntity<List<PurchaseRequestSubmissionDto>> getAllPurchaseRequestSubmission(Pageable pageable, @RequestParam Date startDate, @RequestParam Date endDate) {
+    public ResponseEntity<List<PurchaseRequestSubmissionDto>> getAllPurchaseRequestSubmission(Pageable pageable, @RequestParam(required = false, name = "startDate") Date startDate, @RequestParam(required = false, name = "endDate") Date endDate) {
         log.info("REST Request to getAllPurchaseRequestSubmission");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Start Date: {}, End Date: {}", startDate, endDate);

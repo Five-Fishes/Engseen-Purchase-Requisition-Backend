@@ -21,6 +21,7 @@ public class PurchaseTemplateItemServiceImpl implements PurchaseTemplateItemServ
     private final Logger log = LoggerFactory.getLogger(PurchaseTemplateItemServiceImpl.class);
 
     @Override
+    @Transactional(readOnly = true)
     public List<PurchaseTemplateItemDto> findAllByPurchaseTemplateId(Long purchaseTemplateId, Pageable pageable) {
         log.debug("Request to findAll Purchase Template by Id: {}", purchaseTemplateId);
         // TODO Auto-generated method stub

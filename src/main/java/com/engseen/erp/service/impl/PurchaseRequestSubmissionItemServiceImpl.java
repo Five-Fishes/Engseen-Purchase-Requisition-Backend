@@ -21,6 +21,7 @@ public class PurchaseRequestSubmissionItemServiceImpl implements PurchaseRequest
     private final Logger log = LoggerFactory.getLogger(PurchaseRequestSubmissionItemServiceImpl.class);
 
     @Override
+    @Transactional(readOnly = true)
     public List<PurchaseRequestSubmissionItemDto> findAllByPurchaseRequestSubmissionId(Long purchaseRequestSubmissionId, Pageable pageable) {
         log.debug("Request to findAll Purchase Request Submission Item");
         // TODO Auto-generated method stub

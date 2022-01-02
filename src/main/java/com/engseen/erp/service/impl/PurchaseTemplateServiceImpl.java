@@ -21,6 +21,7 @@ public class PurchaseTemplateServiceImpl implements PurchaseTemplateService {
     private final Logger log = LoggerFactory.getLogger(PurchaseTemplateServiceImpl.class);
 
     @Override
+    @Transactional(readOnly = true)
     public List<PurchaseTemplateDto> findAll(Pageable pageable) {
         log.debug("Request to findAll Purchase Template");
         // TODO Auto-generated method stub
