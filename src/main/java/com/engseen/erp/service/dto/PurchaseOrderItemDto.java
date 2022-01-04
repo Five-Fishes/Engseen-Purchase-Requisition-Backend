@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseOrderItem} entity.
+ * A DTO for the {@link com.engseen.erp.entity.PurchaseOrderItem} entity.
  */
 @Data
 @EqualsAndHashCode(callSuper=false)

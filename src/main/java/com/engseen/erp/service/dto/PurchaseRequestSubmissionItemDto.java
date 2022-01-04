@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseRequestSubmissionItem} entity.
+ * A DTO for the {@link com.engseen.erp.entity.PurchaseRequestSubmissionItem} entity.
  */
 @Data
 public class PurchaseRequestSubmissionItemDto extends PurchaseRequestItemDto implements Serializable {
