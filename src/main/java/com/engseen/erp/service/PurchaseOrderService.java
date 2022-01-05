@@ -8,7 +8,7 @@ import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link com.thirdcc.webapp.entity.PurchaseOrder}.
+ * Service Interface for managing {@link com.engseen.erp.entity.PurchaseOrder}.
  */
 public interface PurchaseOrderService {
 
