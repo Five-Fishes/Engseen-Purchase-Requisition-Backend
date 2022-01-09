@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
 
 /**
  * Service Implementation for managing {@link PurchaseOrder}.
@@ -64,7 +65,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         EmailContent emailContent = new EmailContent();
         emailContent.setToEmailList(List.of("yjhhoward@gmail.com"));
         emailContent.setSubject("Purchase Order Request");
-        emailContent.setBody("Hi,\nHereby to make purchase order\n\nBest Regard\nEngseen");
+        // Construct Email Body from Thymeleaf Template
+        Context emailContext = new Context();
+        emailContext.setVariable("title", "Purchase Order {PO Number}");
+        emailContext.setVariable("name", "{Vendor Name}");
+        emailContext.setVariable("poNumber", "{PO Number}");
+        String poEmailBody = emailService.constructEmailBodyFromTemplate("po-email-template", emailContext);
+        emailContent.setBody(poEmailBody);
         // Dummy File Attachment
         File dummyFile = File.createTempFile("temp-file-name", ".tmp");
         dummyFile.deleteOnExit();

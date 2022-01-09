@@ -2,6 +2,7 @@ package com.engseen.erp.service.impl;
 
 import javax.mail.internet.MimeMessage;
 
+import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.dto.EmailContent;
 
@@ -14,6 +15,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 /**
  * Service Implementation for Email Sending Service
@@ -28,10 +31,12 @@ public class EmailServiceImpl implements EmailService {
     private String NOREPLY_ADDRESS;
 
     private JavaMailSender emailSender;
+    private TemplateEngine templateEngine;
     
     @Autowired
-    public EmailServiceImpl(JavaMailSender emailSender) {
+    public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine) {
         this.emailSender = emailSender;
+        this.templateEngine = templateEngine;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(NOREPLY_ADDRESS);
             helper.setTo(emailContent.getToEmailList().toArray(String[]::new));
             helper.setSubject(emailContent.getSubject());
-            helper.setText(emailContent.getBody());
+            helper.setText(emailContent.getBody(), true);
             if (emailContent.getCcEmailList() != null) {
                 log.debug("CC Email List: {}", emailContent.getCcEmailList());
                 helper.setCc(emailContent.getCcEmailList().toArray(String[]::new));
@@ -62,6 +67,14 @@ public class EmailServiceImpl implements EmailService {
             log.error("Error: {}", e);
             return false;
         }
+    }
+
+    @Override
+    public String constructEmailBodyFromTemplate(String templateName, Context context) {
+        log.debug("Request to construct emailBody with template: {}", templateName);
+        String templatePath = AppConstant.EMAIL_TEMPLATE_DIRECTORY + templateName;
+        String emailBody = templateEngine.process(templatePath, context);
+        return emailBody;
     }
     
 }
