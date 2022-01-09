@@ -7,7 +7,7 @@ import com.engseen.erp.service.dto.PurchaseTemplateDto;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Service Interface for managing {@link com.thirdcc.webapp.entity.PruchaseTemplate}.
+ * Service Interface for managing {@link com.engseen.erp.entity.PruchaseTemplate}.
  */
 public interface PurchaseTemplateService {
 

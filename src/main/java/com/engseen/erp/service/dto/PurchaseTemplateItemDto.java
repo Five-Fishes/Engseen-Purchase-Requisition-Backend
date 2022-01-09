@@ -6,7 +6,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseTemplateItem} entity.
+ * A DTO for the {@link com.engseen.erp.entity.PurchaseTemplateItem} entity.
  */
 @Data
 public class PurchaseTemplateItemDto implements Serializable {

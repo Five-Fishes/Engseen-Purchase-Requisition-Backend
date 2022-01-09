@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.thirdcc.webapp.entity.PurchaseTemplate} entity.
+ * A DTO for the {@link com.engseen.erp.entity.PurchaseTemplate} entity.
  */
 @Data
 public class PurchaseTemplateDto implements Serializable {
