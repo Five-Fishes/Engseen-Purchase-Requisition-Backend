@@ -1,10 +1,13 @@
 package com.engseen.erp.service.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
  * A DTO for the {@link com.engseen.erp.entity.Component} entity.
  */
+@Data
 public class ComponentDto implements Serializable {
     private Long id;
 

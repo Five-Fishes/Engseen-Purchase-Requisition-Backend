@@ -13,12 +13,9 @@ public interface ComponentService {
 
     /**
      * Get all Component by search filters
-     * @param component the component name
-     * @param vendor the vendor name
-     * @param packingSize the packing size
      * @param pageable the pagination information
      * @return the list of entities
      */
-    List<ComponentDto> findAllByFilters(String component, String vendor, Integer packingSize,Pageable pageable);
+    List<ComponentDto> findAll(Pageable pageable);
 
 }
