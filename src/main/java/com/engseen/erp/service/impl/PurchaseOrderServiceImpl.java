@@ -55,7 +55,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
-        List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged())
+        List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
         if (purchaseRequestApprovalItemList == null || purchaseRequestApprovalItemList.size() < 1) {
             throw new BadRequestException("No Confirmed Item Found to Issue PO");
         }
