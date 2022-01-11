@@ -2,6 +2,7 @@ package com.engseen.erp.service.impl;
 
 import java.util.List;
 
+import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 
@@ -24,6 +25,15 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
     @Transactional(readOnly = true)
     public List<PurchaseRequestApprovalItemDto> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable) {
         log.debug("Request to findAll Purchase Request Approval Item");
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PurchaseRequestApprovalItemDto> findAllByPurchaseRequestApprovalIdAndStatus(Long purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus status, Pageable pageable) {
+        log.debug("Request to findAll Purchase Request Approval Item");
+        log.debug("PurchaseRequestApprovalId: {}, status: {}", purchaseRequestApprovalId, status);
         // TODO Auto-generated method stub
         return null;
     }

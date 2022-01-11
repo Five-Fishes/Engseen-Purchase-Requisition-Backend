@@ -2,6 +2,7 @@ package com.engseen.erp.service;
 
 import java.util.List;
 
+import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,17 @@ public interface PurchaseRequestApprovalItemService {
      * @return the list of entities.
      */
     List<PurchaseRequestApprovalItemDto> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable);
+
+    /**
+     * Get all the PurchaseRequestApprovalItems by PurchaseRequestApprovalId and status.
+     *
+     * @param purchaseRequestApprovalId Id of Purchase Request Approval
+     * @param status status of Purchase Request Approval Item
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    List<PurchaseRequestApprovalItemDto> findAllByPurchaseRequestApprovalIdAndStatus(Long purchaseRequestApprovalId,
+        PurchaseRequisitionApprovalItemStatus status, Pageable pageable);
 
     /**
      * Add Purchase Request Approval Item
