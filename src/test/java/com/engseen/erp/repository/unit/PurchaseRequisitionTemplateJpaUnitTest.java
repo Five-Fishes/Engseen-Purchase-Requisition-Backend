@@ -1,7 +1,8 @@
-package com.engseen.erp.repository;
+package com.engseen.erp.repository.unit;
 
 import com.engseen.erp.domain.ItemMaster;
 import com.engseen.erp.domain.PurchaseRequisitionTemplate;
+import com.engseen.erp.repository.PurchaseRequisitionTemplateRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
