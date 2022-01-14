@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.engseen.erp.service.PurchaseRequestSubmissionService;
-import com.engseen.erp.service.dto.PurchaseRequestSubmissionDto;
+import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseRequestSubmission}
+ * Rest Controller for managing {@link com.engseen.erp.domain.PurchaseRequisitionRequest}
  */
 @RequestMapping("/api/purchase-requisition")
 @RestController
 public class PurchaseRequestSubmissionController {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseRequestSubmissionController.class);
-  
-    private PurchaseRequestSubmissionService purchaseRequestSubmissionService;
+
+    private final PurchaseRequestSubmissionService purchaseRequestSubmissionService;
 
     @Autowired
     public PurchaseRequestSubmissionController(PurchaseRequestSubmissionService purchaseRequestSubmissionService) {
@@ -36,33 +36,32 @@ public class PurchaseRequestSubmissionController {
 
     /**
      * {@code GET /purchase-requisition/submission} : Get all Purchase Request Submission
-     * 
-     * @param pageable Pagination Info
+     *
+     * @param pageable  Pagination Info
      * @param startDate startDate to filter based on created date of Purchase Request Submission
-     * @param endDate endDate to filter based on created date of Purchase Request Submission
+     * @param endDate   endDate to filter based on created date of Purchase Request Submission
      */
-    @GetMapping(value="/submission")
-    public ResponseEntity<List<PurchaseRequestSubmissionDto>> getAllPurchaseRequestSubmission(Pageable pageable, @RequestParam(required = false, name = "startDate") Date startDate, @RequestParam(required = false, name = "endDate") Date endDate) {
+    @GetMapping(value = "/submission")
+    public ResponseEntity<List<PurchaseRequisitionRequestDTO>> getAllPurchaseRequestSubmission(Pageable pageable, @RequestParam(required = false, name = "startDate") Date startDate, @RequestParam(required = false, name = "endDate") Date endDate) {
         log.info("REST Request to getAllPurchaseRequestSubmission");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Start Date: {}, End Date: {}", startDate, endDate);
-        List<PurchaseRequestSubmissionDto> purchaseRequestSubmissionDtoList = purchaseRequestSubmissionService.findAll(pageable);
+        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequestSubmissionService.findAll(pageable);
         return ResponseEntity.ok()
-            .body(purchaseRequestSubmissionDtoList);
+                .body(purchaseRequisitionRequestDTOList);
     }
 
     /**
      * {@code POST /purchase-requisition/request} : Add Purchase Request Submission
-     * 
-     * @param purchaseRequestSubmissionDto PurchaseRequestSubmissionDto Object to add
+     *
+     * @param purchaseRequisitionRequestDto PurchaseRequestSubmissionDto Object to add
      */
-    @PostMapping(value="/request")
-    public ResponseEntity<PurchaseRequestSubmissionDto> addPurchaseRequestSubmission(@RequestBody PurchaseRequestSubmissionDto purchaseRequestSubmissionDto) {
-        log.info("REST Request to addPurchaseRequestSubmission: {}", purchaseRequestSubmissionDto);
-        // TODO: have to insert on Submission and Approval Table
-        PurchaseRequestSubmissionDto savedPurchaseRequestSubmissionDto = purchaseRequestSubmissionService.create(purchaseRequestSubmissionDto);
+    @PostMapping(value = "/request")
+    public ResponseEntity<PurchaseRequisitionRequestDTO> addPurchaseRequestSubmission(@RequestBody PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto) {
+        log.info("REST Request to addPurchaseRequestSubmission: {}", purchaseRequisitionRequestDto);
+        PurchaseRequisitionRequestDTO savedPurchaseRequisitionRequestDTO = purchaseRequestSubmissionService.create(purchaseRequisitionRequestDto);
         return ResponseEntity.ok()
-            .body(savedPurchaseRequestSubmissionDto);
+                .body(savedPurchaseRequisitionRequestDTO);
     }
 
 }
