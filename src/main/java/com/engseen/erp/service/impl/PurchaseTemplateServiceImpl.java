@@ -3,7 +3,7 @@ package com.engseen.erp.service.impl;
 import java.util.List;
 
 import com.engseen.erp.service.PurchaseTemplateService;
-import com.engseen.erp.service.dto.PurchaseTemplateDto;
+import com.engseen.erp.service.dto.PurchaseRequisitionTemplateDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Implementation for managing {@link PurchaseTemplate}.
+ * Service Implementation for managing {@link com.engseen.erp.domain.PurchaseRequisitionTemplate}.
  */
 @Service
 @Transactional
@@ -22,22 +22,22 @@ public class PurchaseTemplateServiceImpl implements PurchaseTemplateService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PurchaseTemplateDto> findAll(Pageable pageable) {
+    public List<PurchaseRequisitionTemplateDTO> findAll(Pageable pageable) {
         log.debug("Request to findAll Purchase Template");
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public PurchaseTemplateDto create(PurchaseTemplateDto purchaseTemplateDto) {
-        log.debug("Request to create Purchase Template: {}", purchaseTemplateDto);
+    public PurchaseRequisitionTemplateDTO create(PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO) {
+        log.debug("Request to create Purchase Template: {}", purchaseRequisitionTemplateDTO);
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public PurchaseTemplateDto update(Long purchaseTemplateId, PurchaseTemplateDto purchaseTemplateDto) {
-        log.debug("Request to update Purchase Template: {} with Id: {}", purchaseTemplateDto, purchaseTemplateId);
+    public PurchaseRequisitionTemplateDTO update(Long purchaseTemplateId, PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO) {
+        log.debug("Request to update Purchase Template: {} with Id: {}", purchaseRequisitionTemplateDTO, purchaseTemplateId);
         // TODO Auto-generated method stub
         return null;
     }

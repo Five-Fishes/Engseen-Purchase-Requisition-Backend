@@ -1,7 +1,7 @@
 package com.engseen.erp.controller.rest;
 
 import com.engseen.erp.service.PurchaseTemplateService;
-import com.engseen.erp.service.dto.PurchaseTemplateDto;
+import com.engseen.erp.service.dto.PurchaseRequisitionTemplateDTO;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseTemplate}
+ * Rest Controller for managing {@link com.engseen.erp.domain.PurchaseRequisitionTemplate}
  */
 @RequestMapping("/api/purchase-template")
 @RestController
@@ -41,40 +41,40 @@ public class PurchaseTemplateController {
      * @param pageable Pagination Info
      */
     @GetMapping(value="")
-    public ResponseEntity<List<PurchaseTemplateDto>> getAllPurchaseTemplate(Pageable pageable) {
+    public ResponseEntity<List<PurchaseRequisitionTemplateDTO>> getAllPurchaseTemplate(Pageable pageable) {
         log.info("REST Request to getAllPurchaseTemplate");
         log.debug("Pagination Info: {}", pageable);
-        List<PurchaseTemplateDto> purchaseTemplateDtoList = purchaseTemplateService.findAll(pageable);
+        List<PurchaseRequisitionTemplateDTO> purchaseRequisitionTemplateDTOList = purchaseTemplateService.findAll(pageable);
         return ResponseEntity.ok()
-            .body(purchaseTemplateDtoList);
+            .body(purchaseRequisitionTemplateDTOList);
     }
 
     /**
      * {@code POST /purchase-template} : Add Purchase Template
      * 
-     * @param purchaseTemplateDto PurchaseTemplateDto Object to add
+     * @param purchaseRequisitionTemplateDTO PurchaseTemplateDto Object to add
      */
     @PostMapping(value="")
-    public ResponseEntity<PurchaseTemplateDto> addPurchaseTemplate(@RequestBody PurchaseTemplateDto purchaseTemplateDto) {
-        log.info("REST Request to addPurchaseTemplate: {}", purchaseTemplateDto);
-        PurchaseTemplateDto savedPurchaseTemplateDto = purchaseTemplateService.create(purchaseTemplateDto);
+    public ResponseEntity<PurchaseRequisitionTemplateDTO> addPurchaseTemplate(@RequestBody PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO) {
+        log.info("REST Request to addPurchaseTemplate: {}", purchaseRequisitionTemplateDTO);
+        PurchaseRequisitionTemplateDTO savedPurchaseRequisitionTemplateDTO = purchaseTemplateService.create(purchaseRequisitionTemplateDTO);
         return ResponseEntity.ok()
-            .body(savedPurchaseTemplateDto);
+            .body(savedPurchaseRequisitionTemplateDTO);
     }
 
     /**
      * {@code PUT /purchase-template/{purchaseTemplateId}} : Update Purchase Template with Id
      * 
      * @param purchaseTemplateId Id of Purchase Template to be update
-     * @param purchaseTemplateDto PurchaseTemplateDto Object to update
+     * @param purchaseRequisitionTemplateDTO PurchaseTemplateDto Object to update
      */
     @PutMapping(value="/{purchaseTemplateId}")
-    public ResponseEntity<PurchaseTemplateDto> updatePurchaseTemplate(@PathVariable Long purchaseTemplateId, @RequestBody PurchaseTemplateDto purchaseTemplateDto) {
-        log.info("REST Request to updatePurchaseTemplate: {}", purchaseTemplateDto);
+    public ResponseEntity<PurchaseRequisitionTemplateDTO> updatePurchaseTemplate(@PathVariable Long purchaseTemplateId, @RequestBody PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO) {
+        log.info("REST Request to updatePurchaseTemplate: {}", purchaseRequisitionTemplateDTO);
         log.debug("Purchase Template Id: {}", purchaseTemplateId);
-        PurchaseTemplateDto savedPurchaseTemplateDto = purchaseTemplateService.update(purchaseTemplateId, purchaseTemplateDto);
+        PurchaseRequisitionTemplateDTO savedPurchaseRequisitionTemplateDTO = purchaseTemplateService.update(purchaseTemplateId, purchaseRequisitionTemplateDTO);
         return ResponseEntity.ok()
-            .body(savedPurchaseTemplateDto);
+            .body(savedPurchaseRequisitionTemplateDTO);
     }
 
     /**

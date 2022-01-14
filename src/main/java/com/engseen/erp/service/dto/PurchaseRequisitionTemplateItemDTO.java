@@ -6,10 +6,10 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.engseen.erp.entity.PurchaseTemplateItem} entity.
+ * A DTO for the {@link com.engseen.erp.domain.PurchaseRequisitionTemplateItem} entity.
  */
 @Data
-public class PurchaseTemplateItemDto implements Serializable {
+public class PurchaseRequisitionTemplateItemDTO implements Serializable {
 
     private Long id;
 
