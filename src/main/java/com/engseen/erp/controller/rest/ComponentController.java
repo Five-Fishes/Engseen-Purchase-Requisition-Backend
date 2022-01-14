@@ -3,8 +3,8 @@ package com.engseen.erp.controller.rest;
 import com.engseen.erp.service.ComponentItemCostService;
 import com.engseen.erp.service.ComponentService;
 import com.engseen.erp.service.dto.ComponentDto;
-
 import com.engseen.erp.service.dto.ComponentItemCostDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class ComponentController {
      * @param components Components to search
      */
 
-    @GetMapping(value="/item-cost")
+    @PostMapping(value="/item-cost")
     public ResponseEntity<List<ComponentItemCostDto>> getComponentItemCostByComponents(Pageable pageable, @RequestBody List<ComponentDto> components) {
         log.info("REST Request to get getComponentItemCostByComponents");
         log.debug("Pagination info: {}", pageable);
