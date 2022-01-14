@@ -15,6 +15,7 @@ public class PurchaseRequisitionTemplate implements Serializable {
 
     @Id
     @Column(name = "Id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(name = "TemplateName")

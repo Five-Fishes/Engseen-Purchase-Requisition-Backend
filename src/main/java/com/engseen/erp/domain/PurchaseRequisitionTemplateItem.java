@@ -14,6 +14,7 @@ public class PurchaseRequisitionTemplateItem {
 
     @Id
     @Column(name = "Id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne

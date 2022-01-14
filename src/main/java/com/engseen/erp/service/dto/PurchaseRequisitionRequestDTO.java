@@ -7,10 +7,10 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.engseen.erp.entity.PurchaseRequestSubmission} entity.
+ * A DTO for the {@link com.engseen.erp.domain.PurchaseRequisitionRequest} entity.
  */
 @Data
-public class PurchaseRequestSubmissionDto implements Serializable {
+public class PurchaseRequisitionRequestDTO implements Serializable {
 
     private Long id;
 
@@ -18,8 +18,8 @@ public class PurchaseRequestSubmissionDto implements Serializable {
 
     private String remarks;
 
-    private List<PurchaseRequestSubmissionItemDto> purchaseRequisitionRequestItems;
-    
+    private List<PurchaseRequisitionRequestItemDTO> purchaseRequisitionRequestItems;
+
     private Date createdDate;
-    
+
 }
