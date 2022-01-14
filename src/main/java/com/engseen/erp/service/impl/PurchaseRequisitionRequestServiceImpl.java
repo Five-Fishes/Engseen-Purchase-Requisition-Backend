@@ -11,7 +11,7 @@ import com.engseen.erp.repository.PurchaseRequisitionApprovalItemRepository;
 import com.engseen.erp.repository.PurchaseRequisitionApprovalRepository;
 import com.engseen.erp.repository.PurchaseRequisitionRequestItemRepository;
 import com.engseen.erp.repository.PurchaseRequisitionRequestRepository;
-import com.engseen.erp.service.PurchaseRequestSubmissionService;
+import com.engseen.erp.service.PurchaseRequisitionRequestService;
 import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
 import com.engseen.erp.service.mapper.PurchaseRequisitionRequestItemMapper;
@@ -29,9 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class PurchaseRequestSubmissionServiceImpl implements PurchaseRequestSubmissionService {
+public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitionRequestService {
 
-    private final Logger log = LoggerFactory.getLogger(PurchaseRequestSubmissionServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(PurchaseRequisitionRequestServiceImpl.class);
 
     private final PurchaseRequisitionApprovalRepository purchaseRequisitionApprovalRepository;
     private final PurchaseRequisitionApprovalItemRepository purchaseRequisitionApprovalItemRepository;
@@ -55,6 +55,7 @@ public class PurchaseRequestSubmissionServiceImpl implements PurchaseRequestSubm
     public PurchaseRequisitionRequestDTO create(PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto) {
         log.debug("Request to create Purchase Request Submission: {}", purchaseRequisitionRequestDto);
 
+        // TODO: [LU] Refactor to use service instead of repository of other entities
         /*
          * - Create Purchase Requisition Request
          * - Create Purchase Requisition Approval based on created Purchase Requisition Request

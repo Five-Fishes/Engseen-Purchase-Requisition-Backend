@@ -3,7 +3,7 @@ package com.engseen.erp.controller.rest;
 import java.util.Date;
 import java.util.List;
 
-import com.engseen.erp.service.PurchaseRequestSubmissionService;
+import com.engseen.erp.service.PurchaseRequisitionRequestService;
 import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
 import org.slf4j.Logger;
@@ -27,11 +27,11 @@ public class PurchaseRequestSubmissionController {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseRequestSubmissionController.class);
 
-    private final PurchaseRequestSubmissionService purchaseRequestSubmissionService;
+    private final PurchaseRequisitionRequestService purchaseRequisitionRequestService;
 
     @Autowired
-    public PurchaseRequestSubmissionController(PurchaseRequestSubmissionService purchaseRequestSubmissionService) {
-        this.purchaseRequestSubmissionService = purchaseRequestSubmissionService;
+    public PurchaseRequestSubmissionController(PurchaseRequisitionRequestService purchaseRequisitionRequestService) {
+        this.purchaseRequisitionRequestService = purchaseRequisitionRequestService;
     }
 
     /**
@@ -46,7 +46,7 @@ public class PurchaseRequestSubmissionController {
         log.info("REST Request to getAllPurchaseRequestSubmission");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Start Date: {}, End Date: {}", startDate, endDate);
-        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequestSubmissionService.findAll(pageable);
+        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequisitionRequestService.findAll(pageable);
         return ResponseEntity.ok()
                 .body(purchaseRequisitionRequestDTOList);
     }
@@ -59,7 +59,7 @@ public class PurchaseRequestSubmissionController {
     @PostMapping(value = "/request")
     public ResponseEntity<PurchaseRequisitionRequestDTO> addPurchaseRequestSubmission(@RequestBody PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto) {
         log.info("REST Request to addPurchaseRequestSubmission: {}", purchaseRequisitionRequestDto);
-        PurchaseRequisitionRequestDTO savedPurchaseRequisitionRequestDTO = purchaseRequestSubmissionService.create(purchaseRequisitionRequestDto);
+        PurchaseRequisitionRequestDTO savedPurchaseRequisitionRequestDTO = purchaseRequisitionRequestService.create(purchaseRequisitionRequestDto);
         return ResponseEntity.ok()
                 .body(savedPurchaseRequisitionRequestDTO);
     }
