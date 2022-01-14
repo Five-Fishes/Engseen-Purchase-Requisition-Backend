@@ -1,6 +1,9 @@
 package com.engseen.erp.service.impl;
 
 import java.util.HashMap;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +11,8 @@ import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatu
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.service.PurchaseOrderService;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
+import com.engseen.erp.service.EmailService;
+import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
@@ -18,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
 
 /**
  * Service Implementation for managing {@link PurchaseOrder}.
@@ -29,10 +35,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
 
     private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
-
+    private EmailService emailService;
+    
     @Autowired
     public PurchaseOrderServiceImpl(PurchaseRequestApprovalItemService purchaseRequestApprovalItemService) {
         this.purchaseRequestApprovalItemService = purchaseRequestApprovalItemService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -79,10 +87,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public Boolean emailPO(Long purchaseOrderId) {
+    public Boolean emailPO(Long purchaseOrderId) throws Exception {
         log.debug("Request to email PO by Purchase Order Id");
-        // TODO Auto-generated method stub
-        return null;
+        // TODO: Sample Email PO for testing email service
+        EmailContent emailContent = new EmailContent();
+        emailContent.setToEmailList(List.of("yjhhoward@gmail.com"));
+        emailContent.setSubject("Purchase Order Request");
+        // Construct Email Body from Thymeleaf Template
+        Context emailContext = new Context();
+        emailContext.setVariable("title", "Purchase Order {PO Number}");
+        emailContext.setVariable("name", "{Vendor Name}");
+        emailContext.setVariable("poNumber", "{PO Number}");
+        String poEmailBody = emailService.constructEmailBodyFromTemplate("po-email-template", emailContext);
+        emailContent.setBody(poEmailBody);
+        // Dummy File Attachment
+        File dummyFile = File.createTempFile("temp-file-name", ".tmp");
+        dummyFile.deleteOnExit();
+        BufferedWriter out = new BufferedWriter (new FileWriter(dummyFile));
+        out.write("Dummy Test File");
+        out.close();
+        emailContent.setPoAttachment(dummyFile);
+        return emailService.sendEmail(emailContent);
     }
 
     @Override

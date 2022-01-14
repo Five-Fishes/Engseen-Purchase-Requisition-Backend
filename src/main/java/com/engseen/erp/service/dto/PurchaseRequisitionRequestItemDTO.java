@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * A DTO for the {@link com.engseen.erp.entity.PurchaseRequestSubmissionItem} entity.
+ * A DTO for the {@link com.engseen.erp.domain.PurchaseRequisitionRequestItem} entity.
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class PurchaseRequestSubmissionItemDto extends PurchaseRequestItemDto implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public class PurchaseRequisitionRequestItemDTO extends PurchaseRequestItemDto implements Serializable {
 
     private Long id;
 

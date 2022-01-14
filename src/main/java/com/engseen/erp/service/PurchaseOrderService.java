@@ -1,5 +1,6 @@
 package com.engseen.erp.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.engseen.erp.service.dto.PurchaseOrderDto;
@@ -44,8 +45,9 @@ public interface PurchaseOrderService {
      * 
      * @param purchaseOrderId id of PO to email
      * @return status of email sent
+     * @throws IOException
      */
-	Boolean emailPO(Long purchaseOrderId);
+	Boolean emailPO(Long purchaseOrderId) throws Exception;
 
     /**
      * Generate PO as PDF file to download
