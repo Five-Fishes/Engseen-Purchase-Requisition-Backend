@@ -36,8 +36,9 @@ public interface PurchaseOrderService {
      *
      * @param purchaseRequestApprovalId Id of Purchase Request Approval to issue PO
      * @return the list of PO issue/created
+     * @throws Exception
      */
-	List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId);
+	List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception;
 
     /**
      * Email PO to vendor

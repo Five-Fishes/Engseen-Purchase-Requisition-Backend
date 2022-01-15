@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseOrder}
  */
-@RequestMapping("/api/purchase-order")
+@RequestMapping("/api/stockService")
 @RestController
 public class PurchaseOrderController {
 
@@ -56,9 +56,10 @@ public class PurchaseOrderController {
      * {@code POST /purchase-order/{purchaseRequestApprovalId}} : Issue Purchase Order based on Purchase Request Approval Id
      * 
      * @param purchaseRequestApprovalId Id of Purchase Request Approval to Issue PO
+     * @throws Exception
      */
     @PostMapping(value="/{purchaseRequestApprovalId}")
-    public ResponseEntity<List<PurchaseOrderDto>> issuePurchaseOrder(@PathVariable Long purchaseRequestApprovalId) {
+    public ResponseEntity<List<PurchaseOrderDto>> issuePurchaseOrder(@PathVariable Long purchaseRequestApprovalId) throws Exception {
         log.info("REST Request to issuePurchaseOrder on confirmed Item for Purchase Request Approval with Id: {}", purchaseRequestApprovalId);
         List<PurchaseOrderDto> savedPurchaseOrderDto = purchaseOrderService.issuePO(purchaseRequestApprovalId);
         return ResponseEntity.ok()
