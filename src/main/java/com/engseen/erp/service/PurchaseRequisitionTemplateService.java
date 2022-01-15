@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * Service Interface for managing {@link com.engseen.erp.domain.PurchaseRequisitionTemplate}.
  */
-public interface PurchaseTemplateService {
+public interface PurchaseRequisitionTemplateService {
 
     /**
      * Get all the PurchaseTemplates.

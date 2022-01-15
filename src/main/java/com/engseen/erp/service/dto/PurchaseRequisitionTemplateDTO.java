@@ -15,6 +15,8 @@ public class PurchaseRequisitionTemplateDTO implements Serializable {
 
     private String templateName;
 
-    private List<PurchaseRequisitionTemplateItemDTO> templateItems;
+    private List<PurchaseRequisitionTemplateItemDTO> purchaseRequisitionTemplateItemList;
+
+    private String remarks;
     
 }

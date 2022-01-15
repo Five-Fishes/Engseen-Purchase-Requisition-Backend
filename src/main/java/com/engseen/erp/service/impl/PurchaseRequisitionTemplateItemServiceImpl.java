@@ -2,7 +2,6 @@ package com.engseen.erp.service.impl;
 
 import java.util.List;
 
-import com.engseen.erp.domain.PurchaseRequisitionRequestItem;
 import com.engseen.erp.domain.PurchaseRequisitionTemplateItem;
 import com.engseen.erp.repository.PurchaseRequisitionTemplateItemRepository;
 import com.engseen.erp.service.PurchaseRequisitionTemplateItemService;
@@ -52,24 +51,30 @@ public class PurchaseRequisitionTemplateItemServiceImpl implements PurchaseRequi
 
     @Override
     @Transactional
-    public PurchaseRequisitionTemplateItemDTO update(Long purchaseTemplateItemId, PurchaseRequisitionTemplateItemDTO purchaseRequisitionTemplateItemDTO) {
-        log.debug("Request to update Purchase Template Item: {} with id: {}", purchaseRequisitionTemplateItemDTO, purchaseTemplateItemId);
-        // TODO Auto-generated method stub
-        return null;
+    public PurchaseRequisitionTemplateItemDTO update(Long purchaseRequisitionTemplateItemId, PurchaseRequisitionTemplateItemDTO purchaseRequisitionTemplateItemDTO) {
+        log.debug("Request to update Purchase Template Item: {} with id: {}", purchaseRequisitionTemplateItemDTO, purchaseRequisitionTemplateItemId);
+        
+        PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = purchaseRequisitionTemplateItemMapper.toEntity(purchaseRequisitionTemplateItemDTO);
+        purchaseRequisitionTemplateItem.setId(purchaseRequisitionTemplateItemId);
+        PurchaseRequisitionTemplateItem savedPurchaseRequisitionTemplateItem = purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
+        
+        return purchaseRequisitionTemplateItemMapper.toDto(savedPurchaseRequisitionTemplateItem);
     }
 
     @Override
     @Transactional
-    public void deleteByPurchaseTemplateItemId(Long purchaseTemplateItemId) {
-        log.debug("Request to delete Purchase Template Item by Id: {}", purchaseTemplateItemId);
-        // TODO Auto-generated method stub
+    public void deleteByPurchaseTemplateItemId(Long purchaseRequisitionTemplateItemId) {
+        log.debug("Request to delete Purchase Template Item by Id: {}", purchaseRequisitionTemplateItemId);
+
+        purchaseRequisitionTemplateItemRepository.deleteById(purchaseRequisitionTemplateItemId);
     }
 
     @Override
     @Transactional
-    public void deleteByPurchaseTemplateId(Long purchaseTemplateId) {
-        log.debug("Request to delete Purchase Template by Id: {}", purchaseTemplateId);
-        // TODO Auto-generated method stub
+    public void deleteByPurchaseTemplateId(Long purchaseRequisitionTemplateId) {
+        log.debug("Request to delete Purchase Template by Id: {}", purchaseRequisitionTemplateId);
+
+        purchaseRequisitionTemplateItemRepository.deleteAllByPurchaseRequisitionTemplate_Id(purchaseRequisitionTemplateId);
     }
     
 }

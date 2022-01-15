@@ -1,6 +1,5 @@
 package com.engseen.erp.repository.unit;
 
-import com.engseen.erp.domain.ItemMaster;
 import com.engseen.erp.domain.PurchaseRequisitionTemplate;
 import com.engseen.erp.repository.PurchaseRequisitionTemplateRepository;
 import org.junit.jupiter.api.Test;

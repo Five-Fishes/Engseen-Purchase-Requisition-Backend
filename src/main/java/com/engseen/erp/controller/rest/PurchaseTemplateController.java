@@ -1,6 +1,6 @@
 package com.engseen.erp.controller.rest;
 
-import com.engseen.erp.service.PurchaseTemplateService;
+import com.engseen.erp.service.PurchaseRequisitionTemplateService;
 import com.engseen.erp.service.dto.PurchaseRequisitionTemplateDTO;
 
 import java.util.List;
@@ -28,10 +28,10 @@ public class PurchaseTemplateController {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseTemplateController.class);
   
-    private PurchaseTemplateService purchaseTemplateService;
+    private PurchaseRequisitionTemplateService purchaseTemplateService;
 
     @Autowired
-    public PurchaseTemplateController(PurchaseTemplateService purchaseTemplateService) {
+    public PurchaseTemplateController(PurchaseRequisitionTemplateService purchaseTemplateService) {
         this.purchaseTemplateService = purchaseTemplateService;
     }
 
