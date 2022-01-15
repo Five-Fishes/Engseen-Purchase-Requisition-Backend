@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseOrder}
  */
-@RequestMapping("/api/purchase-order")
+@RequestMapping("/api/stockService")
 @RestController
 public class PurchaseOrderController {
 
