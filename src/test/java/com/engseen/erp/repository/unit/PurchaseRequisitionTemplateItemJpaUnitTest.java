@@ -1,7 +1,6 @@
 package com.engseen.erp.repository.unit;
 
 import com.engseen.erp.domain.PurchaseRequisitionTemplateItem;
-import com.engseen.erp.domain.PurchaseRequisitionTemplateItem;
 import com.engseen.erp.repository.PurchaseRequisitionTemplateItemRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ public class PurchaseRequisitionTemplateItemJpaUnitTest {
 
     private static final String COMPONENT_NAME = "Component AAA";
     private static final String UPDATED_COMPONENT_NAME = "Component AAB";
-    
+
     @Autowired
     private PurchaseRequisitionTemplateItemRepository purchaseRequisitionTemplateItemRepository;
 
@@ -31,7 +30,6 @@ public class PurchaseRequisitionTemplateItemJpaUnitTest {
     @Test
     public void create() {
         PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = new PurchaseRequisitionTemplateItem();
-        purchaseRequisitionTemplateItem.setId(1);
         purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
 
         assertEquals(1, purchaseRequisitionTemplateItemRepository.count());
@@ -45,22 +43,20 @@ public class PurchaseRequisitionTemplateItemJpaUnitTest {
     @Test
     public void findAll() {
         PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = new PurchaseRequisitionTemplateItem();
-        purchaseRequisitionTemplateItem.setId(1);
         purchaseRequisitionTemplateItem.setComponentName(COMPONENT_NAME);
         purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
         List<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemList = purchaseRequisitionTemplateItemRepository.findAll();
 
-        assertEquals(1, purchaseRequisitionTemplateItemList.size());
+        assertEquals(1, purchaseRequisitionTemplateItemRepository.count());
         assertEquals(COMPONENT_NAME, purchaseRequisitionTemplateItemList.get(0).getComponentName());
     }
 
     @Test
     public void findOneById() {
         PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = new PurchaseRequisitionTemplateItem();
-        purchaseRequisitionTemplateItem.setId(1);
         purchaseRequisitionTemplateItem.setComponentName(COMPONENT_NAME);
-        purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
-        Optional<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemOptional = purchaseRequisitionTemplateItemRepository.findById(1L);
+        PurchaseRequisitionTemplateItem savedPurchaseRequisitionTemplateItem = purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
+        Optional<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemOptional = purchaseRequisitionTemplateItemRepository.findById(savedPurchaseRequisitionTemplateItem.getId());
 
         assertTrue(purchaseRequisitionTemplateItemOptional.isPresent());
         assertEquals(COMPONENT_NAME, purchaseRequisitionTemplateItemOptional.get().getComponentName());
@@ -69,18 +65,17 @@ public class PurchaseRequisitionTemplateItemJpaUnitTest {
     @Test
     public void update() {
         PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = new PurchaseRequisitionTemplateItem();
-        purchaseRequisitionTemplateItem.setId(1);
         purchaseRequisitionTemplateItem.setComponentName(COMPONENT_NAME);
-        purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
+        PurchaseRequisitionTemplateItem savedPurchaseRequisitionTemplateItem = purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
 
-        Optional<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItem1 = purchaseRequisitionTemplateItemRepository.findById(1L);
+        Optional<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItem1 = purchaseRequisitionTemplateItemRepository.findById(savedPurchaseRequisitionTemplateItem.getId());
         assertTrue(purchaseRequisitionTemplateItem1.isPresent());
 
         PurchaseRequisitionTemplateItem toBeUpdatedPurchaseRequisitionTemplateItem = purchaseRequisitionTemplateItem1.get();
         toBeUpdatedPurchaseRequisitionTemplateItem.setComponentName(UPDATED_COMPONENT_NAME);
         purchaseRequisitionTemplateItemRepository.save(toBeUpdatedPurchaseRequisitionTemplateItem);
 
-        Optional<PurchaseRequisitionTemplateItem> updatedPurchaseRequisitionTemplateItemOptional = purchaseRequisitionTemplateItemRepository.findById(1L);
+        Optional<PurchaseRequisitionTemplateItem> updatedPurchaseRequisitionTemplateItemOptional = purchaseRequisitionTemplateItemRepository.findById(savedPurchaseRequisitionTemplateItem.getId());
         assertTrue(updatedPurchaseRequisitionTemplateItemOptional.isPresent());
 
         PurchaseRequisitionTemplateItem updatedPurchaseRequisitionTemplateItem = updatedPurchaseRequisitionTemplateItemOptional.get();
@@ -90,13 +85,12 @@ public class PurchaseRequisitionTemplateItemJpaUnitTest {
     @Test
     public void delete() {
         PurchaseRequisitionTemplateItem purchaseRequisitionTemplateItem = new PurchaseRequisitionTemplateItem();
-        purchaseRequisitionTemplateItem.setId(1);
         purchaseRequisitionTemplateItem.setComponentName(COMPONENT_NAME);
-        purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
+        PurchaseRequisitionTemplateItem savedPurchaseRequisitionTemplateItem = purchaseRequisitionTemplateItemRepository.save(purchaseRequisitionTemplateItem);
 
-        assertEquals(1,purchaseRequisitionTemplateItemRepository.count());
+        assertEquals(1, purchaseRequisitionTemplateItemRepository.count());
 
-        purchaseRequisitionTemplateItemRepository.deleteById(1L);
+        purchaseRequisitionTemplateItemRepository.deleteById(savedPurchaseRequisitionTemplateItem.getId());
         assertEquals(0, purchaseRequisitionTemplateItemRepository.count());
     }
 }

@@ -3,8 +3,6 @@ package com.engseen.erp.service.impl;
 import java.util.List;
 
 import com.engseen.erp.domain.PurchaseRequisitionApproval;
-import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
-import com.engseen.erp.repository.PurchaseRequisitionApprovalItemRepository;
 import com.engseen.erp.repository.PurchaseRequisitionApprovalRepository;
 import com.engseen.erp.service.PurchaseRequestApprovalService;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalDto;

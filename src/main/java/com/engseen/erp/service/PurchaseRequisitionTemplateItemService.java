@@ -2,11 +2,11 @@ package com.engseen.erp.service;
 
 import java.util.List;
 
-import com.engseen.erp.service.dto.PurchaseTemplateItemDto;
+import com.engseen.erp.service.dto.PurchaseRequisitionTemplateItemDTO;
 
 import org.springframework.data.domain.Pageable;
 
-public interface PurchaseTemplateItemService {
+public interface PurchaseRequisitionTemplateItemService {
     
     /**
      * Get all the PurchaseTemplateItems by PurchaseTemplateId.
@@ -14,24 +14,24 @@ public interface PurchaseTemplateItemService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    List<PurchaseTemplateItemDto> findAllByPurchaseTemplateId(Long purchaseTemplateId, Pageable pageable);
+    List<PurchaseRequisitionTemplateItemDTO> findAllByPurchaseTemplateId(Long purchaseTemplateId, Pageable pageable);
 
     /**
      * Create New Purchase Template Item
      *
-     * @param purchaseTemplateItemDto entity to be create
+     * @param purchaseRequisitionTemplateItemDTO entity to be create
      * @return the entity created
      */
-	PurchaseTemplateItemDto create(PurchaseTemplateItemDto purchaseTemplateItemDto);
+	PurchaseRequisitionTemplateItemDTO create(PurchaseRequisitionTemplateItemDTO purchaseRequisitionTemplateItemDTO);
 
     /**
      * Update Purchase Template Item
      *
 	 * @param purchaseTemplateItemId id of PurchaseTemplateItem to update
-     * @param purchaseTemplateItemDto entity to be update
+     * @param purchaseRequisitionTemplateItemDTO entity to be update
      * @return the entity updated
      */
-	PurchaseTemplateItemDto update(Long purchaseTemplateItemId, PurchaseTemplateItemDto purchaseTemplateItemDto);
+	PurchaseRequisitionTemplateItemDTO update(Long purchaseTemplateItemId, PurchaseRequisitionTemplateItemDTO purchaseRequisitionTemplateItemDTO);
 
     /**
      * Delete the "id" PurchaseTemplateItem

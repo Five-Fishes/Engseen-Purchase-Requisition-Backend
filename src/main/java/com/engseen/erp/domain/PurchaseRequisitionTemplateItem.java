@@ -4,13 +4,15 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @Entity
 @ToString
 @Table(name = "PurchaseRequisitionTemplateItem")
-public class PurchaseRequisitionTemplateItem {
+public class PurchaseRequisitionTemplateItem implements Serializable {
 
     @Id
     @Column(name = "Id")

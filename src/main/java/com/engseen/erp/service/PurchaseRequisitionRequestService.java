@@ -6,7 +6,7 @@ import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
 import org.springframework.data.domain.Pageable;
 
-public interface PurchaseRequestSubmissionService {
+public interface PurchaseRequisitionRequestService {
 
     /**
      * Get all the PurchaseRequestSubmissions.
@@ -22,6 +22,6 @@ public interface PurchaseRequestSubmissionService {
      * @param purchaseRequisitionRequestDto entity to be create
      * @return the entity created
      */
-	PurchaseRequisitionRequestDTO create(PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto);
+    PurchaseRequisitionRequestDTO create(PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto);
 
 }
