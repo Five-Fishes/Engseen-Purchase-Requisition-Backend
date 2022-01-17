@@ -65,4 +65,5 @@ public class PurchaseRequisitionRequestItemServiceImpl implements PurchaseRequis
         purchaseRequisitionRequestItemRepository.deleteAllByPurchaseRequisitionRequest_Id(purchaseRequisitionRequestId);
     }
 
+    // TODO: [LU] Please ensure the reference to dependent entity is set correctly before saving child items
 }

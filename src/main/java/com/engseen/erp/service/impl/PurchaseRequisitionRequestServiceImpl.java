@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PurchaseRequisitionApproval;
 import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
 import com.engseen.erp.domain.PurchaseRequisitionRequest;
@@ -100,7 +101,11 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
 
             List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemList = purchaseRequisitionApproval.getPurchaseRequisitionApprovalItems()
                     .parallelStream()
-                    .peek(purchaseRequisitionApprovalItem -> purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(savedPurchaseRequisitionApproval)).collect(Collectors.toList());
+                    .peek(purchaseRequisitionApprovalItem -> {
+                        purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(savedPurchaseRequisitionApproval);
+                        purchaseRequisitionApprovalItem.setStatus(PurchaseRequisitionApprovalItemStatus.TO_CONFIRM);
+                    })
+                    .collect(Collectors.toList());
 
             purchaseRequisitionApprovalItemRepository.saveAllAndFlush(purchaseRequisitionApprovalItemList);
         });

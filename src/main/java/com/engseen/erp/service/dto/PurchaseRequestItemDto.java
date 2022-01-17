@@ -9,7 +9,9 @@ import lombok.Data;
  */
 @Data
 public abstract class PurchaseRequestItemDto {
-    
+
+    private Long id;
+
     private String componentCode;
 
     private String componentName;
