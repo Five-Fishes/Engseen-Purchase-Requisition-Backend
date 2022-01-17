@@ -20,6 +20,14 @@ public interface PurchaseRequisitionTemplateService {
     List<PurchaseRequisitionTemplateDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the PurchaseTemplates.
+     *
+     * @param purchaseRequisitionTemplateId Id of Purchase Requisition Template.
+     * @return the list of entities.
+     */
+    PurchaseRequisitionTemplateDTO findById(long purchaseRequisitionTemplateId);
+
+    /**
      * Create New Purchase Template
      *
      * @param purchaseRequisitionTemplateDTO entity to be create

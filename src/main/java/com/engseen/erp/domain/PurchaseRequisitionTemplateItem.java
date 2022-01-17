@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Data
 @Entity
 @ToString
 @Table(name = "PurchaseRequisitionTemplateItem")
@@ -41,4 +40,67 @@ public class PurchaseRequisitionTemplateItem implements Serializable {
     @Column(name = "PackagingSize")
     private BigDecimal packagingSize;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public PurchaseRequisitionTemplate getPurchaseRequisitionTemplate() {
+        return purchaseRequisitionTemplate;
+    }
+
+    public void setPurchaseRequisitionTemplate(PurchaseRequisitionTemplate purchaseRequisitionTemplate) {
+        this.purchaseRequisitionTemplate = purchaseRequisitionTemplate;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public String getComponentCode() {
+        return componentCode;
+    }
+
+    public void setComponentCode(String componentCode) {
+        this.componentCode = componentCode;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(String vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public BigDecimal getPackagingSize() {
+        return packagingSize;
+    }
+
+    public void setPackagingSize(BigDecimal packagingSize) {
+        this.packagingSize = packagingSize;
+    }
 }
