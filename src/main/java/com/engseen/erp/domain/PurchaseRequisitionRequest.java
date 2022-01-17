@@ -9,12 +9,12 @@ import java.util.List;
 
 @Entity
 @ToString
-@Table(name = "PurchaseRequisitionRequest")
+@Table(name = "PurchaseRequisitionRequest", schema = "dbo")
 public class PurchaseRequisitionRequest implements Serializable {
 
     @Id
     @Column(name = "Id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "CreatedDate")

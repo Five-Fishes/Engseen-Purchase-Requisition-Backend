@@ -1,6 +1,6 @@
 package com.engseen.erp.domain;
 
-import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,52 +9,163 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Data
 @Entity
-@Table(name = "VendorItem")
+@ToString
+@Table(name = "VendorItem", schema = "dbo")
 public class VendorItem {
-    
+
     @Id
     @Column(name = "ID")
-    private int ID;
+    private int id;
 
     @Column(name = "VendorID")
-    private String VendorID;
+    private String vendorID;
 
     @Column(name = "Item")
-    private String Item;
+    private String item;
 
     @Column(name = "VendorItem")
-    private String VendorItem;
+    private String vendorItem;
 
     @Column(name = "VIDescription")
-    private String VIDescription;
+    private String vIDescription;
 
     @Column(name = "VIConversion")
-    private BigDecimal VIConversion;
+    private BigDecimal vIConversion;
 
     @Column(name = "VIUnitOfMeasure")
-    private String VIUnitOfMeasure;
+    private String vIUnitOfMeasure;
 
     @Column(name = "VIUnitPrice")
-    private BigDecimal VIUnitPrice;
+    private BigDecimal vIUnitPrice;
 
     @Column(name = "EffectiveDate")
-    private Date EffectiveDate;
+    private Date effectiveDate;
 
     @Column(name = "RevisionNo")
-    private String RevisionNo;
+    private String revisionNo;
 
     @Column(name = "Created")
-    private Date Created;
+    private Date created;
 
     @Column(name = "CreatedBy")
-    private String CreatedBy;
+    private String createdBy;
 
     @Column(name = "Modified")
-    private Date Modified;
+    private Date modified;
 
     @Column(name = "ModifiedBy")
-    private String ModifiedBy;
+    private String modifiedBy;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getVendorID() {
+        return vendorID;
+    }
+
+    public void setVendorID(String vendorID) {
+        this.vendorID = vendorID;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public String getVendorItem() {
+        return vendorItem;
+    }
+
+    public void setVendorItem(String vendorItem) {
+        this.vendorItem = vendorItem;
+    }
+
+    public String getvIDescription() {
+        return vIDescription;
+    }
+
+    public void setvIDescription(String vIDescription) {
+        this.vIDescription = vIDescription;
+    }
+
+    public BigDecimal getvIConversion() {
+        return vIConversion;
+    }
+
+    public void setvIConversion(BigDecimal vIConversion) {
+        this.vIConversion = vIConversion;
+    }
+
+    public String getvIUnitOfMeasure() {
+        return vIUnitOfMeasure;
+    }
+
+    public void setvIUnitOfMeasure(String vIUnitOfMeasure) {
+        this.vIUnitOfMeasure = vIUnitOfMeasure;
+    }
+
+    public BigDecimal getvIUnitPrice() {
+        return vIUnitPrice;
+    }
+
+    public void setvIUnitPrice(BigDecimal vIUnitPrice) {
+        this.vIUnitPrice = vIUnitPrice;
+    }
+
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    public String getRevisionNo() {
+        return revisionNo;
+    }
+
+    public void setRevisionNo(String revisionNo) {
+        this.revisionNo = revisionNo;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 }

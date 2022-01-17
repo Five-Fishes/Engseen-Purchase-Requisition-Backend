@@ -9,43 +9,43 @@ import java.util.Date;
 
 @Entity
 @ToString
-@Table(name = "PurchaseRequisitionRequestItem")
+@Table(name = "PurchaseRequisitionRequestItem", schema = "dbo")
 public class PurchaseRequisitionRequestItem implements Serializable {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "Id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "PurchaseRequisitionRequest_id")
+    @JoinColumn(name = "PurchaseRequisitionRequestId")
     private PurchaseRequisitionRequest purchaseRequisitionRequest;
 
-    @Column(name = "componentCode")
+    @Column(name = "ComponentCode")
     private String componentCode;
 
-    @Column(name = "componentName")
+    @Column(name = "ComponentName")
     private String componentName;
 
-    @Column(name = "vendorId")
+    @Column(name = "VendorId")
     private String vendorId;
 
-    @Column(name = "vendorName")
+    @Column(name = "VendorName")
     private String vendorName;
 
-    @Column(name = "stockBalance")
+    @Column(name = "StockBalance")
     private BigDecimal stockBalance;
 
-    @Column(name = "packagingSize")
+    @Column(name = "PackagingSize")
     private BigDecimal packagingSize;
 
-    @Column(name = "noOfPacks")
+    @Column(name = "NoOfPacks")
     private BigDecimal noOfPacks;
 
-    @Column(name = "quantity")
+    @Column(name = "Quantity")
     private BigDecimal quantity;
 
-    @Column(name = "deliveryDate")
+    @Column(name = "DeliveryDate")
     private Date deliveryDate;
 
     public long getId() {

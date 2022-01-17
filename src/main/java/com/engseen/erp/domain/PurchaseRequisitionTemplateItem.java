@@ -1,6 +1,5 @@
 package com.engseen.erp.domain;
 
-import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -10,16 +9,16 @@ import java.math.BigDecimal;
 
 @Entity
 @ToString
-@Table(name = "PurchaseRequisitionTemplateItem")
+@Table(name = "PurchaseRequisitionTemplateItem", schema = "dbo")
 public class PurchaseRequisitionTemplateItem implements Serializable {
 
     @Id
     @Column(name = "Id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "PurchaseRequisitionTemplate_id")
+    @JoinColumn(name = "PurchaseRequisitionTemplateId")
     private PurchaseRequisitionTemplate purchaseRequisitionTemplate;
 
     @Column(name = "Sequence")

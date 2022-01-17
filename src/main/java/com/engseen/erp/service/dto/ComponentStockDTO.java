@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ComponentStockDto extends ComponentDto implements Serializable {
+public class ComponentStockDTO extends ComponentDTO implements Serializable {
 
     private Double sequence;
 

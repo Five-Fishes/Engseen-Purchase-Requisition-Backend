@@ -1,8 +1,8 @@
 package com.engseen.erp.controller.rest;
 
 import com.engseen.erp.service.VendorService;
-import com.engseen.erp.service.dto.ComponentDto;
-import com.engseen.erp.service.dto.ComponentVendorDto;
+import com.engseen.erp.service.dto.ComponentDTO;
+import com.engseen.erp.service.dto.ComponentVendorDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.ComponentVendor}
+ * Rest Controller for managing {@link com.engseen.erp.domain.VendorMaster}
  */
 @RequestMapping("/api/purchase-requisition/load-data")
 @RestController
@@ -32,11 +32,11 @@ public class VendorController {
     }
 
     @PostMapping(value="")
-    public ResponseEntity<List<ComponentVendorDto>> getAllStockComponentByComponents(Pageable pageable, @RequestBody List<ComponentDto> components){
+    public ResponseEntity<List<ComponentVendorDTO>> getAllStockComponentByComponents(Pageable pageable, @RequestBody List<ComponentDTO> components){
         log.info("REST Request to get ComponentVendorDto");
         log.debug("Pagination info: {}", pageable);
         log.debug("Filter by components: {}", components);
-        List<ComponentVendorDto> savedComponentVendorDtoList = vendorService.findAll(pageable, components);
+        List<ComponentVendorDTO> savedComponentVendorDtoList = vendorService.findAll(pageable, components);
         return ResponseEntity.ok()
                 .body(savedComponentVendorDtoList);
     }

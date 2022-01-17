@@ -3,12 +3,13 @@ package com.engseen.erp.service.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
- * A DTO for the {@link com.engseen.erp.entity.Component} entity.
+ * A DTO for the {@link com.engseen.erp.domain.VendorItem} entity.
  */
 @Data
-public class ComponentDto implements Serializable {
+public class ComponentDTO implements Serializable {
     private Long id;
 
     private String componentCode;
@@ -19,5 +20,5 @@ public class ComponentDto implements Serializable {
 
     private String vendorName;
 
-    private Integer packagingSize;
+    private BigDecimal packagingSize;
 }
