@@ -1,9 +1,12 @@
 package com.engseen.erp.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.engseen.erp.domain.PurchaseRequisitionTemplate;
 import com.engseen.erp.domain.PurchaseRequisitionTemplateItem;
 import com.engseen.erp.repository.PurchaseRequisitionTemplateItemRepository;
+import com.engseen.erp.repository.PurchaseRequisitionTemplateRepository;
 import com.engseen.erp.service.PurchaseRequisitionTemplateItemService;
 import com.engseen.erp.service.dto.PurchaseRequisitionTemplateItemDTO;
 
@@ -25,6 +28,7 @@ public class PurchaseRequisitionTemplateItemServiceImpl implements PurchaseRequi
     private final Logger log = LoggerFactory.getLogger(PurchaseRequisitionTemplateItemServiceImpl.class);
     
     private final PurchaseRequisitionTemplateItemRepository purchaseRequisitionTemplateItemRepository;
+    private final PurchaseRequisitionTemplateRepository purchaseRequisitionTemplateRepository;
     private final PurchaseRequisitionTemplateItemMapper purchaseRequisitionTemplateItemMapper;
 
     @Override
@@ -66,7 +70,9 @@ public class PurchaseRequisitionTemplateItemServiceImpl implements PurchaseRequi
     public void deleteByPurchaseTemplateItemId(Long purchaseRequisitionTemplateItemId) {
         log.debug("Request to delete Purchase Template Item by Id: {}", purchaseRequisitionTemplateItemId);
 
-        purchaseRequisitionTemplateItemRepository.deleteById(purchaseRequisitionTemplateItemId);
+        Optional<PurchaseRequisitionTemplate> purchaseRequisitionTemplateOptional = purchaseRequisitionTemplateRepository.findById(purchaseRequisitionTemplateItemId);
+        purchaseRequisitionTemplateOptional.ifPresent(purchaseRequisitionTemplate -> purchaseRequisitionTemplateItemRepository.deleteById(purchaseRequisitionTemplate.getId()));
+
     }
 
     @Override
@@ -74,7 +80,9 @@ public class PurchaseRequisitionTemplateItemServiceImpl implements PurchaseRequi
     public void deleteByPurchaseTemplateId(Long purchaseRequisitionTemplateId) {
         log.debug("Request to delete Purchase Template by Id: {}", purchaseRequisitionTemplateId);
 
-        purchaseRequisitionTemplateItemRepository.deleteAllByPurchaseRequisitionTemplate_Id(purchaseRequisitionTemplateId);
+        Optional<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemOptional = purchaseRequisitionTemplateItemRepository.findById(purchaseRequisitionTemplateId);
+        purchaseRequisitionTemplateItemOptional.ifPresent(purchaseRequisitionTemplateItem -> purchaseRequisitionTemplateItemRepository.deleteAllByPurchaseRequisitionTemplate_Id(purchaseRequisitionTemplateItem.getId()));
+
     }
     
 }

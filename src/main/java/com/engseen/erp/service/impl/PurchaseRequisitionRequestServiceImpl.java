@@ -2,7 +2,10 @@ package com.engseen.erp.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PurchaseRequisitionApproval;
 import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
 import com.engseen.erp.domain.PurchaseRequisitionRequest;
@@ -16,6 +19,7 @@ import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
 import com.engseen.erp.service.mapper.PurchaseRequisitionRequestItemMapper;
 import com.engseen.erp.service.mapper.PurchaseRequisitionRequestMapper;
+import com.engseen.erp.service.mapper.PurchaseRequisitionRequestToApprovalMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,7 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
     private final PurchaseRequisitionRequestItemRepository purchaseRequisitionRequestItemRepository;
     private final PurchaseRequisitionRequestMapper purchaseRequisitionRequestMapper;
     private final PurchaseRequisitionRequestItemMapper purchaseRequisitionRequestItemMapper;
+    private final PurchaseRequisitionRequestToApprovalMapper purchaseRequisitionRequestToApprovalMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,46 +53,67 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
                 .findAll(pageable)
                 .toList();
 
-        return purchaseRequisitionRequestMapper.toDto(purchaseRequisitionRequestList);
+        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequisitionRequestMapper.toDto(purchaseRequisitionRequestList);
+
+
+        return purchaseRequisitionRequestDTOList
+                .parallelStream()
+                .peek(purchaseRequisitionRequestDTO -> {
+                    Optional<PurchaseRequisitionRequest> purchaseRequisitionRequestOptional = purchaseRequisitionRequestList
+                            .stream()
+                            .filter(purchaseRequisitionRequest -> purchaseRequisitionRequest.getId() == purchaseRequisitionRequestDTO.getId())
+                            .findFirst();
+
+                    purchaseRequisitionRequestOptional.ifPresent(
+                            purchaseRequisitionRequest -> purchaseRequisitionRequestDTO.setPurchaseRequisitionRequestItems(
+                                    purchaseRequisitionRequestItemMapper.toDto(purchaseRequisitionRequest.getPurchaseRequisitionRequestItems())
+                            )
+
+                    );
+
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public PurchaseRequisitionRequestDTO create(PurchaseRequisitionRequestDTO purchaseRequisitionRequestDto) {
         log.debug("Request to create Purchase Request Submission: {}", purchaseRequisitionRequestDto);
 
-        // TODO: [LU] Refactor to use service instead of repository of other entities
         /*
          * - Create Purchase Requisition Request
          * - Create Purchase Requisition Approval based on created Purchase Requisition Request
          */
         PurchaseRequisitionRequest purchaseRequisitionRequest = purchaseRequisitionRequestMapper.toEntity(purchaseRequisitionRequestDto);
-        log.debug("purchaseRequisitionRequest: {}", purchaseRequisitionRequest);
         purchaseRequisitionRequest.setCreatedDate(new Date());
         PurchaseRequisitionRequest savedPurchaseRequisitionRequest = purchaseRequisitionRequestRepository.saveAndFlush(purchaseRequisitionRequest);
 
-        purchaseRequisitionRequestDto
-                .getPurchaseRequisitionRequestItems()
-                .forEach(purchaseRequisitionRequestItemDTO -> {
-                    PurchaseRequisitionRequestItem purchaseRequisitionRequestItem = purchaseRequisitionRequestItemMapper.toEntity(purchaseRequisitionRequestItemDTO);
-                    purchaseRequisitionRequestItem.setPurchaseRequisitionRequest(savedPurchaseRequisitionRequest);
-                    log.debug("purchaseRequisitionRequestItem: {}", purchaseRequisitionRequestItem);
-                    purchaseRequisitionRequestItemRepository.saveAndFlush(purchaseRequisitionRequestItem);
-                });
+        List<PurchaseRequisitionRequestItem> purchaseRequisitionRequestItemList = purchaseRequisitionRequestItemMapper.toEntity(purchaseRequisitionRequestDto.getPurchaseRequisitionRequestItems())
+                .parallelStream()
+                .peek(purchaseRequisitionRequestItem -> purchaseRequisitionRequestItem.setPurchaseRequisitionRequest(savedPurchaseRequisitionRequest))
+                .collect(Collectors.toList());
+        List<PurchaseRequisitionRequestItem> savedPurchaseRequisitionRequestItemList = purchaseRequisitionRequestItemRepository.saveAllAndFlush(purchaseRequisitionRequestItemList);
 
-        PurchaseRequisitionApproval purchaseRequisitionApproval = new PurchaseRequisitionApproval();
-        purchaseRequisitionApproval.setCreatedDate(new Date());
-        purchaseRequisitionApproval.setRemarks(savedPurchaseRequisitionRequest.getRemarks());
-        PurchaseRequisitionApproval savedPurchaseRequisitionApproval = purchaseRequisitionApprovalRepository.saveAndFlush(purchaseRequisitionApproval);
+        Optional<PurchaseRequisitionRequest> latestPurchaseRequisitionRequest = purchaseRequisitionRequestRepository.findById(savedPurchaseRequisitionRequest.getId());
+        latestPurchaseRequisitionRequest.ifPresent( latestPurchaseRequisitionRequestPresent -> {
+            PurchaseRequisitionApproval purchaseRequisitionApproval = purchaseRequisitionRequestToApprovalMapper.toApproval(latestPurchaseRequisitionRequestPresent);
+            purchaseRequisitionApproval.setPurchaseRequisitionApprovalItems(purchaseRequisitionRequestToApprovalMapper.toApprovalItem(purchaseRequisitionRequestItemList));
+            PurchaseRequisitionApproval savedPurchaseRequisitionApproval = purchaseRequisitionApprovalRepository.saveAndFlush(purchaseRequisitionApproval);
 
-        savedPurchaseRequisitionRequest
-                .getPurchaseRequisitionRequestItems()
-                .forEach(purchaseRequisitionRequestItem -> {
-                    PurchaseRequisitionApprovalItem purchaseRequisitionApprovalItem = new PurchaseRequisitionApprovalItem();
-                    purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(savedPurchaseRequisitionApproval);
-                    purchaseRequisitionApprovalItemRepository.save(purchaseRequisitionApprovalItem);
-                });
+            List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemList = purchaseRequisitionApproval.getPurchaseRequisitionApprovalItems()
+                    .parallelStream()
+                    .peek(purchaseRequisitionApprovalItem -> {
+                        purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(savedPurchaseRequisitionApproval);
+                        purchaseRequisitionApprovalItem.setStatus(PurchaseRequisitionApprovalItemStatus.TO_CONFIRM);
+                    })
+                    .collect(Collectors.toList());
 
-        return purchaseRequisitionRequestMapper.toDto(savedPurchaseRequisitionRequest);
+            purchaseRequisitionApprovalItemRepository.saveAllAndFlush(purchaseRequisitionApprovalItemList);
+        });
+
+        PurchaseRequisitionRequestDTO mappedPurchaseRequisitionDto = purchaseRequisitionRequestMapper.toDto(savedPurchaseRequisitionRequest);
+        mappedPurchaseRequisitionDto.setPurchaseRequisitionRequestItems(purchaseRequisitionRequestItemMapper.toDto(savedPurchaseRequisitionRequestItemList));
+
+        return mappedPurchaseRequisitionDto;
     }
 
 }

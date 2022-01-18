@@ -25,10 +25,20 @@ public class PurchaseRequisitionTemplateItemDTO implements Serializable {
 
     private Double packagingSize;
 
-    private Double sequence;
+    private int sequence;
 
+    /**
+     * - Quantity(No. of Packs) current item to be delivered
+     * - Optional field
+     * - Used while constructing request
+     */
     private Double quantity;
-    
+
+    /**
+     * - Date current item to be delivered
+     * - Optional field
+     * - Used while constructing request
+     */
     private Date deliveryDate;
 
 }

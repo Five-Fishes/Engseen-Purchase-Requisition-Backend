@@ -7,14 +7,12 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * A DTO for the {@link com.engseen.erp.entity.PurchaseRequestApproval} entity.
+ * A DTO for the {@link com.engseen.erp.domain.PurchaseRequisitionApproval} entity.
  */
 @Data
 public class PurchaseRequestApprovalDto implements Serializable {
 
     private Long id;
-
-    private Long templateId;
 
     private String remarks;
 

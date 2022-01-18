@@ -28,7 +28,7 @@ public class PurchaseTemplateController {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseTemplateController.class);
   
-    private PurchaseRequisitionTemplateService purchaseTemplateService;
+    private final PurchaseRequisitionTemplateService purchaseTemplateService;
 
     @Autowired
     public PurchaseTemplateController(PurchaseRequisitionTemplateService purchaseTemplateService) {
@@ -37,7 +37,7 @@ public class PurchaseTemplateController {
 
     /**
      * {@code GET /purchase-template} : Get all Purchase Template
-     * 
+     *
      * @param pageable Pagination Info
      */
     @GetMapping(value="")
@@ -46,7 +46,21 @@ public class PurchaseTemplateController {
         log.debug("Pagination Info: {}", pageable);
         List<PurchaseRequisitionTemplateDTO> purchaseRequisitionTemplateDTOList = purchaseTemplateService.findAll(pageable);
         return ResponseEntity.ok()
-            .body(purchaseRequisitionTemplateDTOList);
+                .body(purchaseRequisitionTemplateDTOList);
+    }
+
+    /**
+     * {@code GET /purchase-template/{purchaseRequisitionTemplateId}} : Get Purchase Template by Id
+     * 
+     * @param purchaseRequisitionTemplateId Id of {@link com.engseen.erp.domain.PurchaseRequisitionTemplate}
+     */
+    @GetMapping(value="/{purchaseRequisitionTemplateId}")
+    public ResponseEntity<PurchaseRequisitionTemplateDTO> getAllPurchaseTemplate(@PathVariable long purchaseRequisitionTemplateId) {
+        log.info("REST Request to getPurchaseTemplateById");
+        log.debug("PurchaseTemplate Id: {}", purchaseRequisitionTemplateId);
+        PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO = purchaseTemplateService.findById(purchaseRequisitionTemplateId);
+        return ResponseEntity.ok()
+            .body(purchaseRequisitionTemplateDTO);
     }
 
     /**

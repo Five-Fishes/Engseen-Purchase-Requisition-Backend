@@ -2,8 +2,8 @@ package com.engseen.erp.controller.rest;
 
 import com.engseen.erp.service.ComponentItemCostService;
 import com.engseen.erp.service.ComponentService;
-import com.engseen.erp.service.dto.ComponentDto;
-import com.engseen.erp.service.dto.ComponentItemCostDto;
+import com.engseen.erp.service.dto.ComponentDTO;
+import com.engseen.erp.service.dto.ComponentItemCostDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.Component}
+ * Rest Controller for managing {@link com.engseen.erp.domain.VendorItem}
  */
 
 @RequestMapping("/api/component")
@@ -23,8 +23,8 @@ import java.util.List;
 public class ComponentController {
     private final Logger log = LoggerFactory.getLogger(ComponentController.class);
 
-    private ComponentService componentService;
-    private ComponentItemCostService componentItemCostService;
+    private final ComponentService componentService;
+    private final ComponentItemCostService componentItemCostService;
 
     @Autowired
     public ComponentController(ComponentService componentService, ComponentItemCostService componentItemCostService) {
@@ -41,13 +41,13 @@ public class ComponentController {
      * @param pageable Pagination Info
      */
     @GetMapping(value="")
-    public ResponseEntity<List<ComponentDto>> getAllComponents(Pageable pageable, @RequestParam (required=false) String component, @RequestParam (required=false) String vendor, @RequestParam (required=false) Integer packingSize){
+    public ResponseEntity<List<ComponentDTO>> getAllComponents(Pageable pageable, @RequestParam (required=false) String component, @RequestParam (required=false) String vendor, @RequestParam (required=false) Integer packingSize){
         log.info("Rest Request to getAllComponents");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Component: {}, Vendor: {}, Packing Size: {}", component, vendor, packingSize);
-        List<ComponentDto> componentDtoList = componentService.findAll(pageable);
+        List<ComponentDTO> componentDTOList = componentService.findAll(pageable, component, vendor, packingSize);
         return ResponseEntity.ok()
-                .body(componentDtoList);
+                .body(componentDTOList);
     }
 
 
@@ -59,12 +59,12 @@ public class ComponentController {
      */
 
     @PostMapping(value="/item-cost")
-    public ResponseEntity<List<ComponentItemCostDto>> getComponentItemCostByComponents(Pageable pageable, @RequestBody List<ComponentDto> components) {
+    public ResponseEntity<List<ComponentItemCostDTO>> getComponentItemCostByComponents(Pageable pageable, @RequestBody List<ComponentDTO> components) {
         log.info("REST Request to get getComponentItemCostByComponents");
         log.debug("Pagination info: {}", pageable);
         log.debug("Filter by components: {}", components);
-        List<ComponentItemCostDto> savedComponentItemCostDtoList = componentItemCostService.findAll(pageable, components);
+        List<ComponentItemCostDTO> savedComponentItemCostDTOList = componentItemCostService.findAll(pageable, components);
         return ResponseEntity.ok()
-                .body(savedComponentItemCostDtoList);
+                .body(savedComponentItemCostDTOList);
     }
 }
