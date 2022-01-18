@@ -32,8 +32,17 @@ docker-compose -f src/main/docker/mssql.yml up -d
     - Ensure gradle is using ```shell gradle-wrapper.properties``` to o execute tasks
     - Run application / gradle tasks
     
-4. Shut down database
+4. Shut down database while keeping data
+```shell
+docker-compose -f src/main/docker/mssql.yml stop
+```
+
+5. Start stopped database
+```shell
+docker-compose -f src/main/docker/mssql.yml stop
+```
+
+6. Shut down and clean up database
 ```shell
 docker-compose -f src/main/docker/mssql.yml down
 ```
-          
