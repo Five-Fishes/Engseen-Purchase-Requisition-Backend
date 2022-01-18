@@ -1,10 +1,10 @@
--- Create a new table called '[VendorMaster]' in schema '[dbo]'
+-- Create a new table called '[ItemMaster]' in schema '[dbo]'
 -- Drop the table if it already exists
-IF OBJECT_ID('[dbo].[VendorMaster]', 'U') IS NOT NULL
-DROP TABLE [dbo].[VendorMaster]
+IF OBJECT_ID('[dbo].[ItemMaster]', 'U') IS NOT NULL
+DROP TABLE [dbo].[ItemMaster]
     GO
 -- Create the table in the specified schema
-CREATE TABLE [dbo].[VendorMaster]
+CREATE TABLE [dbo].[ItemMaster]
 (
     [ID] int IDENTITY(1,1) ,
     [Item] varchar(30),
@@ -219,6 +219,119 @@ CREATE TABLE [dbo].[Inventory]
     );
 GO
 
+-- Create a new table called '[PODetail]' in schema '[dbo]'
+-- Drop the table if it already exists
+IF OBJECT_ID('[dbo].[PODetail]', 'U') IS NOT NULL
+DROP TABLE [dbo].[PODetail]
+    GO
+-- Create the table in the specified schema
+CREATE TABLE [dbo].[PODetail]
+(
+    [ID]                   int         NOT NULL IDENTITY (1,1),
+    [PONumber]             varchar(30) NOT NULL,
+    [LineNumber]           int         NOT NULL,
+    [Item]                 varchar(30) NOT NULL,
+    [LineType]             char(1)     NOT NULL,
+    [LineSelector]         char(1)     NOT NULL,
+    [OrderQuantity]        decimal     NOT NULL,
+    [QuantityReceived]     decimal     NOT NULL,
+    [QuantityInInspection] decimal     NOT NULL,
+    [QuantityOnHand]       decimal     NOT NULL,
+    [QuantityOnHold]       decimal     NOT NULL,
+    [BlanketQuantity]      decimal     NOT NULL,
+    [ETADate]              datetime    NOT NULL,
+    [NeedDate]             datetime,
+    [DateLastReceipt]      datetime,
+    [LeadTime]             int,
+    [Discount]             int,
+    [LineStatus]           char(1)     NOT NULL,
+    [UnitPrice]            decimal     NOT NULL,
+    [ExtendedPrice]        decimal     NOT NULL,
+    [Remark]               varchar(480),
+    [VendorItem]           varchar(30),
+    [VIDescription]        varchar(60),
+    [VIConversion]         decimal,
+    [VIUnitOfMeasure]      varchar(4),
+    [VIOrderQuantity]      decimal,
+    [VIUnitPrice]          decimal,
+    [ItemFailure]          varchar(20),
+    [PrintUOM]             varchar(4),
+    [DepartmentCode]       varchar(6),
+    [SegmentCode]          varchar(6),
+    [Created]              datetime,
+    [CreatedBy]            varchar(8),
+    [Modified]             datetime,
+    [ModifiedBy]           varchar(8),
+    );
+GO
+
+-- Create a new table called '[POHeader]' in schema '[dbo]'
+-- Drop the table if it already exists
+IF OBJECT_ID('[dbo].[POHeader]', 'U') IS NOT NULL
+DROP TABLE [dbo].[POHeader]
+    GO
+-- Create the table in the specified schema
+CREATE TABLE [dbo].[POHeader]
+(
+    [ID]                  int         NOT NULL IDENTITY (1,1),
+    [PONumber]            varchar(30) NOT NULL,
+    [VendorID]            varchar(12) NOT NULL,
+    [Buyer]               varchar(8)  NOT NULL,
+    [Contact]             varchar(38),
+    [Phone]               varchar(30),
+    [OurContact]          varchar(30),
+    [OrderStatus]         char(1)     NOT NULL,
+    [OriginalPODate]      datetime    NOT NULL,
+    [PORevisionDate]      datetime    NOT NULL,
+    [POReference]         varchar(20),
+    [PORevision]          varchar(2),
+    [LocationID]          int,
+    [ShipTo]              varchar(60),
+    [Address1]            varchar(60),
+    [Address2]            varchar(60),
+    [City]                varchar(30),
+    [State]               varchar(20),
+    [ZipCode]             varchar(24),
+    [Country]             varchar(30),
+    [ShipVia]             varchar(40),
+    [FOBPoint]            varchar(40),
+    [StandardTerms]       char(1)     NOT NULL,
+    [Cash1Percent]        decimal     NOT NULL,
+    [Cash1Days]           int         NOT NULL,
+    [Cash2Percent]        decimal     NOT NULL,
+    [Cash2Days]           int         NOT NULL,
+    [NetDays]             int         NOT NULL,
+    [DueDay]              int         NOT NULL,
+    [CutoffDay]           int         NOT NULL,
+    [MonthsDelay]         int         NOT NULL,
+    [BlanketOrder]        char(1)     NOT NULL,
+    [PrintPO]             char(1)     NOT NULL,
+    [Contract]            varchar(42),
+    [ControllingCurrency] char(1)     NOT NULL,
+    [CurrencyCode]        varchar(10) NOT NULL,
+    [ExchangeRate]        decimal     NOT NULL,
+    [Remark]              varchar(480),
+    [Less1]               varchar(50),
+    [Less1Amount]         decimal,
+    [Less2]               varchar(50),
+    [Less2Amount]         decimal,
+    [OrderTotal]          decimal     NOT NULL,
+    [NoOfLines]           int,
+    [PrintPONo]           int,
+    [CounterID]           int,
+    [POType]              char(1),
+    [ApprovalStatus]      char(1),
+    [CurrentApprover]     varchar(8),
+    [Imported]            char(1),
+    [GST]                 int,
+    [Created]             datetime,
+    [CreatedBy]           varchar(8),
+    [Modified]            datetime,
+    [ModifiedBy]          varchar(8),
+    [Accessed]            datetime,
+    [AccessedBy]          varchar(8),
+    );
+GO
 
 
 
