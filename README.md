@@ -6,7 +6,7 @@
 3. Java 11
 
 ## Development
-1. Start up database, and create DATABASE 'engseenERP'. This is because SQL SERVER cannot create database on startup. 
+1. Start up database, and create DATABASE 'API'. This is because SQL SERVER cannot create database on startup. 
     - Recommend using Azure Data Studio
     - Login with connection details as follows:
         - Connection Type: Microsoft SQL Server
@@ -23,13 +23,13 @@ docker-compose -f src/main/docker/mssql.yml up -d
 2. Start up application
     - CLI: 
         - windows   : 
-          ```shell /gradlew.bat bootRun```
+          ```/gradlew.bat bootRun```
         - unix      : 
-          ```shell ./gradlew bootRun``` (In case of Permission Denied, run ```chmod +x gradlew```)
+          ```./gradlew bootRun``` (In case of Permission Denied, run ```chmod +x gradlew```)
           
 3. Debug using Intellij
     - Ensure project loaded as gradle project
-    - Ensure gradle is using ```shell gradle-wrapper.properties``` to o execute tasks
+    - Ensure gradle is using ```gradle-wrapper.properties``` to execute tasks
     - Run application / gradle tasks
     
 4. Shut down database while keeping data
