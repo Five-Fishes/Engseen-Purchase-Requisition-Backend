@@ -1,17 +1,24 @@
 package com.engseen.erp.service.impl;
 
-import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
+import com.engseen.erp.domain.PODetail;
+import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.exception.BadRequestException;
+import com.engseen.erp.repository.PODetailRepository;
+import com.engseen.erp.repository.POHeaderRepository;
+import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.PurchaseOrderService;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
-import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
@@ -19,29 +26,26 @@ import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service Implementation for managing {@link PurchaseOrder}.
  */
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
 
+    private POHeaderRepository poHeaderRepository;
+    private PODetailRepository poDetailRepository;
     private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
     private EmailService emailService;
-    
-    @Autowired
-    public PurchaseOrderServiceImpl(PurchaseRequestApprovalItemService purchaseRequestApprovalItemService) {
-        this.purchaseRequestApprovalItemService = purchaseRequestApprovalItemService;
-        this.emailService = emailService;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -79,11 +83,44 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         });
         log.debug("Construct Purchase Order based on Vendor");
+        List<PurchaseOrderDto> purchaseOrderDtoList = new ArrayList<>();
         for (Map.Entry<String, List<PurchaseRequestApprovalItemDto>> vendorPurchaseRequestItem : purchaseRequestItemGroupByVendor.entrySet()) {
-            // TODO: Construct Purchase Order Object
-            // TODO: Insert PurchaseOrder
+            POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey());
+            poHeaderRepository.save(poHeader);
+            List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
+            poDetailRepository.saveAll(poDetailList);
+            PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
+            purchaseOrderDtoList.add(purchaseOrderDto);
         }
-        return null;
+        return purchaseOrderDtoList;
+    }
+
+    private POHeader constructPOHeader(String vendorId) {
+        POHeader poHeader = new POHeader();
+        poHeader.setVendorID(vendorId);
+        // poHeader.setPONumber();
+        poHeader.setOriginalPODate(Instant.now());
+        poHeader.setPORevisionDate(Instant.now());
+        poHeader.setCreated(Instant.now());
+        poHeader.setCreatedBy("System");
+        // TODO: Complete POHeader construction
+        return poHeader;
+    }
+
+    private List<PODetail> constructPODetail(List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList, POHeader poHeader) {
+        List<PODetail> poDetails = new ArrayList<>();
+        // TODO: Complete List of PODetail construction
+        return poDetails;
+    }
+
+    private PurchaseOrderDto constructPurchaseOrderDto(POHeader poHeader) {
+        PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
+        // TODO: Complete PurchaseOrderDto construction
+        purchaseOrderDto.setPoNumber(poHeader.getPONumber());
+        purchaseOrderDto.setVendorId(poHeader.getVendorID());
+        purchaseOrderDto.setRevisionDate(Date.from(poHeader.getPORevisionDate()));
+        // purchaseOrderDto.setVendorName();
+        return purchaseOrderDto;
     }
 
     @Override
