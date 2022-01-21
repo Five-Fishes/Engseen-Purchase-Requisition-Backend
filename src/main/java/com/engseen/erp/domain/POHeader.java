@@ -162,6 +162,15 @@ public class POHeader {
     @Column(name = "GST")
     private Integer gst;
 
+    @Column(name = "PurchaseRequestApprovalId")
+    private Long purchaseRequestApprovalId;
+
+    @Column(name = "Emailed", nullable = false)
+    private boolean emailed;
+
+    @Column(name = "Downloaded", nullable = false)
+    private boolean downloaded;
+
     @Column(name = "Created")
     private Instant created;
 
@@ -226,6 +235,30 @@ public class POHeader {
 
     public void setCreated(Instant created) {
         this.created = created;
+    }
+
+    public Long getPurchaseRequestApprovalId() {
+        return purchaseRequestApprovalId;
+    }
+
+    public void setPurchaseRequestApprovalId(Long purchaseRequestApprovalId) {
+        this.purchaseRequestApprovalId = purchaseRequestApprovalId;
+    }
+
+    public boolean getEmailed() {
+        return emailed;
+    }
+
+    public void setEmailed(boolean emailed) {
+        this.emailed = emailed;
+    }
+
+    public boolean getDownloaded() {
+        return downloaded;
+    }
+
+    public void setDownloaded(boolean downloaded) {
+        this.downloaded = downloaded;
     }
 
     public Integer getGst() {

@@ -3,12 +3,15 @@ package com.engseen.erp.service.impl;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PODetail;
@@ -64,6 +67,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
+    @Transactional
     public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
@@ -85,41 +89,65 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Construct Purchase Order based on Vendor");
         List<PurchaseOrderDto> purchaseOrderDtoList = new ArrayList<>();
         for (Map.Entry<String, List<PurchaseRequestApprovalItemDto>> vendorPurchaseRequestItem : purchaseRequestItemGroupByVendor.entrySet()) {
-            POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey());
+            POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey(), purchaseRequestApprovalId);
             poHeaderRepository.save(poHeader);
             List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
             poDetailRepository.saveAll(poDetailList);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
+        log.debug("Updating Purchase Request Approval Confirmed Item to Issued");
+        purchaseRequestApprovalItemList.forEach(purchaseRequestApprovalItem -> {
+            purchaseRequestApprovalItem.setStatus(PurchaseRequisitionApprovalItemStatus.ISSUED);
+            purchaseRequestApprovalItemService.update(purchaseRequestApprovalItem.getId(), purchaseRequestApprovalItem);
+        });
         return purchaseOrderDtoList;
     }
 
-    private POHeader constructPOHeader(String vendorId) {
+    private POHeader constructPOHeader(String vendorId, Long purchaseRequestApprovalId) {
         POHeader poHeader = new POHeader();
         poHeader.setVendorID(vendorId);
-        // poHeader.setPONumber();
+        poHeader.setPONumber(generatePONumber(vendorId));
+        poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
         poHeader.setOriginalPODate(Instant.now());
         poHeader.setPORevisionDate(Instant.now());
+        poHeader.setEmailed(Boolean.FALSE);
+        poHeader.setDownloaded(Boolean.FALSE);
         poHeader.setCreated(Instant.now());
         poHeader.setCreatedBy("System");
         // TODO: Complete POHeader construction
         return poHeader;
     }
 
+    private String generatePONumber(String vendorId) {
+        int poNumberValue = 1000 + new Random().nextInt(9000);
+        return vendorId + "-" + poNumberValue;
+    }
+
     private List<PODetail> constructPODetail(List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList, POHeader poHeader) {
         List<PODetail> poDetails = new ArrayList<>();
-        // TODO: Complete List of PODetail construction
+        purchaseRequestApprovalItemList.forEach(purchaseItem -> {
+            PODetail poDetail = new PODetail();
+            poDetail.setPONumber(poHeader.getPONumber());
+            poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
+            poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
+            poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
+            poDetail.setUnitPrice(BigDecimal.valueOf(purchaseItem.getItemCost()));
+            poDetail.setCreated(Instant.now());
+            poDetail.setCreatedBy("System");
+            poDetails.add(poDetail);
+            // TODO: Complete List of PODetail construction
+        });
         return poDetails;
     }
 
     private PurchaseOrderDto constructPurchaseOrderDto(POHeader poHeader) {
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
-        // TODO: Complete PurchaseOrderDto construction
         purchaseOrderDto.setPoNumber(poHeader.getPONumber());
         purchaseOrderDto.setVendorId(poHeader.getVendorID());
         purchaseOrderDto.setRevisionDate(Date.from(poHeader.getPORevisionDate()));
         // purchaseOrderDto.setVendorName();
+        // TODO: Complete PurchaseOrderDto construction
         return purchaseOrderDto;
     }
 

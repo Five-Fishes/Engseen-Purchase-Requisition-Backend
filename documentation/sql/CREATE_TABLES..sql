@@ -447,3 +447,10 @@ CREATE TABLE [dbo].[PurchaseRequisitionApprovalItem]
     [DeliveryDate] DATETIME,
     );
 GO
+
+ALTER TABLE [dbo].[POHeader]
+ADD 
+PurchaseRequestApprovalId BIGINT,
+Emailed BIT,
+Downloaded BIT;
+GO
