@@ -32,19 +32,17 @@ import com.engseen.erp.service.dto.VendorMasterDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Service Implementation for managing {@link PurchaseOrder}.
  */
 @Service
-@RequiredArgsConstructor
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
@@ -55,6 +53,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
     private EmailService emailService;
     private VendorService vendorService;
+
+    @Autowired
+    public PurchaseOrderServiceImpl(POHeaderRepository poHeaderRepository, PODetailRepository poDetailRepository,
+        PurchaseRequestApprovalService purchaseRequestApprovalService, PurchaseRequestApprovalItemService purchaseRequestApprovalItemService,
+        EmailService emailService, VendorService vendorService
+    ) {
+        this.poHeaderRepository = poHeaderRepository;
+        this.poDetailRepository = poDetailRepository;
+        this.purchaseRequestApprovalService = purchaseRequestApprovalService;
+        this.purchaseRequestApprovalItemService = purchaseRequestApprovalItemService;
+        this.emailService = emailService;
+        this.vendorService = vendorService;
+    }
 
     @Override
     @Transactional(readOnly = true)

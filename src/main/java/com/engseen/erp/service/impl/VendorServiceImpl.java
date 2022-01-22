@@ -11,22 +11,26 @@ import com.engseen.erp.service.mapper.VendorMasterMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 /**
  * Service Implementation for managing {@link com.engseen.erp.domain.VendorMaster}.
  */
 @Service
-@RequiredArgsConstructor
 public class VendorServiceImpl implements VendorService {
 
     private final Logger log = LoggerFactory.getLogger(ComponentServiceImpl.class);
 
     private VendorMasterMapper vendorMasterMapper;
     private VendorMasterRepository vendorMasterRepository;
+
+    @Autowired
+    public VendorServiceImpl(VendorMasterMapper vendorMasterMapper, VendorMasterRepository vendorMasterRepository) {
+        this.vendorMasterMapper = vendorMasterMapper;
+        this.vendorMasterRepository = vendorMasterRepository;
+    }
 
     @Override
     @Transactional
