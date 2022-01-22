@@ -22,13 +22,17 @@ import com.engseen.erp.repository.POHeaderRepository;
 import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.PurchaseOrderService;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
+import com.engseen.erp.service.PurchaseRequestApprovalService;
+import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
+import com.engseen.erp.service.dto.VendorMasterDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,23 +51,34 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private POHeaderRepository poHeaderRepository;
     private PODetailRepository poDetailRepository;
+    private PurchaseRequestApprovalService purchaseRequestApprovalService;
     private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
     private EmailService emailService;
+    private VendorService vendorService;
 
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseOrderRequestApprovalDto> findAllGroupByPurchaseRequestApproval(Pageable pageable) {
         log.debug("Request to findAll Purchase Order group by Purchase Request Approval");
-        // TODO Auto-generated method stub
-        return null;
+        return purchaseRequestApprovalService.findAll(pageable)
+            .stream()
+            .map(purchaseRequestApproval -> {
+                PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
+                purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
+                purchaseOrderRequestApprovalDto.setPurchaseOrderDtoList(
+                    findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged())
+                );
+                return purchaseOrderRequestApprovalDto;
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseOrderDto> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable) {
         log.debug("Request to findAll Purchase Order by Purchase Request Approval Id");
-        // TODO Auto-generated method stub
-        return null;
+        Page<POHeader> poHeaderList = poHeaderRepository.findAllByPurchaseRequestApprovalId(purchaseRequestApprovalId, pageable);
+        return poHeaderList.map(this::constructPurchaseOrderDto).getContent();
     }
 
     @Override
@@ -144,9 +159,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderDto constructPurchaseOrderDto(POHeader poHeader) {
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
         purchaseOrderDto.setPoNumber(poHeader.getPONumber());
-        purchaseOrderDto.setVendorId(poHeader.getVendorID());
         purchaseOrderDto.setRevisionDate(Date.from(poHeader.getPORevisionDate()));
-        // purchaseOrderDto.setVendorName();
+        purchaseOrderDto.setPurchaseRequisitionApprovalId(poHeader.getPurchaseRequestApprovalId());
+        purchaseOrderDto.setEmailed(poHeader.getEmailed());
+        purchaseOrderDto.setDownloaded(poHeader.getDownloaded());
+        purchaseOrderDto.setVendorId(poHeader.getVendorID());
+        VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(poHeader.getVendorID());
+        purchaseOrderDto.setVendorName(vendorMasterDto.getVendorName());
+        // purchaseOrderDto.setEmail();
         // TODO: Complete PurchaseOrderDto construction
         return purchaseOrderDto;
     }
