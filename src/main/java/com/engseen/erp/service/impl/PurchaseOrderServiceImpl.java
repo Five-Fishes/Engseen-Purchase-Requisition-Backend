@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             .map(purchaseRequestApproval -> {
                 PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
                 purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
-                purchaseOrderRequestApprovalDto.setPurchaseOrderDtoList(
+                purchaseOrderRequestApprovalDto.setCreatedDate(purchaseRequestApproval.getCreatedDate());
+                purchaseOrderRequestApprovalDto.setPurchaseOrders(
                     findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged())
                 );
                 return purchaseOrderRequestApprovalDto;
@@ -99,8 +101,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Get List of Purchase Approval Item with Confirmed status");
         List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
         if (purchaseRequestApprovalItemList == null || purchaseRequestApprovalItemList.size() < 1) {
+            log.error("No Confirmed Item Found to Issue PO for Id: {}", purchaseRequestApprovalId);
             throw new BadRequestException("No Confirmed Item Found to Issue PO");
         }
+        log.debug("Purchase Request Approval Item List: {}", purchaseRequestApprovalItemList);
         Map<String, List<PurchaseRequestApprovalItemDto>> purchaseRequestItemGroupByVendor = new HashMap<>();
         log.debug("Group Purchase Request Items based on Vendor as Map");
         purchaseRequestApprovalItemList.forEach(purchaseRequestItem -> {
@@ -113,17 +117,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         });
         log.debug("Construct Purchase Order based on Vendor");
+        log.debug("Purchase Request Item Group By Vendor List: {}", purchaseRequestItemGroupByVendor);
         List<PurchaseOrderDto> purchaseOrderDtoList = new ArrayList<>();
         for (Map.Entry<String, List<PurchaseRequestApprovalItemDto>> vendorPurchaseRequestItem : purchaseRequestItemGroupByVendor.entrySet()) {
             POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey(), purchaseRequestApprovalId);
+            log.debug("Saving PO Header: {}", poHeader);
             poHeaderRepository.save(poHeader);
             List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
+            log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailRepository.saveAll(poDetailList);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
         log.debug("Updating Purchase Request Approval Confirmed Item to Issued");
         purchaseRequestApprovalItemList.forEach(purchaseRequestApprovalItem -> {
+            purchaseRequestApprovalItem.setRequestApprovalId(purchaseRequestApprovalId);
             purchaseRequestApprovalItem.setStatus(PurchaseRequisitionApprovalItemStatus.ISSUED);
             purchaseRequestApprovalItemService.update(purchaseRequestApprovalItem.getId(), purchaseRequestApprovalItem);
         });
@@ -131,26 +139,48 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     private POHeader constructPOHeader(String vendorId, Long purchaseRequestApprovalId) {
+        log.debug("Request to constructPOHeader with vendorId: {}, purchaseRequestApprovalId: {}", vendorId, purchaseRequestApprovalId);
         POHeader poHeader = new POHeader();
         poHeader.setVendorID(vendorId);
         poHeader.setPONumber(generatePONumber(vendorId));
         poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
         poHeader.setOriginalPODate(Instant.now());
         poHeader.setPORevisionDate(Instant.now());
+        // TODO: Complete POHeader construction with Not Null Value
+        poHeader.setBuyer("");
+        poHeader.setOrderStatus(Character.MIN_VALUE);
+        poHeader.setStandardTerms(Character.MIN_VALUE);
+        poHeader.setCash1Days(0);
+        poHeader.setCash1Percent(BigDecimal.ZERO);
+        poHeader.setCash2Days(0);
+        poHeader.setCash2Percent(BigDecimal.ZERO);
+        poHeader.setNetDays(0);
+        poHeader.setCutoffDay(0);
+        poHeader.setDueDay(0);
+        poHeader.setMonthsDelay(0);
+        poHeader.setBlanketOrder(Character.MIN_VALUE);
+        poHeader.setPrintPO(Character.MIN_VALUE);
+        poHeader.setControllingCurrency(Character.MIN_VALUE);
+        poHeader.setCurrencyCode("");
+        poHeader.setExchangeRate(BigDecimal.ONE);
+        poHeader.setOrderTotal(BigDecimal.ZERO);
+        // End Complete POHeader construction with Not Null Value
         poHeader.setEmailed(Boolean.FALSE);
         poHeader.setDownloaded(Boolean.FALSE);
         poHeader.setCreated(Instant.now());
         poHeader.setCreatedBy("System");
-        // TODO: Complete POHeader construction
         return poHeader;
     }
 
     private String generatePONumber(String vendorId) {
+        log.debug("Request to generatePONumber for vendorId: {}", vendorId);
         int poNumberValue = 1000 + new Random().nextInt(9000);
         return vendorId + "-" + poNumberValue;
     }
 
     private List<PODetail> constructPODetail(List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList, POHeader poHeader) {
+        log.debug("Request to constructPODetail");
+        log.debug("Purchase Request Approval Item List: {}", purchaseRequestApprovalItemList);
         List<PODetail> poDetails = new ArrayList<>();
         purchaseRequestApprovalItemList.forEach(purchaseItem -> {
             PODetail poDetail = new PODetail();
@@ -158,17 +188,31 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
             poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
             poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
-            poDetail.setUnitPrice(BigDecimal.valueOf(purchaseItem.getItemCost()));
+            poDetail.setUnitPrice(BigDecimal.valueOf(Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d)));
+            // TODO: Complete List of PODetail construction with Not Null Value
+            poDetail.setLineNumber(1);
+            poDetail.setLineType(Character.MIN_VALUE);
+            poDetail.setLineSelector(Character.MIN_VALUE);
+            poDetail.setQuantityReceived(BigDecimal.ZERO);
+            poDetail.setQuantityInInspection(BigDecimal.ZERO);
+            poDetail.setQuantityOnHand(BigDecimal.ZERO);
+            poDetail.setQuantityOnHold(BigDecimal.ZERO);
+            poDetail.setBlanketQuantity(BigDecimal.ZERO);
+            poDetail.setLineStatus(Character.MIN_VALUE);
+            poDetail.setExtendedPrice(BigDecimal.ZERO);
+            // End Complete List of PODetail construction with Not Null Value
             poDetail.setCreated(Instant.now());
             poDetail.setCreatedBy("System");
             poDetails.add(poDetail);
-            // TODO: Complete List of PODetail construction
         });
         return poDetails;
     }
 
     private PurchaseOrderDto constructPurchaseOrderDto(POHeader poHeader) {
+        log.debug("Request to constructPurchaseOrderDto");
+        log.debug("PO Header: {}", poHeader);
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
+        purchaseOrderDto.setId(Long.valueOf(poHeader.getId()));
         purchaseOrderDto.setPoNumber(poHeader.getPONumber());
         purchaseOrderDto.setRevisionDate(Date.from(poHeader.getPORevisionDate()));
         purchaseOrderDto.setPurchaseRequisitionApprovalId(poHeader.getPurchaseRequestApprovalId());

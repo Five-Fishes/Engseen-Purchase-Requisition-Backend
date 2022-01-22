@@ -36,7 +36,7 @@ public class VendorMaster {
     @Column(name = "Approval")
     private char approval;
     
-    @Column(name = "Print")
+    @Column(name = "`Print`")
     private char print;
     
     @Column(name = "VendorRevision")
