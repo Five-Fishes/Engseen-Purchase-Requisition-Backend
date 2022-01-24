@@ -10,13 +10,13 @@ import com.engseen.erp.service.ComponentService;
 import com.engseen.erp.service.dto.ComponentDTO;
 import com.engseen.erp.service.mapper.VendorItemMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,12 +39,60 @@ public class ComponentServiceImpl implements ComponentService {
     public List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize) {
         log.debug("Request to findAll Component by component, vendor and packing size");
 
+        /*
+        Search rules:
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | component | vendor | packingSize | queryMethod                                                 |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | null      | null   | null        | findAll                                                     |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | null      | null   | !null       | findAllByViConversionIs                                     |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | null      | !null  | null        | findAllByVendorIDContaining                                 |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | null      | !null  | !null       | findAllByVendorIDContainingOrViConversionIs                 |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | !null     | null   | null        | findAllByItemContaining                                     |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | !null     | null   | !null       | findAllByItemContainingOrViConversionIs                     |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | !null     | !null  | null        | findAllByItemContainingOrVendorIDContaining                 |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+        | !null     | !null  | !null       | findAllByItemContainingOrVendorIDContainingOrViConversionIs |
+        +-----------+--------+-------------+-------------------------------------------------------------+
+         */
+
         List<VendorItem> vendorItemList;
-        if (Strings.isNotBlank(component)) {
-            vendorItemList = vendorItemRepository.findByItemIsLike(pageable, component).toList();
+        if (component == null) {
+            if (vendor == null) {
+                if (packingSize == null) {
+                    vendorItemList = vendorItemRepository.findAll(pageable).toList();
+                } else {
+                    vendorItemList = vendorItemRepository.findAllByViConversionIs(pageable, BigDecimal.valueOf(packingSize)).toList();
+                }
+            } else {
+                if (packingSize == null) {
+                    vendorItemList = vendorItemRepository.findAllByVendorIDContaining(pageable, vendor).toList();
+                } else {
+                    vendorItemList = vendorItemRepository.findAllByVendorIDContainingOrViConversionIs(pageable, vendor, BigDecimal.valueOf(packingSize)).toList();
+                }
+            }
         } else {
-             vendorItemList = vendorItemRepository.findAll(pageable).toList();
+            if (vendor == null) {
+                if (packingSize == null) {
+                    vendorItemList = vendorItemRepository.findAllByItemContaining(pageable, component).toList();
+                } else {
+                    vendorItemList = vendorItemRepository.findAllByItemContainingOrViConversionIs(pageable, component, BigDecimal.valueOf(packingSize)).toList();
+                }
+            } else {
+                if (packingSize == null) {
+                    vendorItemList = vendorItemRepository.findAllByItemContainingOrVendorIDContaining(pageable, component, vendor).toList();
+                } else {
+                    vendorItemList = vendorItemRepository.findAllByItemContainingOrVendorIDContainingOrViConversionIs(pageable, component, vendor, BigDecimal.valueOf(packingSize)).toList();
+                }
+            }
         }
+
 
         return vendorItemList
                 .parallelStream()

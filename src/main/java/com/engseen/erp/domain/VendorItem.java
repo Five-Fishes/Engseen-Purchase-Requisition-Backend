@@ -31,7 +31,7 @@ public class VendorItem {
     private String vIDescription;
 
     @Column(name = "VIConversion")
-    private BigDecimal vIConversion;
+    private BigDecimal viConversion;
 
     @Column(name = "VIUnitOfMeasure")
     private String vIUnitOfMeasure;
@@ -97,12 +97,12 @@ public class VendorItem {
         this.vIDescription = vIDescription;
     }
 
-    public BigDecimal getvIConversion() {
-        return vIConversion;
+    public BigDecimal getViConversion() {
+        return viConversion;
     }
 
-    public void setvIConversion(BigDecimal vIConversion) {
-        this.vIConversion = vIConversion;
+    public void setViConversion(BigDecimal vIConversion) {
+        this.viConversion = vIConversion;
     }
 
     public String getvIUnitOfMeasure() {
