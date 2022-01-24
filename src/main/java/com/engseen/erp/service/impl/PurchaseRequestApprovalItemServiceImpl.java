@@ -73,7 +73,7 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
     public PurchaseRequestApprovalItemDto update(Long purchaseRequestApprovalItemId, PurchaseRequestApprovalItemDto purchaseRequestApprovalItemDto) {
         log.debug("Request to update Purchase Request Approval Item");
 
-        Optional<PurchaseRequisitionApproval> purchaseRequisitionApprovalOptional = purchaseRequisitionApprovalRepository.findById(purchaseRequestApprovalItemId);
+        Optional<PurchaseRequisitionApproval> purchaseRequisitionApprovalOptional = purchaseRequisitionApprovalRepository.findById(purchaseRequestApprovalItemDto.getRequestApprovalId());
 
         PurchaseRequisitionApprovalItem savedPurchaseRequisitionApprovalItem;
         PurchaseRequisitionApprovalItem purchaseRequisitionApprovalItem = purchaseRequisitionApprovalItemMapper.toEntity(purchaseRequestApprovalItemDto);

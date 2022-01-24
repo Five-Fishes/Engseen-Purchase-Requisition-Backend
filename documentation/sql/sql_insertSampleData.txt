@@ -2,7 +2,7 @@
 
 --Purchase Requisition Template
 INSERT INTO PURCHASE_REQUISITION_TEMPLATE
-(ID, TEMPLATE_NAME ,REMARKS ) 
+(Id, TemplateName ,Remarks) 
 VALUES
 (1, 'Dye Chemical', 'This is Template for Dye Chemical'),
 (2, 'KONG LONG HUAT', 'This is Template for Kong Long Huat'),
@@ -18,7 +18,7 @@ VALUES
 
 --Purchase Requisition Template Item
 INSERT INTO PURCHASE_REQUISITION_TEMPLATE_ITEM 
-(ID, PURCHASE_REQUISITION_TEMPLATE_ID, COMPONENT_CODE , COMPONENT_NAME , PACKAGING_SIZE , SEQUENCE , VENDOR_ID , VENDOR_NAME ) 
+(Id, PurchaseRequisitionTemplateId, ComponentCode , ComponentName , PackagingSize , Sequence , VendorId , VendorName ) 
 VALUES
 (1, '1', 'DBECOR300NEWW', 'BEGACRON GOLDEN YELLOW 2RS 200%', 1000.00 ,1, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.'),
 (2, '1', 'DBECOR301', 'BEGACRON BLUE 2RS 200%', 1000.00 ,2, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.'),
@@ -38,7 +38,7 @@ VALUES
 
 --Purchase Requisition Request
 INSERT INTO PURCHASE_REQUISITION_REQUEST 
-(ID, CREATED_DATE ,TEMPLATE_ID ,REMARKS ) 
+(Id, CreatedDate ,TemplateId ,Remarks ) 
 VALUES
 (1, '2022-01-01 18:47:52', 1, 'First Purchase Request on 2022'),
 (2, '2022-01-02 18:47:52', 1, 'SecondPurchase Request on 2022'),
@@ -59,7 +59,7 @@ VALUES
 
 --Purchase Requisition Request Item
 INSERT INTO PURCHASE_REQUISITION_REQUEST_ITEM 
-(ID, PURCHASE_REQUISITION_REQUEST_ID , COMPONENT_CODE , COMPONENT_NAME, PACKAGING_SIZE , NO_OF_PACKS , VENDOR_ID , VENDOR_NAME , QUANTITY , DELIVERY_DATE , STOCK_BALANCE ) 
+(Id, PurchaseRequisitionRequestId , ComponentCode , ComponentName , PackagingSize , NoOfPacks , VendorId , VendorName , Quqntity , DeliveryDate , StockBalance ) 
 VALUES
 (1, '1', 'DBECOR300NEWW', 'BEGACRON GOLDEN YELLOW 2RS 200%', 1000.00 ,120, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.', 100, '2022-01-20 12:47:52', 10),
 (2, '1', 'DBECOR301', 'BEGACRON BLUE 2RS 200%', 1000.00 ,230, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.', 100, '2022-01-20 12:47:52', 10),
@@ -80,7 +80,7 @@ VALUES
 
 --Purchase Requisition Approval
 INSERT INTO PURCHASE_REQUISITION_APPROVAL 
-(ID, CREATED_DATE,REMARKS ) 
+(Id, CreatedDate , Remarks ) 
 VALUES
 (1, '2022-01-01 18:47:52', 'First Purchase Request on 2022'),
 (2, '2022-01-02 18:47:52', 'Second Purchase Request on 2022'),
@@ -100,7 +100,7 @@ VALUES
 
 --Purchase Requisition Approval Item
 INSERT INTO PURCHASE_REQUISITION_APPROVAL_ITEM 
-(ID, PURCHASE_REQUISITION_APPROVAL_ID , COMPONENT_CODE , COMPONENT_NAME, PACKAGING_SIZE , NO_OF_PACKS , VENDOR_ID , VENDOR_NAME , QUANTITY , DELIVERY_DATE , STOCK_BALANCE, STATUS  ) 
+(Id, PurchaseRequisitionApproval , ComponentCode , ComponentName , PackagingSize , NoOfPacks , VendorId , VendorName , Quantity , DeliveryDate , StockBalance, Status ) 
 VALUES
 (1, '1', 'DBECOR300NEWW', 'BEGACRON GOLDEN YELLOW 2RS 200%', 1000.00 ,120, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.', 100, '2022-01-20 12:47:52', 10, 0),
 (2, '1', 'DBECOR301', 'BEGACRON BLUE 2RS 200%', 1000.00 ,230, 'KLH', 'KONG LONG HUAT CHEMICAL SDN. BHD.', 100, '2022-01-20 12:47:52', 10, 0),
@@ -120,7 +120,7 @@ VALUES
 
 --Item Master
 INSERT INTO ITEM_MASTER 
-(ID , ITEM , UNIT_OF_MEASURE )
+(Id , Item , UnitOfMeasure )
 VALUES
 (1, 'COMP-A', 'KG'),
 (2, 'COMP-B', 'KG'),
@@ -130,7 +130,7 @@ VALUES
 
 --Vendor Master
 INSERT INTO VENDOR_MASTER 
-(ID , VENDORID , VENDOR_NAME )
+(Id , VendorID , VendorName )
 VALUES
 (1, 'VEN-A', 'Vendor AA'),
 (2, 'VEN-B', 'Vendor BB'),
@@ -140,7 +140,7 @@ VALUES
 
 --Vendor Item
 INSERT INTO VENDOR_ITEM 
-(ID , ITEM , VENDORID )
+(Id , Item , VendorID)
 VALUES
 (1, 'COMP-A', 'VEN-A'),
 (2, 'COMP-B', 'VEN-B'),
