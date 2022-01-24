@@ -1,5 +1,6 @@
 package com.engseen.erp.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,15 @@ public class PurchaseRequestApprovalServiceImpl implements PurchaseRequestApprov
                 .findAll(pageable)
                 .toList();
 
+        return purchaseRequisitionApprovalMapper.toDto(purchaseRequisitionApprovalItemList);
+    }
+
+    @Override
+    public List<PurchaseRequestApprovalDto> findAll(Pageable pageable, Date startDate, Date endDate) {
+        log.debug("Request to findAll Purchase Request Approval filtered by date");
+        List<PurchaseRequisitionApproval> purchaseRequisitionApprovalItemList = purchaseRequisitionApprovalRepository
+                .findAllByCreatedDateBetween(pageable, startDate, endDate)
+                .toList();
         return purchaseRequisitionApprovalMapper.toDto(purchaseRequisitionApprovalItemList);
     }
 

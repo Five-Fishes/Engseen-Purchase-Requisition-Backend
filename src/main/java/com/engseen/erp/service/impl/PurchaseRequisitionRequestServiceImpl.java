@@ -53,26 +53,17 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
                 .findAll(pageable)
                 .toList();
 
-        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequisitionRequestMapper.toDto(purchaseRequisitionRequestList);
+        return getPurchaseRequisitionRequestDTOS(purchaseRequisitionRequestList);
+    }
 
+    @Override
+    public List<PurchaseRequisitionRequestDTO> findAll(Pageable pageable, Date startDate, Date endDate) {
+        log.debug("Request to findAll Purchase Request Submission with date range filter");
+        List<PurchaseRequisitionRequest> purchaseRequisitionRequestList = purchaseRequisitionRequestRepository
+                .findAllByCreatedDateBetween(pageable, startDate, endDate)
+                .toList();
 
-        return purchaseRequisitionRequestDTOList
-                .parallelStream()
-                .peek(purchaseRequisitionRequestDTO -> {
-                    Optional<PurchaseRequisitionRequest> purchaseRequisitionRequestOptional = purchaseRequisitionRequestList
-                            .stream()
-                            .filter(purchaseRequisitionRequest -> purchaseRequisitionRequest.getId() == purchaseRequisitionRequestDTO.getId())
-                            .findFirst();
-
-                    purchaseRequisitionRequestOptional.ifPresent(
-                            purchaseRequisitionRequest -> purchaseRequisitionRequestDTO.setPurchaseRequisitionRequestItems(
-                                    purchaseRequisitionRequestItemMapper.toDto(purchaseRequisitionRequest.getPurchaseRequisitionRequestItems())
-                            )
-
-                    );
-
-                })
-                .collect(Collectors.toList());
+        return getPurchaseRequisitionRequestDTOS(purchaseRequisitionRequestList);
     }
 
     @Override
@@ -94,7 +85,7 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
         List<PurchaseRequisitionRequestItem> savedPurchaseRequisitionRequestItemList = purchaseRequisitionRequestItemRepository.saveAllAndFlush(purchaseRequisitionRequestItemList);
 
         Optional<PurchaseRequisitionRequest> latestPurchaseRequisitionRequest = purchaseRequisitionRequestRepository.findById(savedPurchaseRequisitionRequest.getId());
-        latestPurchaseRequisitionRequest.ifPresent( latestPurchaseRequisitionRequestPresent -> {
+        latestPurchaseRequisitionRequest.ifPresent(latestPurchaseRequisitionRequestPresent -> {
             PurchaseRequisitionApproval purchaseRequisitionApproval = purchaseRequisitionRequestToApprovalMapper.toApproval(latestPurchaseRequisitionRequestPresent);
             purchaseRequisitionApproval.setPurchaseRequisitionApprovalItems(purchaseRequisitionRequestToApprovalMapper.toApprovalItem(purchaseRequisitionRequestItemList));
             PurchaseRequisitionApproval savedPurchaseRequisitionApproval = purchaseRequisitionApprovalRepository.saveAndFlush(purchaseRequisitionApproval);
@@ -114,6 +105,28 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
         mappedPurchaseRequisitionDto.setPurchaseRequisitionRequestItems(purchaseRequisitionRequestItemMapper.toDto(savedPurchaseRequisitionRequestItemList));
 
         return mappedPurchaseRequisitionDto;
+    }
+
+    private List<PurchaseRequisitionRequestDTO> getPurchaseRequisitionRequestDTOS(List<PurchaseRequisitionRequest> purchaseRequisitionRequestList) {
+        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequisitionRequestMapper.toDto(purchaseRequisitionRequestList);
+
+        return purchaseRequisitionRequestDTOList
+                .parallelStream()
+                .peek(purchaseRequisitionRequestDTO -> {
+                    Optional<PurchaseRequisitionRequest> purchaseRequisitionRequestOptional = purchaseRequisitionRequestList
+                            .stream()
+                            .filter(purchaseRequisitionRequest -> purchaseRequisitionRequest.getId() == purchaseRequisitionRequestDTO.getId())
+                            .findFirst();
+
+                    purchaseRequisitionRequestOptional.ifPresent(
+                            purchaseRequisitionRequest -> purchaseRequisitionRequestDTO.setPurchaseRequisitionRequestItems(
+                                    purchaseRequisitionRequestItemMapper.toDto(purchaseRequisitionRequest.getPurchaseRequisitionRequestItems())
+                            )
+
+                    );
+
+                })
+                .collect(Collectors.toList());
     }
 
 }
