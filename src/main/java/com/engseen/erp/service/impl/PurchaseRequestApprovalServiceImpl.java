@@ -1,6 +1,7 @@
 package com.engseen.erp.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.engseen.erp.domain.PurchaseRequisitionApproval;
 import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
@@ -47,14 +48,19 @@ public class PurchaseRequestApprovalServiceImpl implements PurchaseRequestApprov
     @Override
     public PurchaseRequestApprovalDto update(Long purchaseRequestApprovalId, PurchaseRequestApprovalDto purchaseRequestApprovalDto) {
         log.debug("Request to update Purchase Request Approval");
+
+        /* Map to entity */
         PurchaseRequisitionApproval purchaseRequisitionApproval = purchaseRequisitionApprovalMapper.toEntity(purchaseRequestApprovalDto);
-        purchaseRequisitionApproval.setId(purchaseRequestApprovalId);
-
         List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemList = purchaseRequisitionApprovalItemMapper.toEntity(purchaseRequestApprovalDto.getPurchaseRequisitionApprovalItems());
-        purchaseRequisitionApprovalItemList.forEach(purchaseRequisitionApprovalItem -> purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(purchaseRequisitionApproval));
-        List<PurchaseRequisitionApprovalItem> updatedPurchaseRequisitionApprovalItemList = purchaseRequisitionApprovalItemRepository.saveAll(purchaseRequisitionApprovalItemList);
 
-        PurchaseRequisitionApproval updatedPurchaseRequisitionApproval = purchaseRequisitionApprovalRepository.save(purchaseRequisitionApproval);
+        /*
+        - Delete missing items
+        - Save purchaseRequisitionApproval
+        - Save purchaseRequisitionApprovalItem
+         */
+        deletePurchaseRequisitionApprovalItemsIfMissing(purchaseRequestApprovalId, purchaseRequisitionApprovalItemList);
+        PurchaseRequisitionApproval updatedPurchaseRequisitionApproval = savePurchaseRequisitionApproval(purchaseRequestApprovalId, purchaseRequisitionApproval);
+        List<PurchaseRequisitionApprovalItem> updatedPurchaseRequisitionApprovalItemList = savePurchaseRequisitionApprovalItems(updatedPurchaseRequisitionApproval, purchaseRequisitionApprovalItemList);
 
         PurchaseRequestApprovalDto mappedPurchaseRequestApprovalDto =  purchaseRequisitionApprovalMapper.toDto(updatedPurchaseRequisitionApproval);
         mappedPurchaseRequestApprovalDto.setPurchaseRequisitionApprovalItems(
@@ -62,6 +68,34 @@ public class PurchaseRequestApprovalServiceImpl implements PurchaseRequestApprov
         );
 
         return mappedPurchaseRequestApprovalDto;
+    }
+
+    private PurchaseRequisitionApproval savePurchaseRequisitionApproval(Long purchaseRequestApprovalId, PurchaseRequisitionApproval purchaseRequisitionApproval) {
+        purchaseRequisitionApproval.setId(purchaseRequestApprovalId);
+        return purchaseRequisitionApprovalRepository.saveAndFlush(purchaseRequisitionApproval);
+    }
+
+    private List<PurchaseRequisitionApprovalItem> savePurchaseRequisitionApprovalItems(PurchaseRequisitionApproval purchaseRequisitionApproval, List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemList) {
+        purchaseRequisitionApprovalItemList.forEach(purchaseRequisitionApprovalItem -> purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(purchaseRequisitionApproval));
+        return purchaseRequisitionApprovalItemRepository.saveAll(purchaseRequisitionApprovalItemList);
+    }
+
+    private void deletePurchaseRequisitionApprovalItemsIfMissing(Long purchaseRequisitionApprovalId, List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemList) {
+        List<PurchaseRequisitionApprovalItem> existingPurchaseRequisitionApprovalItemList = purchaseRequisitionApprovalItemRepository.findAllByPurchaseRequisitionApproval_Id(Pageable.unpaged(), purchaseRequisitionApprovalId).toList();
+        List<PurchaseRequisitionApprovalItem> purchaseRequisitionApprovalItemsToBeDeleted = existingPurchaseRequisitionApprovalItemList
+                .stream()
+                .filter( purchaseRequisitionApprovalItem -> purchaseRequisitionApprovalItemList
+                        .stream()
+                        .noneMatch(purchaseRequisitionApprovalItem1 -> purchaseRequisitionApprovalItem1.getId() == purchaseRequisitionApprovalItem.getId()))
+                .collect(Collectors.toList());
+
+        purchaseRequisitionApprovalItemRepository.deleteAllById(
+                purchaseRequisitionApprovalItemsToBeDeleted
+                        .stream()
+                        .map(PurchaseRequisitionApprovalItem::getId)
+                        .collect(Collectors.toList())
+        );
+        purchaseRequisitionApprovalItemRepository.flush();
     }
 
 }
