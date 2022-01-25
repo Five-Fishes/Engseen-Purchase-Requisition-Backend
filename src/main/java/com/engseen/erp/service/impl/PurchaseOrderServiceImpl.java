@@ -1,36 +1,26 @@
 package com.engseen.erp.service.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
-import com.engseen.erp.service.EmailService;
-import com.engseen.erp.service.PurchaseOrderService;
-import com.engseen.erp.service.PurchaseRequestApprovalItemService;
-import com.engseen.erp.service.PurchaseRequestApprovalService;
-import com.engseen.erp.service.VendorService;
+import com.engseen.erp.service.*;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,35 +28,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 /**
- * Service Implementation for managing {@link PurchaseOrder}.
+ * Service Implementation for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
  */
 @Service
+@RequiredArgsConstructor
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
 
-    private POHeaderRepository poHeaderRepository;
-    private PODetailRepository poDetailRepository;
-    private PurchaseRequestApprovalService purchaseRequestApprovalService;
-    private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
-    private EmailService emailService;
-    private VendorService vendorService;
-
-    @Autowired
-    public PurchaseOrderServiceImpl(POHeaderRepository poHeaderRepository, PODetailRepository poDetailRepository,
-        PurchaseRequestApprovalService purchaseRequestApprovalService, PurchaseRequestApprovalItemService purchaseRequestApprovalItemService,
-        EmailService emailService, VendorService vendorService
-    ) {
-        this.poHeaderRepository = poHeaderRepository;
-        this.poDetailRepository = poDetailRepository;
-        this.purchaseRequestApprovalService = purchaseRequestApprovalService;
-        this.purchaseRequestApprovalItemService = purchaseRequestApprovalItemService;
-        this.emailService = emailService;
-        this.vendorService = vendorService;
-    }
+    private final POHeaderRepository poHeaderRepository;
+    private final PODetailRepository poDetailRepository;
+    private final PurchaseRequestApprovalService purchaseRequestApprovalService;
+    private final PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
+    private final EmailService emailService;
+    private final VendorService vendorService;
+    private final TemplateEngine templateEngine;
+    private final HtmlToPdfService htmlToPdfService;
 
     @Override
     @Transactional(readOnly = true)
@@ -96,7 +77,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional
-    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception {
+    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
         List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
@@ -251,10 +232,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public String downloadPO(Long purchaseOrderId) {
+    public String downloadPOBase64String(Long purchaseOrderId) throws IOException {
         log.debug("Request to download PO by Purchase Order Id");
-        // TODO Auto-generated method stub
+        File poPdf = generatePoPdfFile(purchaseOrderId);
+        Base64.getEncoder().encodeToString(new FileInputStream(poPdf).readAllBytes());
         return null;
     }
-    
+
+    @Override
+    public File downloadPOFile(Long purchaseOrderId) throws IOException {
+        return generatePoPdfFile(purchaseOrderId);
+    }
+
+    private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
+        String templatePath = AppConstant.EMAIL_TEMPLATE_DIRECTORY + "po-pdf-template";
+        Context pdfContext = new Context();
+        String poPdf = templateEngine.process(templatePath, pdfContext);
+        return htmlToPdfService.htmlToPdf(poPdf);
+    }
+
 }

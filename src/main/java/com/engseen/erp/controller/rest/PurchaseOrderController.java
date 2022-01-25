@@ -1,5 +1,9 @@
 package com.engseen.erp.controller.rest;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +14,10 @@ import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseOrder}
+ * Rest Controller for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}
  */
 @RequestMapping("/api/purchase-order")
 @RestController
@@ -37,76 +44,83 @@ public class PurchaseOrderController {
 
     /**
      * {@code GET /purchase-order} : Get all Purchase Order
-     * 
-     * @param pageable Pagination Info
+     *
+     * @param pageable  Pagination Info
      * @param startDate startDate to filter based on created date of Purchase Order
-     * @param endDate endDate to filter based on created date of Purchase Order
+     * @param endDate   endDate to filter based on created date of Purchase Order
      */
-    @GetMapping(value="")
+    @GetMapping(value = "")
     public ResponseEntity<List<PurchaseOrderRequestApprovalDto>> getAllPurchaseOrder(Pageable pageable, @RequestParam(required = false, name = "startDate") Date startDate, @RequestParam(required = false, name = "endDate") Date endDate) {
         log.info("REST Request to getAllPurchaseOrder");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Start Date: {}, End Date: {}", startDate, endDate);
         List<PurchaseOrderRequestApprovalDto> purchaseOrderDtoList = purchaseOrderService.findAllGroupByPurchaseRequestApproval(pageable);
         return ResponseEntity.ok()
-            .body(purchaseOrderDtoList);
+                .body(purchaseOrderDtoList);
     }
 
     /**
      * {@code POST /purchase-order/{purchaseRequestApprovalId}} : Issue Purchase Order based on Purchase Request Approval Id
-     * 
+     *
      * @param purchaseRequestApprovalId Id of Purchase Request Approval to Issue PO
-     * @throws Exception
+     * @throws Exception error issuing purchase order
      */
-    @PostMapping(value="/{purchaseRequestApprovalId}")
+    @PostMapping(value = "/{purchaseRequestApprovalId}")
     public ResponseEntity<List<PurchaseOrderDto>> issuePurchaseOrder(@PathVariable Long purchaseRequestApprovalId) throws Exception {
         log.info("REST Request to issuePurchaseOrder on confirmed Item for Purchase Request Approval with Id: {}", purchaseRequestApprovalId);
         List<PurchaseOrderDto> savedPurchaseOrderDto = purchaseOrderService.issuePO(purchaseRequestApprovalId);
         return ResponseEntity.ok()
-            .body(savedPurchaseOrderDto);
+                .body(savedPurchaseOrderDto);
     }
 
     /**
      * {@code POST /purchase-order/email/{purchaseOrderId}} : Email Purchase Order
-     * 
+     *
      * @param purchaseOrderId Id of Purchase Order
      */
-    @PostMapping(value="/email/{purchaseOrderId}")
+    @PostMapping(value = "/email/{purchaseOrderId}")
     public ResponseEntity<Void> emailPurchaseOrder(@PathVariable Long purchaseOrderId) throws Exception {
         log.info("REST Request to emailPurchaseOrder with Id: {}", purchaseOrderId);
         Boolean emailSent = purchaseOrderService.emailPO(purchaseOrderId);
         return ResponseEntity.ok()
-            .build();
+                .build();
     }
 
     /**
      * {@code POST /purchase-order/download/{purchaseOrderId}} : Download Purchase Order
-     * 
+     *
      * @param purchaseOrderId Id of Purchase Order
      */
-    @PostMapping(value="/download/{purchaseOrderId}")
-    public ResponseEntity<String> downloadPurchaseOrder(@PathVariable Long purchaseOrderId) {
+    @PostMapping(value = "/download/{purchaseOrderId}")
+    public ResponseEntity<Resource> downloadPurchaseOrder(@PathVariable Long purchaseOrderId) throws IOException {
         log.info("REST Request to downloadPurchaseOrder with Id: {}", purchaseOrderId);
-        String fileBase64String = purchaseOrderService.downloadPO(purchaseOrderId);
+
+        File poPdfFile = purchaseOrderService.downloadPOFile(purchaseOrderId);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(poPdfFile));
+
         return ResponseEntity.ok()
-            .body(fileBase64String);
+                .contentLength(poPdfFile.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     /**
      * {@code POST /purchase-order/download-email/{purchaseRequestApprovalId}} : Download and Emaill all Purchase Order based on purchaseRequestApprovalId
-     * 
-     * @param purchaseOrderId Id of Purchase Order
+     *
+     * @param purchaseRequestApprovalId Id of purchase requisition approval
+     * @return generated files
+     * @throws Exception error creating pdf and sending email
      */
-    @PostMapping(value="/download-email/{purchaseRequestApprovalId}")
-    public ResponseEntity<?> downloadAndEmailByPurchaseRequestApprvoalId(@PathVariable Long purchaseRequestApprovalId) throws Exception {
+    @PostMapping(value = "/download-email/{purchaseRequestApprovalId}")
+    public ResponseEntity<?> downloadAndEmailByPurchaseRequestApprovalId(@PathVariable Long purchaseRequestApprovalId) throws Exception {
         log.info("REST Request to downloadAndEmailByPurchaseRequestApprvoalId with Purchase Request Approval Id: {}", purchaseRequestApprovalId);
-        List<PurchaseOrderDto> purchaseOrderDtoList = purchaseOrderService.findAllByPurchaseRequestApprovalId(purchaseRequestApprovalId, Pageable.unpaged()              );
+        List<PurchaseOrderDto> purchaseOrderDtoList = purchaseOrderService.findAllByPurchaseRequestApprovalId(purchaseRequestApprovalId, Pageable.unpaged());
         for (PurchaseOrderDto purchaseOrderDto : purchaseOrderDtoList) {
             Boolean emailSent = purchaseOrderService.emailPO(purchaseOrderDto.getId());
-            String fileBase64String = purchaseOrderService.downloadPO(purchaseOrderDto.getId());
+            String fileBase64String = purchaseOrderService.downloadPOBase64String(purchaseOrderDto.getId());
         }
         return ResponseEntity.ok()
-            .body(null);
+                .body(null);
     }
-    
+
 }
