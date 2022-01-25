@@ -333,6 +333,68 @@ CREATE TABLE [dbo].[POHeader]
     );
 GO
 
+create table UserMaster
+(
+    ID                    int identity,
+    UserID                varchar(8),
+    UserName              varchar(50),
+    Password              varchar(12),
+    Status                char,
+    UserGroup             varchar(15),
+    PlannerBuyer          char,
+    CSR                   char,
+    Department            varchar(50),
+    HOD                   char,
+    MD                    char,
+    PD                    char,
+    ShowFullPR            char,
+    SelectHOD             char,
+    Email                 varchar(50),
+    DateFormat            varchar(10),
+    ItemFilter            varchar(50),
+    PrinterName           varchar(50),
+    PrinterPort           varchar(50),
+    PrinterDriver         varchar(50),
+    DefaultStoreNo        varchar(4),
+    DefaultStoreBin       varchar(12),
+    ViewPrice             char,
+    MoveAllItem           char,
+    PostGRN               char,
+    UnpostGRN             char,
+    PostPOReturn          char,
+    UnpostPOReturn        char,
+    PostCashBill          char,
+    UnpostCashBill        char,
+    PostRentalBill        char,
+    UnpostRentalBill      char,
+    PostInvoice           char,
+    UnpostInvoice         char,
+    PostDN                char,
+    UnpostDN              char,
+    PostCN                char,
+    UnpostCN              char,
+    PostPayment           char,
+    UnpostPayment         char,
+    Created               datetime,
+    CreatedBy             varchar(8),
+    Modified              datetime,
+    ModifiedBy            varchar(8),
+    Accessed              datetime,
+    AccessedBy            varchar(8),
+    Role                  varchar(50),
+    CanLoginByPsw         char,
+    IsPswAdded            char,
+    CanLoginByFingerprint char,
+    IsFingerprintAdded    char,
+    SCView                char,
+    SCAdjustError         char,
+    STView                char,
+    SIView                char,
+    IdleLogoutDuration    int,
+    SIEditQty             char
+)
+go
+
 
 
 
@@ -449,7 +511,7 @@ CREATE TABLE [dbo].[PurchaseRequisitionApprovalItem]
 GO
 
 ALTER TABLE [dbo].[POHeader]
-ADD 
+ADD
 PurchaseRequestApprovalId BIGINT,
 Emailed BIT,
 Downloaded BIT;
