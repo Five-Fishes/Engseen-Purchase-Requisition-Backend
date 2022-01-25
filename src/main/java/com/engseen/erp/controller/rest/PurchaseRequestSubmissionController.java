@@ -2,6 +2,7 @@ package com.engseen.erp.controller.rest;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.engseen.erp.service.PurchaseRequisitionRequestService;
 import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
@@ -46,7 +47,13 @@ public class PurchaseRequestSubmissionController {
         log.info("REST Request to getAllPurchaseRequestSubmission");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Start Date: {}, End Date: {}", startDate, endDate);
-        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList = purchaseRequisitionRequestService.findAll(pageable);
+
+        List<PurchaseRequisitionRequestDTO> purchaseRequisitionRequestDTOList;
+        if (Objects.nonNull(startDate) && Objects.nonNull(endDate)) {
+            purchaseRequisitionRequestDTOList = purchaseRequisitionRequestService.findAll(pageable, startDate, endDate);
+        } else {
+            purchaseRequisitionRequestDTOList = purchaseRequisitionRequestService.findAll(pageable);
+        }
         return ResponseEntity.ok()
                 .body(purchaseRequisitionRequestDTOList);
     }

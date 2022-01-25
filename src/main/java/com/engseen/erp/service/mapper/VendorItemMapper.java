@@ -13,10 +13,10 @@ public interface VendorItemMapper {
     @Mappings({
             @Mapping(target = "id", source = "source.id"),
             @Mapping(target = "componentCode", ignore = true), // Need to retrieve from ItemMaster
-            @Mapping(target = "componentName", source = "source.vendorItem"),
+            @Mapping(target = "componentName", source = "source.item"),
             @Mapping(target = "vendorId", source = "source.vendorID"),
-            @Mapping(target = "vendorName", ignore = true), // Need to retrieve from Vendormaster
-            @Mapping(target = "packagingSize", source = "source.vIConversion")
+            @Mapping(target = "vendorName", ignore = true), // Need to retrieve from VendorMaster
+            @Mapping(target = "packagingSize", source = "source.viConversion")
     })
     ComponentDTO vendorItemToComponentDTO(VendorItem source);
 
@@ -24,7 +24,7 @@ public interface VendorItemMapper {
             @Mapping(target = "id", source = "source.id"),
             @Mapping(target = "componentCode", ignore = true), // Need to retrieve from ItemMaster
             @Mapping(target = "vendorId", source = "source.vendorID"),
-            @Mapping(target = "packagingSize", source = "source.vIConversion"),
+            @Mapping(target = "packagingSize", source = "source.viConversion"),
             @Mapping(target = "itemCost", source = "source.vIUnitPrice")
     })
     ComponentItemCostDTO vendorItemToComponentItemCostDTO(VendorItem source);
