@@ -32,31 +32,31 @@ public class ItemMaster implements Serializable {
     private String revisionLevel;
 
     @Column(name = "MakeBuyCode")
-    private char makeBuyCode;
+    private Character makeBuyCode;
 
     @Column(name = "ItemType")
-    private char itemType;
+    private Character itemType;
 
     @Column(name = "ItemStatus")
-    private char itemStatus;
+    private Character itemStatus;
 
     @Column(name = "LotTrace")
-    private char lotTrace;
+    private Character lotTrace;
 
     @Column(name = "Serialization")
-    private char serialization;
+    private Character serialization;
 
     @Column(name = "OrderPolicy")
-    private char orderPolicy;
+    private Character orderPolicy;
 
     @Column(name = "InspectionRequired")
-    private char inspectionRequired;
+    private Character inspectionRequired;
 
     @Column(name = "Drawing")
     private String drawing;
 
     @Column(name = "ItemClassifications")
-    private char itemClassifications;
+    private Character itemClassifications;
 
     @Column(name = "Reference1")
     private String reference1;
@@ -86,28 +86,28 @@ public class ItemMaster implements Serializable {
     private BigDecimal itemGrossWeight;
 
     @Column(name = "LotAssignmentPolicy")
-    private char lotAssignmentPolicy;
+    private Character lotAssignmentPolicy;
 
     @Column(name = "LotDefaultPolicy")
-    private char lotDefaultPolicy;
+    private Character lotDefaultPolicy;
 
     @Column(name = "FIFOInventoryPolicy")
-    private char fIFOInventoryPolicy;
+    private Character fIFOInventoryPolicy;
 
     @Column(name = "BackflushPolicy")
-    private char backflushPolicy;
+    private Character backflushPolicy;
 
     @Column(name = "AvailableCalendarDays")
-    private int availableCalendarDays;
+    private Integer availableCalendarDays;
 
     @Column(name = "ShelfLifeCalendarDays")
-    private int shelfLifeCalendarDays;
+    private Integer shelfLifeCalendarDays;
 
     @Column(name = "RetestCalendarDays")
-    private int retestCalendarDays;
+    private Integer retestCalendarDays;
 
     @Column(name = "LastLot")
-    private int lastLot;
+    private Integer lastLot;
 
     @Column(name = "LotMask")
     private String lotMask;
@@ -116,7 +116,7 @@ public class ItemMaster implements Serializable {
     private String defaultLot;
 
     @Column(name = "LotCounter")
-    private char lotCounter;
+    private Character lotCounter;
 
     @Column(name = "SerialNumberMask")
     private String serialNumberMask;
@@ -125,25 +125,25 @@ public class ItemMaster implements Serializable {
     private String defaultSerialNumber;
 
     @Column(name = "SerialNumberCounter")
-    private char serialNumberCounter;
+    private Character serialNumberCounter;
 
     @Column(name = "PlannerBuyer")
     private String plannerBuyer;
 
     @Column(name = "RunLeadTime")
-    private int runLeadTime;
+    private Integer runLeadTime;
 
     @Column(name = "FixedLeadTime")
-    private int fixedLeadTime;
+    private Integer fixedLeadTime;
 
     @Column(name = "InspectionLeadTime")
-    private int inspectionLeadTime;
+    private Integer inspectionLeadTime;
 
     @Column(name = "PlanLeadTime")
-    private int planLeadTime;
+    private Integer planLeadTime;
 
     @Column(name = "LotSizeDay")
-    private int lotSizeDay;
+    private Integer lotSizeDay;
 
     @Column(name = "LotSizeQuantity")
     private BigDecimal lotSizeQuantity;
@@ -164,19 +164,19 @@ public class ItemMaster implements Serializable {
     private String preferredStoreBin;
 
     @Column(name = "ForecastCode")
-    private char forecastCode;
+    private Character forecastCode;
 
     @Column(name = "ForecastPeriod")
-    private char forecastPeriod;
+    private Character forecastPeriod;
 
     @Column(name = "ItemYieldFactor")
-    private int itemYieldFactor;
+    private Integer itemYieldFactor;
 
     @Column(name = "DecimalPrecisionCode")
-    private int decimalPrecisionCode;
+    private Integer decimalPrecisionCode;
 
     @Column(name = "LowLevelCode")
-    private int lowLevelCode;
+    private Integer lowLevelCode;
 
     @Column(name = "Remark1")
     private String remark1;
@@ -200,7 +200,7 @@ public class ItemMaster implements Serializable {
     private BigDecimal averageSellingPrice;
 
     @Column(name = "CostCode")
-    private int costCode;
+    private Integer costCode;
 
     @Column(name = "MaterialCost")
     private BigDecimal materialCost;
@@ -245,10 +245,10 @@ public class ItemMaster implements Serializable {
     private BigDecimal minimumSellingPrice;
 
     @Column(name = "LastSerialNumber")
-    private int lastSerialNumber;
+    private Integer lastSerialNumber;
 
     @Column(name = "MRPPriority")
-    private int mRPPriority;
+    private Integer mRPPriority;
 
     @Column(name = "Created")
     private Date created;
@@ -308,59 +308,59 @@ public class ItemMaster implements Serializable {
         this.revisionLevel = revisionLevel;
     }
 
-    public char getMakeBuyCode() {
+    public Character getMakeBuyCode() {
         return makeBuyCode;
     }
 
-    public void setMakeBuyCode(char makeBuyCode) {
+    public void setMakeBuyCode(Character makeBuyCode) {
         this.makeBuyCode = makeBuyCode;
     }
 
-    public char getItemType() {
+    public Character getItemType() {
         return itemType;
     }
 
-    public void setItemType(char itemType) {
+    public void setItemType(Character itemType) {
         this.itemType = itemType;
     }
 
-    public char getItemStatus() {
+    public Character getItemStatus() {
         return itemStatus;
     }
 
-    public void setItemStatus(char itemStatus) {
+    public void setItemStatus(Character itemStatus) {
         this.itemStatus = itemStatus;
     }
 
-    public char getLotTrace() {
+    public Character getLotTrace() {
         return lotTrace;
     }
 
-    public void setLotTrace(char lotTrace) {
+    public void setLotTrace(Character lotTrace) {
         this.lotTrace = lotTrace;
     }
 
-    public char getSerialization() {
+    public Character getSerialization() {
         return serialization;
     }
 
-    public void setSerialization(char serialization) {
+    public void setSerialization(Character serialization) {
         this.serialization = serialization;
     }
 
-    public char getOrderPolicy() {
+    public Character getOrderPolicy() {
         return orderPolicy;
     }
 
-    public void setOrderPolicy(char orderPolicy) {
+    public void setOrderPolicy(Character orderPolicy) {
         this.orderPolicy = orderPolicy;
     }
 
-    public char getInspectionRequired() {
+    public Character getInspectionRequired() {
         return inspectionRequired;
     }
 
-    public void setInspectionRequired(char inspectionRequired) {
+    public void setInspectionRequired(Character inspectionRequired) {
         this.inspectionRequired = inspectionRequired;
     }
 
@@ -372,11 +372,11 @@ public class ItemMaster implements Serializable {
         this.drawing = drawing;
     }
 
-    public char getItemClassifications() {
+    public Character getItemClassifications() {
         return itemClassifications;
     }
 
-    public void setItemClassifications(char itemClassifications) {
+    public void setItemClassifications(Character itemClassifications) {
         this.itemClassifications = itemClassifications;
     }
 
@@ -452,67 +452,67 @@ public class ItemMaster implements Serializable {
         this.itemGrossWeight = itemGrossWeight;
     }
 
-    public char getLotAssignmentPolicy() {
+    public Character getLotAssignmentPolicy() {
         return lotAssignmentPolicy;
     }
 
-    public void setLotAssignmentPolicy(char lotAssignmentPolicy) {
+    public void setLotAssignmentPolicy(Character lotAssignmentPolicy) {
         this.lotAssignmentPolicy = lotAssignmentPolicy;
     }
 
-    public char getLotDefaultPolicy() {
+    public Character getLotDefaultPolicy() {
         return lotDefaultPolicy;
     }
 
-    public void setLotDefaultPolicy(char lotDefaultPolicy) {
+    public void setLotDefaultPolicy(Character lotDefaultPolicy) {
         this.lotDefaultPolicy = lotDefaultPolicy;
     }
 
-    public char getfIFOInventoryPolicy() {
+    public Character getfIFOInventoryPolicy() {
         return fIFOInventoryPolicy;
     }
 
-    public void setfIFOInventoryPolicy(char fIFOInventoryPolicy) {
+    public void setfIFOInventoryPolicy(Character fIFOInventoryPolicy) {
         this.fIFOInventoryPolicy = fIFOInventoryPolicy;
     }
 
-    public char getBackflushPolicy() {
+    public Character getBackflushPolicy() {
         return backflushPolicy;
     }
 
-    public void setBackflushPolicy(char backflushPolicy) {
+    public void setBackflushPolicy(Character backflushPolicy) {
         this.backflushPolicy = backflushPolicy;
     }
 
-    public int getAvailableCalendarDays() {
+    public Integer getAvailableCalendarDays() {
         return availableCalendarDays;
     }
 
-    public void setAvailableCalendarDays(int availableCalendarDays) {
+    public void setAvailableCalendarDays(Integer availableCalendarDays) {
         this.availableCalendarDays = availableCalendarDays;
     }
 
-    public int getShelfLifeCalendarDays() {
+    public Integer getShelfLifeCalendarDays() {
         return shelfLifeCalendarDays;
     }
 
-    public void setShelfLifeCalendarDays(int shelfLifeCalendarDays) {
+    public void setShelfLifeCalendarDays(Integer shelfLifeCalendarDays) {
         this.shelfLifeCalendarDays = shelfLifeCalendarDays;
     }
 
-    public int getRetestCalendarDays() {
+    public Integer getRetestCalendarDays() {
         return retestCalendarDays;
     }
 
-    public void setRetestCalendarDays(int retestCalendarDays) {
+    public void setRetestCalendarDays(Integer retestCalendarDays) {
         this.retestCalendarDays = retestCalendarDays;
     }
 
-    public int getLastLot() {
+    public Integer getLastLot() {
         return lastLot;
     }
 
-    public void setLastLot(int lastLot) {
+    public void setLastLot(Integer lastLot) {
         this.lastLot = lastLot;
     }
 
@@ -532,11 +532,11 @@ public class ItemMaster implements Serializable {
         this.defaultLot = defaultLot;
     }
 
-    public char getLotCounter() {
+    public Character getLotCounter() {
         return lotCounter;
     }
 
-    public void setLotCounter(char lotCounter) {
+    public void setLotCounter(Character lotCounter) {
         this.lotCounter = lotCounter;
     }
 
@@ -556,11 +556,11 @@ public class ItemMaster implements Serializable {
         this.defaultSerialNumber = defaultSerialNumber;
     }
 
-    public char getSerialNumberCounter() {
+    public Character getSerialNumberCounter() {
         return serialNumberCounter;
     }
 
-    public void setSerialNumberCounter(char serialNumberCounter) {
+    public void setSerialNumberCounter(Character serialNumberCounter) {
         this.serialNumberCounter = serialNumberCounter;
     }
 
@@ -572,43 +572,43 @@ public class ItemMaster implements Serializable {
         this.plannerBuyer = plannerBuyer;
     }
 
-    public int getRunLeadTime() {
+    public Integer getRunLeadTime() {
         return runLeadTime;
     }
 
-    public void setRunLeadTime(int runLeadTime) {
+    public void setRunLeadTime(Integer runLeadTime) {
         this.runLeadTime = runLeadTime;
     }
 
-    public int getFixedLeadTime() {
+    public Integer getFixedLeadTime() {
         return fixedLeadTime;
     }
 
-    public void setFixedLeadTime(int fixedLeadTime) {
+    public void setFixedLeadTime(Integer fixedLeadTime) {
         this.fixedLeadTime = fixedLeadTime;
     }
 
-    public int getInspectionLeadTime() {
+    public Integer getInspectionLeadTime() {
         return inspectionLeadTime;
     }
 
-    public void setInspectionLeadTime(int inspectionLeadTime) {
+    public void setInspectionLeadTime(Integer inspectionLeadTime) {
         this.inspectionLeadTime = inspectionLeadTime;
     }
 
-    public int getPlanLeadTime() {
+    public Integer getPlanLeadTime() {
         return planLeadTime;
     }
 
-    public void setPlanLeadTime(int planLeadTime) {
+    public void setPlanLeadTime(Integer planLeadTime) {
         this.planLeadTime = planLeadTime;
     }
 
-    public int getLotSizeDay() {
+    public Integer getLotSizeDay() {
         return lotSizeDay;
     }
 
-    public void setLotSizeDay(int lotSizeDay) {
+    public void setLotSizeDay(Integer lotSizeDay) {
         this.lotSizeDay = lotSizeDay;
     }
 
@@ -660,43 +660,43 @@ public class ItemMaster implements Serializable {
         this.preferredStoreBin = preferredStoreBin;
     }
 
-    public char getForecastCode() {
+    public Character getForecastCode() {
         return forecastCode;
     }
 
-    public void setForecastCode(char forecastCode) {
+    public void setForecastCode(Character forecastCode) {
         this.forecastCode = forecastCode;
     }
 
-    public char getForecastPeriod() {
+    public Character getForecastPeriod() {
         return forecastPeriod;
     }
 
-    public void setForecastPeriod(char forecastPeriod) {
+    public void setForecastPeriod(Character forecastPeriod) {
         this.forecastPeriod = forecastPeriod;
     }
 
-    public int getItemYieldFactor() {
+    public Integer getItemYieldFactor() {
         return itemYieldFactor;
     }
 
-    public void setItemYieldFactor(int itemYieldFactor) {
+    public void setItemYieldFactor(Integer itemYieldFactor) {
         this.itemYieldFactor = itemYieldFactor;
     }
 
-    public int getDecimalPrecisionCode() {
+    public Integer getDecimalPrecisionCode() {
         return decimalPrecisionCode;
     }
 
-    public void setDecimalPrecisionCode(int bigDecimalPrecisionCode) {
+    public void setDecimalPrecisionCode(Integer bigDecimalPrecisionCode) {
         this.decimalPrecisionCode = bigDecimalPrecisionCode;
     }
 
-    public int getLowLevelCode() {
+    public Integer getLowLevelCode() {
         return lowLevelCode;
     }
 
-    public void setLowLevelCode(int lowLevelCode) {
+    public void setLowLevelCode(Integer lowLevelCode) {
         this.lowLevelCode = lowLevelCode;
     }
 
@@ -756,11 +756,11 @@ public class ItemMaster implements Serializable {
         this.averageSellingPrice = averageSellingPrice;
     }
 
-    public int getCostCode() {
+    public Integer getCostCode() {
         return costCode;
     }
 
-    public void setCostCode(int costCode) {
+    public void setCostCode(Integer costCode) {
         this.costCode = costCode;
     }
 
@@ -876,19 +876,19 @@ public class ItemMaster implements Serializable {
         this.minimumSellingPrice = minimumSellingPrice;
     }
 
-    public int getLastSerialNumber() {
+    public Integer getLastSerialNumber() {
         return lastSerialNumber;
     }
 
-    public void setLastSerialNumber(int lastSerialNumber) {
+    public void setLastSerialNumber(Integer lastSerialNumber) {
         this.lastSerialNumber = lastSerialNumber;
     }
 
-    public int getmRPPriority() {
+    public Integer getmRPPriority() {
         return mRPPriority;
     }
 
-    public void setmRPPriority(int mRPPriority) {
+    public void setmRPPriority(Integer mRPPriority) {
         this.mRPPriority = mRPPriority;
     }
 
