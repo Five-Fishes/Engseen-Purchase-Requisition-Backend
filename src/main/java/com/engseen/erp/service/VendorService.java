@@ -31,5 +31,5 @@ public interface VendorService {
      * @param item the item of Vendor Item to retrieve
      * @return the VendorItem
      */
-    VendorItem findOneVendorItemByVendorAndItem(String vendorId, String item)
+    VendorItem findOneVendorItemByVendorAndItem(String vendorId, String item);
 }
