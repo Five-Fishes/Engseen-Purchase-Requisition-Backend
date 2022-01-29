@@ -1,6 +1,20 @@
 package com.engseen.erp.service.impl;
 
-import static com.engseen.erp.constant.AppConstant.*;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_SELECTOR;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_STATUS;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_TYPE;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_QUANTITY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_BLANKET_ORDER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_BUYER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_DAYS_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_PERCENT_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CURRENCY_CODE_RM;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_DAY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_OTHER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_RM;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_ORDER_STATUS;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_PRINT_PO;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,6 +33,7 @@ import java.util.stream.Collectors;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
+import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
@@ -196,12 +211,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poDetail.setPONumber(poHeader.getPONumber());
             poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
             poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
-            poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
             poDetail.setLineNumber(poDetails.size() + 1);
+            poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
             double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
             poDetail.setUnitPrice(BigDecimal.valueOf(itemCost));
             poDetail.setExtendedPrice(BigDecimal.valueOf(purchaseItem.getQuantity() * itemCost));
-            
+            // Vendor Information
+            VendorItem vendorItem = vendorService.findOneVendorItemByVendorAndItem(poHeader.getVendorID(), purchaseItem.getComponentCode());
+            poDetail.setVIConversion(vendorItem.getViConversion());
+            poDetail.setVIOrderQuantity(vendorItem.getViConversion().multiply(BigDecimal.valueOf(purchaseItem.getQuantity())));
+            poDetail.setVIUnitPrice(vendorItem.getViConversion().multiply(BigDecimal.valueOf(itemCost)));
+            // End Vendor Information
             poDetail.setLineType(PO_DETAIL_LINE_TYPE);
             poDetail.setLineSelector(PO_DETAIL_LINE_SELECTOR);
             poDetail.setQuantityReceived(PO_DETAIL_QUANTITY_COLUMN);
@@ -231,7 +251,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(poHeader.getVendorID());
         purchaseOrderDto.setVendorName(vendorMasterDto.getVendorName());
         // purchaseOrderDto.setEmail();
-        // TODO: Complete PurchaseOrderDto construction
         return purchaseOrderDto;
     }
 
