@@ -265,13 +265,13 @@ CREATE TABLE [dbo].[PODetail]
     );
 GO
 
--- Create a new table called '[POHeader]' in schema '[dbo]'
+-- Create a new table called '[POHeaderViewLegacy]' in schema '[dbo]'
 -- Drop the table if it already exists
-IF OBJECT_ID('[dbo].[POHeader]', 'U') IS NOT NULL
-DROP TABLE [dbo].[POHeader]
+IF OBJECT_ID('[dbo].[POHeaderViewLegacy]', 'U') IS NOT NULL
+DROP TABLE [dbo].[POHeaderViewLegacy]
     GO
 -- Create the table in the specified schema
-CREATE TABLE [dbo].[POHeader]
+CREATE TABLE [dbo].[POHeaderViewLegacy]
 (
     [ID]                  int         NOT NULL IDENTITY (1,1),
     [PONumber]            varchar(30) NOT NULL,
@@ -510,7 +510,7 @@ CREATE TABLE [dbo].[PurchaseRequisitionApprovalItem]
     );
 GO
 
-ALTER TABLE [dbo].[POHeader]
+ALTER TABLE [dbo].[POHeaderViewLegacy]
 ADD
 PurchaseRequestApprovalId BIGINT,
 Emailed BIT,
