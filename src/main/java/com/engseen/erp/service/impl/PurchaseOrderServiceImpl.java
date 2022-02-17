@@ -1,5 +1,21 @@
 package com.engseen.erp.service.impl;
 
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_SELECTOR;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_STATUS;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_TYPE;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_QUANTITY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_BLANKET_ORDER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_BUYER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_DAYS_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_PERCENT_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CURRENCY_CODE_RM;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_DAY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_OTHER;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_RM;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_ORDER_STATUS;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_PRINT_PO;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,6 +33,7 @@ import java.util.stream.Collectors;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
+import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
@@ -121,9 +138,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseOrderDto> purchaseOrderDtoList = new ArrayList<>();
         for (Map.Entry<String, List<PurchaseRequestApprovalItemDto>> vendorPurchaseRequestItem : purchaseRequestItemGroupByVendor.entrySet()) {
             POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey(), purchaseRequestApprovalId);
+            List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
+            BigDecimal orderTotalAmount = poDetailList.stream()
+                .map(PODetail::getExtendedPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
             poHeaderRepository.save(poHeader);
-            List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailRepository.saveAll(poDetailList);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
@@ -146,29 +167,32 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
         poHeader.setOriginalPODate(Instant.now());
         poHeader.setPORevisionDate(Instant.now());
-        // TODO: Complete POHeader construction with Not Null Value
-        poHeader.setBuyer("");
-        poHeader.setOrderStatus(Character.MIN_VALUE);
-        poHeader.setStandardTerms(Character.MIN_VALUE);
-        poHeader.setCash1Days(0);
-        poHeader.setCash1Percent(BigDecimal.ZERO);
-        poHeader.setCash2Days(0);
-        poHeader.setCash2Percent(BigDecimal.ZERO);
-        poHeader.setNetDays(0);
-        poHeader.setCutoffDay(0);
-        poHeader.setDueDay(0);
-        poHeader.setMonthsDelay(0);
-        poHeader.setBlanketOrder(Character.MIN_VALUE);
-        poHeader.setPrintPO(Character.MIN_VALUE);
-        poHeader.setControllingCurrency(Character.MIN_VALUE);
-        poHeader.setCurrencyCode("");
-        poHeader.setExchangeRate(BigDecimal.ONE);
-        poHeader.setOrderTotal(BigDecimal.ZERO);
-        // End Complete POHeader construction with Not Null Value
         poHeader.setEmailed(Boolean.FALSE);
         poHeader.setDownloaded(Boolean.FALSE);
+        VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(vendorId);
+        poHeader.setNetDays(0);
+        poHeader.setMonthsDelay(0);
+        poHeader.setControllingCurrency(vendorMasterDto.getControllingCurrency());
+        poHeader.setCurrencyCode(vendorMasterDto.getCurrencyCode());
+        if (vendorMasterDto.getCurrencyCode() == PO_HEADER_CURRENCY_CODE_RM) {
+            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_RM);
+        } else {
+            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);
+        }
         poHeader.setCreated(Instant.now());
         poHeader.setCreatedBy("System");
+        
+        poHeader.setBuyer(PO_HEADER_BUYER);
+        poHeader.setOrderStatus(PO_HEADER_ORDER_STATUS);
+        poHeader.setStandardTerms(PO_HEADER_STANDARD_TERMS);
+        poHeader.setCash1Days(PO_HEADER_CASH_DAYS_COLUMN);
+        poHeader.setCash1Percent(PO_HEADER_CASH_PERCENT_COLUMN);
+        poHeader.setCash2Days(PO_HEADER_CASH_DAYS_COLUMN);
+        poHeader.setCash2Percent(PO_HEADER_CASH_PERCENT_COLUMN);
+        poHeader.setCutoffDay(PO_HEADER_DAY_COLUMN);
+        poHeader.setDueDay(PO_HEADER_DAY_COLUMN);
+        poHeader.setBlanketOrder(PO_HEADER_BLANKET_ORDER);
+        poHeader.setPrintPO(PO_HEADER_PRINT_PO);
         return poHeader;
     }
 
@@ -187,20 +211,25 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poDetail.setPONumber(poHeader.getPONumber());
             poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
             poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
+            poDetail.setLineNumber(poDetails.size() + 1);
             poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
-            poDetail.setUnitPrice(BigDecimal.valueOf(Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d)));
-            // TODO: Complete List of PODetail construction with Not Null Value
-            poDetail.setLineNumber(1);
-            poDetail.setLineType(Character.MIN_VALUE);
-            poDetail.setLineSelector(Character.MIN_VALUE);
-            poDetail.setQuantityReceived(BigDecimal.ZERO);
-            poDetail.setQuantityInInspection(BigDecimal.ZERO);
-            poDetail.setQuantityOnHand(BigDecimal.ZERO);
-            poDetail.setQuantityOnHold(BigDecimal.ZERO);
-            poDetail.setBlanketQuantity(BigDecimal.ZERO);
-            poDetail.setLineStatus(Character.MIN_VALUE);
-            poDetail.setExtendedPrice(BigDecimal.ZERO);
-            // End Complete List of PODetail construction with Not Null Value
+            double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
+            poDetail.setUnitPrice(BigDecimal.valueOf(itemCost));
+            poDetail.setExtendedPrice(BigDecimal.valueOf(purchaseItem.getQuantity() * itemCost));
+            // Vendor Information
+            VendorItem vendorItem = vendorService.findOneVendorItemByVendorAndItem(poHeader.getVendorID(), purchaseItem.getComponentCode());
+            poDetail.setVIConversion(vendorItem.getViConversion());
+            poDetail.setVIOrderQuantity(vendorItem.getViConversion().multiply(BigDecimal.valueOf(purchaseItem.getQuantity())));
+            poDetail.setVIUnitPrice(vendorItem.getViConversion().multiply(BigDecimal.valueOf(itemCost)));
+            // End Vendor Information
+            poDetail.setLineType(PO_DETAIL_LINE_TYPE);
+            poDetail.setLineSelector(PO_DETAIL_LINE_SELECTOR);
+            poDetail.setQuantityReceived(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setQuantityInInspection(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setQuantityOnHand(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setQuantityOnHold(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setBlanketQuantity(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setLineStatus(PO_DETAIL_LINE_STATUS);
             poDetail.setCreated(Instant.now());
             poDetail.setCreatedBy("System");
             poDetails.add(poDetail);
@@ -222,7 +251,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(poHeader.getVendorID());
         purchaseOrderDto.setVendorName(vendorMasterDto.getVendorName());
         // purchaseOrderDto.setEmail();
-        // TODO: Complete PurchaseOrderDto construction
         return purchaseOrderDto;
     }
 

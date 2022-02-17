@@ -2,6 +2,8 @@ package com.engseen.erp.service.impl;
 
 import java.util.List;
 
+import com.engseen.erp.domain.VendorItem;
+import com.engseen.erp.repository.VendorItemRepository;
 import com.engseen.erp.repository.VendorMasterRepository;
 import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.ComponentDTO;
@@ -25,11 +27,13 @@ public class VendorServiceImpl implements VendorService {
 
     private VendorMasterMapper vendorMasterMapper;
     private VendorMasterRepository vendorMasterRepository;
+    private VendorItemRepository vendorItemRepository;
 
     @Autowired
-    public VendorServiceImpl(VendorMasterMapper vendorMasterMapper, VendorMasterRepository vendorMasterRepository) {
+    public VendorServiceImpl(VendorMasterMapper vendorMasterMapper, VendorMasterRepository vendorMasterRepository, VendorItemRepository vendorItemRepository) {
         this.vendorMasterMapper = vendorMasterMapper;
         this.vendorMasterRepository = vendorMasterRepository;
+        this.vendorItemRepository = vendorItemRepository;
     }
 
     @Override
@@ -46,6 +50,13 @@ public class VendorServiceImpl implements VendorService {
         log.debug("Request to findOne Vendor By VendorId: {}", vendorId);
         return vendorMasterRepository.findByVendorID(vendorId)
             .map(vendorMasterMapper::toDto)
+            .orElse(null);
+    }
+
+    @Override
+    public VendorItem findOneVendorItemByVendorAndItem(String vendorId, String item) {
+        log.debug("Request to findOne VendorItem Vendor By VendorId {} and item {}", vendorId, item);
+        return vendorItemRepository.findOneByVendorIDAndItem(vendorId, item)
             .orElse(null);
     }
     
