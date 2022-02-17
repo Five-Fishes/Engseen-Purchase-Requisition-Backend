@@ -14,7 +14,7 @@ CREATE PROCEDURE POHeaderInsert (
 )
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             INSERT INTO [dbo].[POHeaderViewLegacy]
                 (PONumber, VendorID, Buyer, Contact, Phone, OurContact, 
                 OrderStatus, OriginalPODate, PORevisionDate, POReference, PORevision, LocationID, 
@@ -37,7 +37,7 @@ AS
                 @NoOfLines, @PrintPONo, @CounterID, @POType, @ApprovalStatus, @CurrentApprover, 
                 @Imported, @GST, @Created, @CreatedBy, @Modified, @ModifiedBy, 
                 @Accessed, @AccessedBy, @PurchaseRequestApprovalId, @Emailed, @Downloaded);
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- Update POHeader
@@ -55,7 +55,7 @@ CREATE PROCEDURE POHeaderUpdate (@ID INTEGER,
 )
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             UPDATE [dbo].[POHeaderViewLegacy]
             SET PONumber = @PONumber, VendorID = @VendorID, Buyer = @Buyer, 
                 Contact = @Contact, Phone = @Phone, OurContact = @OurContact, 
@@ -78,17 +78,17 @@ AS
                 Accessed = @Accessed, AccessedBy = @AccessedBy, PurchaseRequestApprovalId = @PurchaseRequestApprovalId, 
                 Emailed = @Emailed, Downloaded = @Downloaded)
             WHERE ID = @ID;
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- Delete POHeader
 CREATE PROCEDURE POHeaderDelete (@ID INTEGER)
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             DELETE FROM [dbo].[POHeaderViewLegacy]
             WHERE ID = @ID;
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- End POHeader Store Procedure
@@ -105,7 +105,7 @@ CREATE PROCEDURE PODetailInsert (
 )
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             INSERT INTO [dbo].[PODetailViewLegacy]
                 (PONumber, LineNumber, Item, LineType, LineSelector, OrderQuantity, 
                 QuantityReceived, QuantityInInspection, QuantityOnHand, QuantityOnHold, BlanketQuantity, ETADate, 
@@ -120,7 +120,7 @@ AS
                 @ExtendedPrice, @Remark, @VendorItem, @VIDescription, @VIConversion, @VIUnitOfMeasure, 
                 @VIOrderQuantity, @VIUnitPrice, @ItemFailure, @PrintUOM, @DepartmentCode, @SegmentCode, 
                 @Created, @CreatedBy, @Modified, @ModifiedBy);
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- Update PODetail
@@ -134,7 +134,7 @@ CREATE PROCEDURE PODetailUpdate (@ID INTEGER,
 )
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             UPDATE [dbo].[PODetailViewLegacy]
             SET PONumber = @PONumber, LineNumber = @LineNumber, Item = @Item, 
                 LineType = @LineType, LineSelector = @LineSelector, OrderQuantity = @OrderQuantity, 
@@ -149,17 +149,17 @@ AS
                 Created = @Created, CreatedBy = @CreatedBy, Modified = @Modified, 
                 ModifiedBy = @ModifiedBy)
             WHERE ID = @ID;
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- Delete PODetail
 CREATE PROCEDURE PODetailDelete (@ID INTEGER)
 AS
     BEGIN
-        SET XCAT_ABORT ON;
+        SET XACT_ABORT ON;
             DELETE FROM [dbo].[PODetailViewLegacy]
             WHERE ID = @ID;
-        SET XCAT_ABORT OFF;
+        SET XACT_ABORT OFF;
     END
 
 -- End PODetail Store Procedure
