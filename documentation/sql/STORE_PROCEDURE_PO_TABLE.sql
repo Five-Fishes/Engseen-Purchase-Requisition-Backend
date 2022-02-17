@@ -1,6 +1,6 @@
 -- Start POHeader Store Procedure
 -- Insert POHeader
-CREATE PROCEDURE POHeaderInsert (
+CREATE PROCEDURE POHeaderInsert 
     @PONumber VARCHAR(30), @VendorID VARCHAR(12), @Buyer VARCHAR(8), @Contact VARCHAR(38), @Phone VARCHAR(30), @OurContact VARCHAr(30), 
     @OrderStatus CHAR(1), @OriginalPODate DATETIME, @PORevisionDate DATETIME, @POReference VARCHAR(20), @PORevision VARCHAR(2), @LocationID INTEGER,
     @ShipTo VARCHAR(60), @Address1 VARCHAR(60), @Address2 VARCHAR(60), @City VARCHAR(30), @State VARCHAR(20), @ZipCode VARCHAR(24), 
@@ -11,7 +11,6 @@ CREATE PROCEDURE POHeaderInsert (
     @NoOfLines INTEGER, @PrintPONo INTEGER, @CounterID INTEGER, @POType CHAR(1), @ApprovalStatus CHAR(1), @CurrentApprover VARCHAR(8), 
     @Imported CHAR(1), @GST INTEGER, @Created DATETIME, @CreatedBy VARCHAR(8), @Modified DATETIME, @ModifiedBy VARCHAR(8), 
     @Accessed DATETIME, @AccessedBy VARCHAR(8), @PurchaseRequestApprovalId BIGINT, @Emailed BIT, @Downloaded BIT
-)
 AS
     BEGIN
         SET XACT_ABORT ON;
@@ -41,7 +40,7 @@ AS
     END
 
 -- Update POHeader
-CREATE PROCEDURE POHeaderUpdate (@ID INTEGER, 
+CREATE PROCEDURE POHeaderUpdate @ID INTEGER, 
     @PONumber VARCHAR(30), @VendorID VARCHAR(12), @Buyer VARCHAR(8), @Contact VARCHAR(38), @Phone VARCHAR(30), @OurContact VARCHAr(30), 
     @OrderStatus CHAR(1), @OriginalPODate DATETIME, @PORevisionDate DATETIME, @POReference VARCHAR(20), @PORevision VARCHAR(2), @LocationID INTEGER,
     @ShipTo VARCHAR(60), @Address1 VARCHAR(60), @Address2 VARCHAR(60), @City VARCHAR(30), @State VARCHAR(20), @ZipCode VARCHAR(24), 
@@ -52,7 +51,6 @@ CREATE PROCEDURE POHeaderUpdate (@ID INTEGER,
     @NoOfLines INTEGER, @PrintPONo INTEGER, @CounterID INTEGER, @POType CHAR(1), @ApprovalStatus CHAR(1), @CurrentApprover VARCHAR(8), 
     @Imported CHAR(1), @GST INTEGER, @Created DATETIME, @CreatedBy VARCHAR(8), @Modified DATETIME, @ModifiedBy VARCHAR(8), 
     @Accessed DATETIME, @AccessedBy VARCHAR(8), @PurchaseRequestApprovalId BIGINT, @Emailed BIT, @Downloaded BIT
-)
 AS
     BEGIN
         SET XACT_ABORT ON;
@@ -76,13 +74,13 @@ AS
                 Imported = @Imported, GST = @GST, Created = @Created, 
                 CreatedBy = @CreatedBy, Modified = @Modified, ModifiedBy = @ModifiedBy, 
                 Accessed = @Accessed, AccessedBy = @AccessedBy, PurchaseRequestApprovalId = @PurchaseRequestApprovalId, 
-                Emailed = @Emailed, Downloaded = @Downloaded)
+                Emailed = @Emailed, Downloaded = @Downloaded
             WHERE ID = @ID;
         SET XACT_ABORT OFF;
     END
 
 -- Delete POHeader
-CREATE PROCEDURE POHeaderDelete (@ID INTEGER)
+CREATE PROCEDURE POHeaderDelete @ID INTEGER
 AS
     BEGIN
         SET XACT_ABORT ON;
@@ -95,14 +93,13 @@ AS
 
 -- Start PODetail Store Procedure
 -- Insert PODetail
-CREATE PROCEDURE PODetailInsert (
+CREATE PROCEDURE PODetailInsert 
     @PONumber VARCHAR(30), @LineNumber INTEGER, @Item VARCHAR(30), @LineType CHAR(1), @LineSelector CHAR(1), @OrderQuantity DECIMAL(18, 0), 
     @QuantityReceived DECIMAL(18, 0), @QuantityInInspection DECIMAL(18, 0), @QuantityOnHand DECIMAL(18, 0), @QuantityOnHold DECIMAL(18, 0), @BlanketQuantity DECIMAL(18, 0), @ETADate DATETIME,
     @NeedDate DATETIME, @DateLastReceipt DATETIME, @LeadTime INTEGER, @Discount INTEGER, @LineStatus CHAR(1), @UnitPrice DECIMAL(18, 0), 
     @ExtendedPrice DECIMAL(18, 0), @Remark VARCHAR(480), @VendorItem VARCHAR(30), @VIDescription VARCHAR(60), @VIConversion DECIMAL(18, 0), @VIUnitOfMeasure VARCHAR(4), 
     @VIOrderQuantity DECIMAL(18, 0), @VIUnitPrice DECIMAL(18, 0), @ItemFailure VARCHAR(20), @PrintUOM VARCHAR(4), @DepartmentCode VARCHAR(6), @SegmentCode VARCHAR(6), 
     @Created DATETIME, @CreatedBy VARCHAR(8), @Modified DATETIME, @ModifiedBy VARCHAR(8)
-)
 AS
     BEGIN
         SET XACT_ABORT ON;
@@ -124,14 +121,13 @@ AS
     END
 
 -- Update PODetail
-CREATE PROCEDURE PODetailUpdate (@ID INTEGER, 
+CREATE PROCEDURE PODetailUpdate @ID INTEGER, 
     @PONumber VARCHAR(30), @LineNumber INTEGER, @Item VARCHAR(30), @LineType CHAR(1), @LineSelector CHAR(1), @OrderQuantity DECIMAL(18, 0), 
     @QuantityReceived DECIMAL(18, 0), @QuantityInInspection DECIMAL(18, 0), @QuantityOnHand DECIMAL(18, 0), @QuantityOnHold DECIMAL(18, 0), @BlanketQuantity DECIMAL(18, 0), @ETADate DATETIME,
     @NeedDate DATETIME, @DateLastReceipt DATETIME, @LeadTime INTEGER, @Discount INTEGER, @LineStatus CHAR(1), @UnitPrice DECIMAL(18, 0), 
     @ExtendedPrice DECIMAL(18, 0), @Remark VARCHAR(480), @VendorItem VARCHAR(30), @VIDescription VARCHAR(60), @VIConversion DECIMAL(18, 0), @VIUnitOfMeasure VARCHAR(4), 
     @VIOrderQuantity DECIMAL(18, 0), @VIUnitPrice DECIMAL(18, 0), @ItemFailure VARCHAR(20), @PrintUOM VARCHAR(4), @DepartmentCode VARCHAR(6), @SegmentCode VARCHAR(6), 
     @Created DATETIME, @CreatedBy VARCHAR(8), @Modified DATETIME, @ModifiedBy VARCHAR(8)
-)
 AS
     BEGIN
         SET XACT_ABORT ON;
@@ -147,13 +143,13 @@ AS
                 VIOrderQuantity = @VIOrderQuantity, VIUnitPrice = @VIUnitPrice, ItemFailure = @ItemFailure, 
                 PrintUOM = @PrintUOM, DepartmentCode = @DepartmentCode, SegmentCode = @SegmentCode, 
                 Created = @Created, CreatedBy = @CreatedBy, Modified = @Modified, 
-                ModifiedBy = @ModifiedBy)
+                ModifiedBy = @ModifiedBy
             WHERE ID = @ID;
         SET XACT_ABORT OFF;
     END
 
 -- Delete PODetail
-CREATE PROCEDURE PODetailDelete (@ID INTEGER)
+CREATE PROCEDURE PODetailDelete @ID INTEGER
 AS
     BEGIN
         SET XACT_ABORT ON;
