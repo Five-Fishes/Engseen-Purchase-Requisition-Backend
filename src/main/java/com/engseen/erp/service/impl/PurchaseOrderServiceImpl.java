@@ -157,7 +157,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             );
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
-            poDetailRepository.saveAll(poDetailList);
+            poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
+                poDetail.getPONumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(), 
+                poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), poDetail.getETADate(), 
+                poDetail.getNeedDate(), poDetail.getDateLastReceipt(), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(), 
+                poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(), 
+                poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
+                poDetail.getCreated(), poDetail.getCreatedBy(), poDetail.getModified(), poDetail.getModifiedBy())
+            );
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
