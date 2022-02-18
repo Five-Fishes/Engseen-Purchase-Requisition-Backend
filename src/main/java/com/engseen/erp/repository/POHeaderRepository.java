@@ -17,7 +17,7 @@ public interface POHeaderRepository extends JpaRepository<POHeader, Integer> {
     Page<POHeader> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable);
     
     @Procedure(value = "POHeaderInsert")
-    Integer insertPOHeader(String PONumber, String VendorID, String Buyer, String Contact, String Phone, String OurContact, 
+    POHeader insertPOHeader(String PONumber, String VendorID, String Buyer, String Contact, String Phone, String OurContact, 
         Character OrderStatus, Instant OriginalPODate, Instant PORevisionDate, String POReference, String PORevision, Integer LocationID, 
         String ShipTo, String Address1, String Address2, String City, String State, String ZipCode, 
         String Country, String ShipVia, String FOBPoint, Character StandardTerms, BigDecimal Cash1Percent, Integer Cash1Days, 

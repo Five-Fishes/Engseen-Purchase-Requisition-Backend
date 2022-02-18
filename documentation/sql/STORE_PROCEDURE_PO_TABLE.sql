@@ -1,6 +1,6 @@
 -- Start POHeader Store Procedure
 -- Insert POHeader
-CREATE PROCEDURE POHeaderInsert 
+CREATE PROCEDURE POHeaderInsert  
     @PONumber VARCHAR(30), @VendorID VARCHAR(12), @Buyer VARCHAR(8), @Contact VARCHAR(38), @Phone VARCHAR(30), @OurContact VARCHAr(30), 
     @OrderStatus CHAR(1), @OriginalPODate DATETIME, @PORevisionDate DATETIME, @POReference VARCHAR(20), @PORevision VARCHAR(2), @LocationID INTEGER,
     @ShipTo VARCHAR(60), @Address1 VARCHAR(60), @Address2 VARCHAR(60), @City VARCHAR(30), @State VARCHAR(20), @ZipCode VARCHAR(24), 
@@ -13,6 +13,7 @@ CREATE PROCEDURE POHeaderInsert
     @Accessed DATETIME, @AccessedBy VARCHAR(8), @PurchaseRequestApprovalId BIGINT, @Emailed BIT, @Downloaded BIT
 AS
     BEGIN
+	    DECLARE @ID INTEGER;
         SET XACT_ABORT ON;
             INSERT INTO [dbo].[POHeaderViewLegacy]
                 (PONumber, VendorID, Buyer, Contact, Phone, OurContact, 
@@ -35,8 +36,11 @@ AS
                 @Remark, @Less1, @Less1Amount, @Less2, @Less2Amount, @OrderTotal, 
                 @NoOfLines, @PrintPONo, @CounterID, @POType, @ApprovalStatus, @CurrentApprover, 
                 @Imported, @GST, @Created, @CreatedBy, @Modified, @ModifiedBy, 
-                @Accessed, @AccessedBy, @PurchaseRequestApprovalId, @Emailed, @Downloaded);
-        SET XACT_ABORT OFF;
+                @Accessed, @AccessedBy, @PurchaseRequestApprovalId, @Emailed, @Downloaded);           
+        SELECT @ID = SCOPE_IDENTITY();
+       	SELECT * FROM [dbo].[POHeaderViewLegacy]
+       	WHERE ID = @ID;
+       	SET XACT_ABORT OFF;
     END
 
 -- Update POHeader

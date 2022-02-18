@@ -144,7 +144,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
-            Integer poHeaderID = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
+            poHeader = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
                 poHeader.getOrderStatus(), poHeader.getOriginalPODate(), poHeader.getPORevisionDate(), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
                 poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
                 poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
@@ -155,7 +155,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 poHeader.getImported(), poHeader.getGst(), poHeader.getCreated(), poHeader.getCreatedBy(), poHeader.getModified(), poHeader.getModifiedBy(),
                 poHeader.getAccessed(), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
             );
-            poHeader.setId(poHeaderID);
+            log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailRepository.saveAll(poDetailList);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
