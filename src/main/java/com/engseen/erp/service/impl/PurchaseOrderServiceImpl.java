@@ -144,7 +144,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
-            poHeaderRepository.save(poHeader);
+            Integer poHeaderID = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
+                poHeader.getOrderStatus(), poHeader.getOriginalPODate(), poHeader.getPORevisionDate(), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
+                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
+                poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
+                poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
+                poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
+                poHeader.getNoOfLines(), poHeader.getPrintPONo(), poHeader.getCounterID(), poHeader.getPOType(), poHeader.getApprovalStatus(), poHeader.getCurrentApprover(),
+                poHeader.getImported(), poHeader.getGst(), poHeader.getCreated(), poHeader.getCreatedBy(), poHeader.getModified(), poHeader.getModifiedBy(),
+                poHeader.getAccessed(), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
+            );
+            poHeader.setId(poHeaderID);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailRepository.saveAll(poDetailList);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
