@@ -39,7 +39,7 @@ docker-compose -f src/main/docker/mssql.yml stop
 
 5. Start stopped database
 ```shell
-docker-compose -f src/main/docker/mssql.yml stop
+docker-compose -f src/main/docker/mssql.yml start
 ```
 
 6. Shut down and clean up database
