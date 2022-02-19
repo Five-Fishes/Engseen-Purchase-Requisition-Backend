@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
+@Table(name = "PODetailViewLegacy")
 public class PODetail {
 
     @Id

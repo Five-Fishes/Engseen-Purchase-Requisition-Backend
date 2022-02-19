@@ -4,17 +4,25 @@ import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_SELECTOR;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_STATUS;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_TYPE;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_QUANTITY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_ADDRESS1;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_ADDRESS2;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_BLANKET_ORDER;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_BUYER;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_DAYS_COLUMN;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_PERCENT_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_CITY;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_COUNTRY;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_CURRENCY_CODE_RM;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_DAY_COLUMN;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_OTHER;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_RM;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ORDER_STATUS;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_PHONE;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_PRINT_PO;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_SHIP_TO;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_STATE;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_ZIP_CODE;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
 /**
- * Service Implementation for managing {@link PurchaseOrder}.
+ * Service Implementation for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
  */
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -113,7 +121,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional
-    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception {
+    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
         List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
@@ -128,7 +136,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String itemVendor = purchaseRequestItem.getVendorId();
             List<PurchaseRequestApprovalItemDto> vendorConfirmedItems = purchaseRequestItemGroupByVendor.get(itemVendor);
             if (vendorConfirmedItems != null) {
-                vendorConfirmedItems.add(purchaseRequestItem);
+                List<PurchaseRequestApprovalItemDto> updatedPurchaseRequestApprovalItemDtoList = new ArrayList<>(vendorConfirmedItems);
+                updatedPurchaseRequestApprovalItemDtoList.add(purchaseRequestItem);
+                purchaseRequestItemGroupByVendor.put(itemVendor, updatedPurchaseRequestApprovalItemDtoList);
             } else {
                 purchaseRequestItemGroupByVendor.put(itemVendor, List.of(purchaseRequestItem));
             }
@@ -144,9 +154,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
-            poHeaderRepository.save(poHeader);
+            poHeader = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
+                poHeader.getOrderStatus(), poHeader.getOriginalPODate(), poHeader.getPORevisionDate(), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
+                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
+                poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
+                poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
+                poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
+                poHeader.getNoOfLines(), poHeader.getPrintPONo(), poHeader.getCounterID(), poHeader.getPOType(), poHeader.getApprovalStatus(), poHeader.getCurrentApprover(),
+                poHeader.getImported(), poHeader.getGst(), poHeader.getCreated(), poHeader.getCreatedBy(), poHeader.getModified(), poHeader.getModifiedBy(),
+                poHeader.getAccessed(), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
+            );
+            log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
-            poDetailRepository.saveAll(poDetailList);
+            poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
+                poDetail.getPONumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(), 
+                poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), poDetail.getETADate(), 
+                poDetail.getNeedDate(), poDetail.getDateLastReceipt(), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(), 
+                poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(), 
+                poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
+                poDetail.getCreated(), poDetail.getCreatedBy(), poDetail.getModified(), poDetail.getModifiedBy())
+            );
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
@@ -174,7 +202,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         poHeader.setMonthsDelay(0);
         poHeader.setControllingCurrency(vendorMasterDto.getControllingCurrency());
         poHeader.setCurrencyCode(vendorMasterDto.getCurrencyCode());
-        if (vendorMasterDto.getCurrencyCode() == PO_HEADER_CURRENCY_CODE_RM) {
+        if (vendorMasterDto.getCurrencyCode().equals(PO_HEADER_CURRENCY_CODE_RM)) {
             poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_RM);
         } else {
             poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);
@@ -183,6 +211,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         poHeader.setCreatedBy("System");
         
         poHeader.setBuyer(PO_HEADER_BUYER);
+        poHeader.setPhone(PO_HEADER_PHONE);
+        poHeader.setShipTo(PO_HEADER_SHIP_TO);
+        poHeader.setAddress1(PO_HEADER_ADDRESS1);
+        poHeader.setAddress2(PO_HEADER_ADDRESS2);
+        poHeader.setCity(PO_HEADER_CITY);
+        poHeader.setState(PO_HEADER_STATE);
+        poHeader.setZipCode(PO_HEADER_ZIP_CODE);
+        poHeader.setCountry(PO_HEADER_COUNTRY);
         poHeader.setOrderStatus(PO_HEADER_ORDER_STATUS);
         poHeader.setStandardTerms(PO_HEADER_STANDARD_TERMS);
         poHeader.setCash1Days(PO_HEADER_CASH_DAYS_COLUMN);
