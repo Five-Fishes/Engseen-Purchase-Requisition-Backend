@@ -58,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
 /**
- * Service Implementation for managing {@link PurchaseOrder}.
+ * Service Implementation for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
  */
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -113,7 +113,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional
-    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) throws Exception {
+    public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
         List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
@@ -128,7 +128,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String itemVendor = purchaseRequestItem.getVendorId();
             List<PurchaseRequestApprovalItemDto> vendorConfirmedItems = purchaseRequestItemGroupByVendor.get(itemVendor);
             if (vendorConfirmedItems != null) {
-                vendorConfirmedItems.add(purchaseRequestItem);
+                List<PurchaseRequestApprovalItemDto> updatedPurchaseRequestApprovalItemDtoList = new ArrayList<>(vendorConfirmedItems);
+                updatedPurchaseRequestApprovalItemDtoList.add(purchaseRequestItem);
+                purchaseRequestItemGroupByVendor.put(itemVendor, updatedPurchaseRequestApprovalItemDtoList);
             } else {
                 purchaseRequestItemGroupByVendor.put(itemVendor, List.of(purchaseRequestItem));
             }
@@ -192,7 +194,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         poHeader.setMonthsDelay(0);
         poHeader.setControllingCurrency(vendorMasterDto.getControllingCurrency());
         poHeader.setCurrencyCode(vendorMasterDto.getCurrencyCode());
-        if (vendorMasterDto.getCurrencyCode() == PO_HEADER_CURRENCY_CODE_RM) {
+        if (vendorMasterDto.getCurrencyCode().equals(PO_HEADER_CURRENCY_CODE_RM)) {
             poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_RM);
         } else {
             poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);

@@ -124,6 +124,41 @@ AS
         SET XACT_ABORT OFF;
     END
 
+-- Update PODetailInsert SP
+ALTER PROCEDURE PODetailInsert
+    @PONumber VARCHAR(30), @LineNumber INTEGER, @Item VARCHAR(30), @LineType CHAR(1), @LineSelector CHAR(1), @OrderQuantity DECIMAL(18, 0),
+    @QuantityReceived DECIMAL(18, 0), @QuantityInInspection DECIMAL(18, 0), @QuantityOnHand DECIMAL(18, 0), @QuantityOnHold DECIMAL(18, 0), @BlanketQuantity DECIMAL(18, 0), @ETADate DATETIME,
+    @NeedDate DATETIME, @DateLastReceipt DATETIME, @LeadTime INTEGER, @Discount INTEGER, @LineStatus CHAR(1), @UnitPrice DECIMAL(18, 0),
+    @ExtendedPrice DECIMAL(18, 0), @Remark VARCHAR(480), @VendorItem VARCHAR(30), @VIDescription VARCHAR(60), @VIConversion DECIMAL(18, 0), @VIUnitOfMeasure VARCHAR(4),
+    @VIOrderQuantity DECIMAL(18, 0), @VIUnitPrice DECIMAL(18, 0), @ItemFailure VARCHAR(20), @PrintUOM VARCHAR(4), @DepartmentCode VARCHAR(6), @SegmentCode VARCHAR(6),
+    @Created DATETIME, @CreatedBy VARCHAR(8), @Modified DATETIME, @ModifiedBy VARCHAR(8)
+AS
+BEGIN
+    SET XACT_ABORT ON;
+    DECLARE @ID INTEGER;
+    INSERT INTO [dbo].[PODetailViewLegacy]
+    (PONumber, LineNumber, Item, LineType, LineSelector, OrderQuantity,
+     QuantityReceived, QuantityInInspection, QuantityOnHand, QuantityOnHold, BlanketQuantity, ETADate,
+     NeedDate, DateLastReceipt, LeadTime, Discount, LineStatus, UnitPrice,
+     ExtendedPrice, Remark, VendorItem, VIDescription, VIConversion, VIUnitOfMeasure,
+     VIOrderQuantity, VIUnitPrice, ItemFailure, PrintUOM, DepartmentCode, SegmentCode,
+     Created, CreatedBy, Modified, ModifiedBy)
+    VALUES
+    (@PONumber, @LineNumber, @Item, @LineType, @LineSelector, @OrderQuantity,
+     @QuantityReceived, @QuantityInInspection, @QuantityOnHand, @QuantityOnHold, @BlanketQuantity, @ETADate,
+     @NeedDate, @DateLastReceipt, @LeadTime, @Discount, @LineStatus, @UnitPrice,
+     @ExtendedPrice, @Remark, @VendorItem, @VIDescription, @VIConversion, @VIUnitOfMeasure,
+     @VIOrderQuantity, @VIUnitPrice, @ItemFailure, @PrintUOM, @DepartmentCode, @SegmentCode,
+     @Created, @CreatedBy, @Modified, @ModifiedBy);
+    SELECT @ID = SCOPE_IDENTITY();
+    SELECT * FROM [dbo].[PODetailViewLegacy]
+    WHERE ID = @ID;
+    SET XACT_ABORT OFF;
+END
+go
+
+
+
 -- Update PODetail
 CREATE PROCEDURE PODetailUpdate @ID INTEGER, 
     @PONumber VARCHAR(30), @LineNumber INTEGER, @Item VARCHAR(30), @LineType CHAR(1), @LineSelector CHAR(1), @OrderQuantity DECIMAL(18, 0), 
