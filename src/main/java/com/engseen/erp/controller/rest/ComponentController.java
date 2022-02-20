@@ -2,6 +2,7 @@ package com.engseen.erp.controller.rest;
 
 import com.engseen.erp.service.ComponentItemCostService;
 import com.engseen.erp.service.ComponentService;
+import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
 import com.engseen.erp.service.dto.ComponentItemCostDTO;
 
@@ -46,6 +47,18 @@ public class ComponentController {
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Component: {}, Vendor: {}, Packing Size: {}", component, vendor, packingSize);
         List<ComponentDTO> componentDTOList = componentService.findAll(pageable, component, vendor, packingSize);
+        return ResponseEntity.ok()
+                .body(componentDTOList);
+    }
+
+    /**
+     * {@code POST /component/bulk-search} : Get all Component by filters in bulk
+     */
+    @PostMapping(value="/bulk-search")
+    public ResponseEntity<List<ComponentDTO>> bulkGetAllComponents(@RequestBody List<ComponentBulkSearchDTO> componentBulkSearchDTOList){
+        log.info("Rest Request to getAllComponents");
+        log.debug("Component bulk search DTO: {}", componentBulkSearchDTOList.toString());
+        List<ComponentDTO> componentDTOList = componentService.bulkFindAll(componentBulkSearchDTOList);
         return ResponseEntity.ok()
                 .body(componentDTOList);
     }
