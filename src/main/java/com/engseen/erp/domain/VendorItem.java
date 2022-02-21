@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Entity
 @ToString
-@Table(name = "VendorItem", schema = "dbo")
+@Table(name = "VendorItemViewLegacy", schema = "dbo")
 public class VendorItem {
 
     @Id

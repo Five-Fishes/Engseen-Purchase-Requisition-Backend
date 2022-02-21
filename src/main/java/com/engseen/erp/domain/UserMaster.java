@@ -3,9 +3,11 @@ package com.engseen.erp.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.Instant;
 
 @Entity
+@Table(name = "UserMasterViewLegacy", schema = "dbo")
 public class UserMaster {
 
     @Id
