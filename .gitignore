@@ -39,3 +39,4 @@ out/
 
 ### Log File
 **.log
+/nohup.out

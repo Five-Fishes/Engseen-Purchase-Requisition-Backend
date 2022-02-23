@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "POHeaderViewLegacy")
+@Table(name = "POHeaderViewLegacy", schema = "dbo")
 public class POHeader {
 
     @Id

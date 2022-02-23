@@ -10,9 +10,10 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface VendorItemMapper {
 
+    // TODO: [LU] Please enhance the mapper, differentiate: Id, ComponentCode, ComponentName Correctly (While creating template should use ComponentName as it is the FK for other tables)
     @Mappings({
             @Mapping(target = "id", source = "source.id"),
-            @Mapping(target = "componentCode", ignore = true), // Need to retrieve from ItemMaster
+            @Mapping(target = "componentCode", source = "source.item"),
             @Mapping(target = "componentName", source = "source.item"),
             @Mapping(target = "vendorId", source = "source.vendorID"),
             @Mapping(target = "vendorName", ignore = true), // Need to retrieve from VendorMaster

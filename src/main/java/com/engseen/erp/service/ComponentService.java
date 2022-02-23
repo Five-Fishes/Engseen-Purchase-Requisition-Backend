@@ -1,5 +1,6 @@
 package com.engseen.erp.service;
 
+import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -16,5 +17,11 @@ public interface ComponentService {
      * @return the list of entities
      */
     List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize);
+
+    /**
+     * Get all Component by search filters in bulk
+     * @return the list of entities
+     */
+    List<ComponentDTO> bulkFindAll(List<ComponentBulkSearchDTO> componentBulkSearchDTOList);
 
 }

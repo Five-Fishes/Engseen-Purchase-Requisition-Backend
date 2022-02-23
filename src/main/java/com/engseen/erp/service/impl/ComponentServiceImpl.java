@@ -7,6 +7,7 @@ import com.engseen.erp.repository.ItemMasterRepository;
 import com.engseen.erp.repository.VendorItemRepository;
 import com.engseen.erp.repository.VendorMasterRepository;
 import com.engseen.erp.service.ComponentService;
+import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
 import com.engseen.erp.service.mapper.VendorItemMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,12 +100,19 @@ public class ComponentServiceImpl implements ComponentService {
                 .parallelStream()
                 .map(vendorItemMapper::vendorItemToComponentDTO)
                 .peek(componentDTO -> {
-                    Optional<ItemMaster> itemMasterOptional = itemMasterRepository.findByItemIsLike(componentDTO.getComponentName());
                     Optional<VendorMaster> vendorMasterOptional = vendorMasterRepository.findByVendorID(componentDTO.getVendorId());
-
-                    itemMasterOptional.ifPresent(itemMaster -> componentDTO.setComponentCode(Integer.toString(itemMaster.getId())));
                     vendorMasterOptional.ifPresent(vendorMaster -> componentDTO.setVendorName(vendorMaster.getVendorName()));
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ComponentDTO> bulkFindAll(List<ComponentBulkSearchDTO> componentBulkSearchDTOList) {
+        List<ComponentDTO> componentDTOList = new ArrayList<>();
+        componentBulkSearchDTOList.forEach(item -> {
+            ComponentDTO firstFoundItem = findAll(Pageable.ofSize(1), item.getComponentCode(), item.getVendorId(), item.getPackagingSize().intValue()).get(0);
+            componentDTOList.add(firstFoundItem);
+        });
+        return componentDTOList;
     }
 }

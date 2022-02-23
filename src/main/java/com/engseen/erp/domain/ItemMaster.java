@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @ToString
-@Table(name = "ItemMaster", schema = "dbo")
+@Table(name = "ItemMasterViewLegacy", schema = "dbo")
 public class ItemMaster implements Serializable {
 
     @Id
