@@ -23,7 +23,7 @@ public class AppConstant {
     public static String PO_HEADER_ADDRESS1 = "Lot 2958, Acku Inds. Estate";
     public static String PO_HEADER_ADDRESS2 = "Jalan Bagan Lalang";
     public static String PO_HEADER_CITY = "Butterworth";
-    public static String PO_HEADER_STATE = "13400";
+    public static String PO_HEADER_STATE = "Penang";
     public static String PO_HEADER_ZIP_CODE = "13400";
     public static String PO_HEADER_COUNTRY = "Malaysia";
 
