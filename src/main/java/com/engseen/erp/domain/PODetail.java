@@ -3,9 +3,13 @@ package com.engseen.erp.domain;
 import lombok.ToString;
 
 import javax.persistence.*;
+
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@ToString
 @Entity
 @ToString
 @Table(name = "PODetailViewLegacy", schema = "dbo")
