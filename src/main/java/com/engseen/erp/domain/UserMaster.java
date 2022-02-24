@@ -1,12 +1,16 @@
 package com.engseen.erp.domain;
 
+import java.time.Instant;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.Instant;
+
+import lombok.ToString;
 
 @Entity
+@ToString
 @Table(name = "UserMasterViewLegacy", schema = "dbo")
 public class UserMaster {
 

@@ -1,9 +1,13 @@
 package com.engseen.erp.domain;
 
 import javax.persistence.*;
+
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@ToString
 @Entity
 @Table(name = "POHeaderViewLegacy", schema = "dbo")
 public class POHeader {
