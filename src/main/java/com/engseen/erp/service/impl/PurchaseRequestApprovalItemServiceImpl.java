@@ -1,5 +1,6 @@
 package com.engseen.erp.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,13 +9,13 @@ import com.engseen.erp.domain.PurchaseRequisitionApproval;
 import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
 import com.engseen.erp.repository.PurchaseRequisitionApprovalItemRepository;
 import com.engseen.erp.repository.PurchaseRequisitionApprovalRepository;
+import com.engseen.erp.repository.VendorItemRepository;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 
 import com.engseen.erp.service.mapper.PurchaseRequisitionApprovalItemMapper;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Service Implementation for managing {@link com.engseen.erp.domain.PurchaseRequisitionApprovalItem}.
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestApprovalItemService {
 
-    private final Logger log = LoggerFactory.getLogger(PurchaseRequestApprovalServiceImpl.class);
     private final PurchaseRequisitionApprovalItemRepository purchaseRequisitionApprovalItemRepository;
     private final PurchaseRequisitionApprovalRepository purchaseRequisitionApprovalRepository;
     private final PurchaseRequisitionApprovalItemMapper purchaseRequisitionApprovalItemMapper;
+    private final VendorItemRepository vendorItemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -62,6 +64,18 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
         if (purchaseRequisitionApprovalOptional.isPresent()) {
             PurchaseRequisitionApprovalItem purchaseRequisitionApprovalItem = purchaseRequisitionApprovalItemMapper.toEntity(purchaseRequestApprovalItemDto);
             purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(purchaseRequisitionApprovalOptional.get());
+
+            /*
+            Find vendor item and prefill unit price as item cost
+             */
+            vendorItemRepository.findOneByVendorIDAndItem(
+                    purchaseRequestApprovalItemDto.getVendorId(),
+                    purchaseRequestApprovalItemDto.getComponentCode()
+            ).ifPresentOrElse(
+                    vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getvIUnitPrice()),
+                    () -> purchaseRequisitionApprovalItem.setItemCost(BigDecimal.ZERO)
+            );
+
             PurchaseRequisitionApprovalItem savedPurchaseRequisitionApprovalItem = purchaseRequisitionApprovalItemRepository.save(purchaseRequisitionApprovalItem);
             return purchaseRequisitionApprovalItemMapper.toDto(savedPurchaseRequisitionApprovalItem);
         }
@@ -93,10 +107,10 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
     public void delete(Long purchaseRequestApprovalItemId) {
         log.debug("Request to delete Purchase Request Approval Item");
 
-        if(purchaseRequisitionApprovalItemRepository.existsById(purchaseRequestApprovalItemId)) {
+        if (purchaseRequisitionApprovalItemRepository.existsById(purchaseRequestApprovalItemId)) {
             purchaseRequisitionApprovalItemRepository.deleteById(purchaseRequestApprovalItemId);
         }
 
     }
-    
+
 }

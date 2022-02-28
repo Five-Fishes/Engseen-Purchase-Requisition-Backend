@@ -33,7 +33,7 @@ public class PurchaseRequisitionRequestItem implements Serializable {
     @Column(name = "VendorName")
     private String vendorName;
 
-    @Column(name = "StockBalance")
+    @Column(name = "StockBalance") // TODO: [LU] remove this field, as this value should be real time from inventory table
     private BigDecimal stockBalance;
 
     @Column(name = "PackagingSize")
@@ -42,7 +42,7 @@ public class PurchaseRequisitionRequestItem implements Serializable {
     @Column(name = "NoOfPacks")
     private BigDecimal noOfPacks;
 
-    @Column(name = "Quantity")
+    @Column(name = "Quantity") // TODO: [LU] remove this field, as this value is derived from: packaging size * no of packs
     private BigDecimal quantity;
 
     @Column(name = "DeliveryDate")

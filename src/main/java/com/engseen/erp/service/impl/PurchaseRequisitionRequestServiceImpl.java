@@ -1,19 +1,14 @@
 package com.engseen.erp.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
-import com.engseen.erp.domain.PurchaseRequisitionApproval;
-import com.engseen.erp.domain.PurchaseRequisitionApprovalItem;
-import com.engseen.erp.domain.PurchaseRequisitionRequest;
-import com.engseen.erp.domain.PurchaseRequisitionRequestItem;
-import com.engseen.erp.repository.PurchaseRequisitionApprovalItemRepository;
-import com.engseen.erp.repository.PurchaseRequisitionApprovalRepository;
-import com.engseen.erp.repository.PurchaseRequisitionRequestItemRepository;
-import com.engseen.erp.repository.PurchaseRequisitionRequestRepository;
+import com.engseen.erp.domain.*;
+import com.engseen.erp.repository.*;
 import com.engseen.erp.service.PurchaseRequisitionRequestService;
 import com.engseen.erp.service.dto.PurchaseRequisitionRequestDTO;
 
@@ -44,6 +39,7 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
     private final PurchaseRequisitionRequestMapper purchaseRequisitionRequestMapper;
     private final PurchaseRequisitionRequestItemMapper purchaseRequisitionRequestItemMapper;
     private final PurchaseRequisitionRequestToApprovalMapper purchaseRequisitionRequestToApprovalMapper;
+    private final VendorItemRepository vendorItemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -85,6 +81,10 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
         List<PurchaseRequisitionRequestItem> savedPurchaseRequisitionRequestItemList = purchaseRequisitionRequestItemRepository.saveAllAndFlush(purchaseRequisitionRequestItemList);
 
         Optional<PurchaseRequisitionRequest> latestPurchaseRequisitionRequest = purchaseRequisitionRequestRepository.findById(savedPurchaseRequisitionRequest.getId());
+
+        /*
+        Generate Purchase Requisition Approval after creating Purchase Requisition Request Successfully
+         */
         latestPurchaseRequisitionRequest.ifPresent(latestPurchaseRequisitionRequestPresent -> {
             PurchaseRequisitionApproval purchaseRequisitionApproval = purchaseRequisitionRequestToApprovalMapper.toApproval(latestPurchaseRequisitionRequestPresent);
             purchaseRequisitionApproval.setPurchaseRequisitionApprovalItems(purchaseRequisitionRequestToApprovalMapper.toApprovalItem(purchaseRequisitionRequestItemList));
@@ -95,6 +95,18 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
                     .peek(purchaseRequisitionApprovalItem -> {
                         purchaseRequisitionApprovalItem.setPurchaseRequisitionApproval(savedPurchaseRequisitionApproval);
                         purchaseRequisitionApprovalItem.setStatus(PurchaseRequisitionApprovalItemStatus.TO_CONFIRM);
+
+                        /*
+                        Set Item cost to the unit price of vendor item by default, user can override by updating approval item
+                        Set default to unit price, or else set to 0
+                         */
+                        vendorItemRepository.findOneByVendorIDAndItem(
+                                purchaseRequisitionApprovalItem.getVendorId(),
+                                purchaseRequisitionApprovalItem.getComponentCode()
+                        ).ifPresentOrElse(
+                                vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getvIUnitPrice()),
+                                () -> purchaseRequisitionApprovalItem.setItemCost(BigDecimal.ZERO)
+                        );
                     })
                     .collect(Collectors.toList());
 

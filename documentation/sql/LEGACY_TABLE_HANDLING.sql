@@ -1,5 +1,4 @@
 -- To handle the connection to legacy database, views that reference tables of legacy database are created
--- TODO: [LU] Before deployment please use 4 parts qualified table name while creating the views
 
 create view [dbo].[InventoryViewLegacy]
 as

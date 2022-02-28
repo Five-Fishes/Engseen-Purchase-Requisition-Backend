@@ -107,7 +107,7 @@ public class PurchaseRequisitionTemplateServiceImpl implements PurchaseRequisiti
     @Transactional
     public PurchaseRequisitionTemplateDTO update(Long purchaseRequisitionTemplateId, PurchaseRequisitionTemplateDTO purchaseRequisitionTemplateDTO) {
         log.debug("Request to update Purchase Template: {} with Id: {}", purchaseRequisitionTemplateDTO, purchaseRequisitionTemplateId);
-        
+
         /* Map to entity */
         PurchaseRequisitionTemplate purchaseRequisitionTemplate = purchaseRequisitionTemplateMapper.toEntity(purchaseRequisitionTemplateDTO);
         List<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemList = purchaseRequisitionTemplateItemMapper.toEntity(purchaseRequisitionTemplateDTO.getPurchaseRequisitionTemplateItemList());
@@ -139,7 +139,7 @@ public class PurchaseRequisitionTemplateServiceImpl implements PurchaseRequisiti
             purchaseRequisitionTemplateItemRepository.deleteAllByPurchaseRequisitionTemplate_Id(purchaseRequisitionTemplate.getId());
         });
     }
-    
+
     private PurchaseRequisitionTemplate savePurchaseRequisitionTemplate(Long purchaseRequisitionTemplateId, PurchaseRequisitionTemplate purchaseRequisitionTemplate) {
         purchaseRequisitionTemplate.setId(purchaseRequisitionTemplateId);
         return purchaseRequisitionTemplateRepository.saveAndFlush(purchaseRequisitionTemplate);
@@ -149,12 +149,12 @@ public class PurchaseRequisitionTemplateServiceImpl implements PurchaseRequisiti
         purchaseRequisitionTemplateItemList.forEach(purchaseRequisitionTemplateItem -> purchaseRequisitionTemplateItem.setPurchaseRequisitionTemplate(purchaseRequisitionTemplate));
         return purchaseRequisitionTemplateItemRepository.saveAllAndFlush(purchaseRequisitionTemplateItemList);
     }
-    
+
     private void deletePurchaseRequisitionTemplateItemsIfMissing(Long purchaseRequisitionTemplateId, List<PurchaseRequisitionTemplateItem> purchaseRequisitionTemplateItemList) {
         List<PurchaseRequisitionTemplateItem> existingPurchaseRequisitionTemplateItemList = purchaseRequisitionTemplateItemRepository.findAllByPurchaseRequisitionTemplate_Id(Pageable.unpaged(), purchaseRequisitionTemplateId).toList();
         List<PurchaseRequisitionTemplateItem> PurchaseRequisitionTemplateItemsToBeDeleted = existingPurchaseRequisitionTemplateItemList
                 .stream()
-                .filter( PurchaseRequisitionTemplateItem -> purchaseRequisitionTemplateItemList
+                .filter(PurchaseRequisitionTemplateItem -> purchaseRequisitionTemplateItemList
                         .stream()
                         .noneMatch(PurchaseRequisitionTemplateItem1 -> PurchaseRequisitionTemplateItem1.getId() == PurchaseRequisitionTemplateItem.getId()))
                 .collect(Collectors.toList());

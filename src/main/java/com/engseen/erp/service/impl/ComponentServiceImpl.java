@@ -1,8 +1,9 @@
 package com.engseen.erp.service.impl;
 
-import com.engseen.erp.domain.ItemMaster;
+import com.engseen.erp.domain.Inventory;
 import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.domain.VendorMaster;
+import com.engseen.erp.repository.InventoryRepository;
 import com.engseen.erp.repository.ItemMasterRepository;
 import com.engseen.erp.repository.VendorItemRepository;
 import com.engseen.erp.repository.VendorMasterRepository;
@@ -34,8 +35,8 @@ public class ComponentServiceImpl implements ComponentService {
     private final Logger log = LoggerFactory.getLogger(ComponentServiceImpl.class);
     private final VendorItemRepository vendorItemRepository;
     private final VendorMasterRepository vendorMasterRepository;
-    private final ItemMasterRepository itemMasterRepository;
     private final VendorItemMapper vendorItemMapper;
+    private final InventoryRepository inventoryRepository;
 
     @Override
     public List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize) {
@@ -114,5 +115,14 @@ public class ComponentServiceImpl implements ComponentService {
             componentDTOList.add(firstFoundItem);
         });
         return componentDTOList;
+    }
+
+    @Override
+    public BigDecimal getStockBalanceByComponentCode(String componentCode) {
+        List<Inventory> inventoryList = inventoryRepository.findAllByItem(componentCode);
+        return inventoryList
+                .stream()
+                .map(Inventory::getQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

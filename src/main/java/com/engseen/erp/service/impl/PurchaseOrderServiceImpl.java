@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -155,25 +156,25 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
             poHeader = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
-                poHeader.getOrderStatus(), poHeader.getOriginalPODate(), poHeader.getPORevisionDate(), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                poHeader.getOrderStatus(), Timestamp.from(poHeader.getOriginalPODate()), Timestamp.from(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
                 poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
                 poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
                 poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
                 poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
                 poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
                 poHeader.getNoOfLines(), poHeader.getPrintPONo(), poHeader.getCounterID(), poHeader.getPOType(), poHeader.getApprovalStatus(), poHeader.getCurrentApprover(),
-                poHeader.getImported(), poHeader.getGst(), poHeader.getCreated(), poHeader.getCreatedBy(), poHeader.getModified(), poHeader.getModifiedBy(),
-                poHeader.getAccessed(), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
+                poHeader.getImported(), poHeader.getGst(), Timestamp.from(poHeader.getCreated()), poHeader.getCreatedBy(), Timestamp.from(poHeader.getModified()), poHeader.getModifiedBy(),
+                Timestamp.from(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
             );
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
                 poDetail.getPONumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(), 
-                poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), poDetail.getETADate(), 
-                poDetail.getNeedDate(), poDetail.getDateLastReceipt(), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(), 
+                poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), Timestamp.from(poDetail.getETADate()),
+                Timestamp.from(poDetail.getNeedDate()), Timestamp.from(poDetail.getDateLastReceipt()), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(),
                 poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(), 
                 poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
-                poDetail.getCreated(), poDetail.getCreatedBy(), poDetail.getModified(), poDetail.getModifiedBy())
+                Timestamp.from(poDetail.getCreated()), poDetail.getCreatedBy(), Timestamp.from(poDetail.getModified()), poDetail.getModifiedBy())
             );
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -52,6 +53,21 @@ public class ComponentController {
     }
 
     /**
+     * {@code GET /component/stock-balance/{componentCode}} : Get stock balance with component code
+     *
+     * @param componentCode component code from frontend
+     * @return stock balance
+     */
+    @GetMapping(value="/stock-balance/{componentCode}")
+    public ResponseEntity<BigDecimal> getAllComponents(@PathVariable String componentCode){
+        log.info("Rest Request to getAllComponents");
+        log.info("componentCode: {}", componentCode);
+        BigDecimal stockBalanceByComponentCode = componentService.getStockBalanceByComponentCode(componentCode);
+        return ResponseEntity.ok()
+                .body(stockBalanceByComponentCode);
+    }
+
+    /**
      * {@code POST /component/bulk-search} : Get all Component by filters in bulk
      */
     @PostMapping(value="/bulk-search")
@@ -70,7 +86,6 @@ public class ComponentController {
      * @param pageable Pagination Info
      * @param components Components to search
      */
-
     @PostMapping(value="/item-cost")
     public ResponseEntity<List<ComponentItemCostDTO>> getComponentItemCostByComponents(Pageable pageable, @RequestBody List<ComponentDTO> components) {
         log.info("REST Request to get getComponentItemCostByComponents");

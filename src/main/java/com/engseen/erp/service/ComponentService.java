@@ -4,6 +4,7 @@ import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -24,4 +25,10 @@ public interface ComponentService {
      */
     List<ComponentDTO> bulkFindAll(List<ComponentBulkSearchDTO> componentBulkSearchDTOList);
 
+    /**
+     * Get stock balance of component using componentCode
+     * @param componentCode Item in db
+     * @return stock balance
+     */
+    BigDecimal getStockBalanceByComponentCode(String componentCode);
 }

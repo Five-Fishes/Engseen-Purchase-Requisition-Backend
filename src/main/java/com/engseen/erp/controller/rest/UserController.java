@@ -18,7 +18,6 @@ public class UserController {
 
     @GetMapping("/{userId}/authority")
     public ResponseEntity<String> getUserAuthorityByUserId(@PathVariable String userId) {
-        // TODO: [LU] Check real db role string and update accordingly
         return ResponseEntity.ok().body(userService.getUserAuthority(userId));
     }
 
