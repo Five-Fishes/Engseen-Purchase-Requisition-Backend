@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-<div>Hello World</div>
+<h1>Purchase Order</h1>
+<div>Created Date: <span th:text="${poHeader.created}"></span></div>
+<div>PO Number: <span th:text="${poHeader.poNumber}">-</span></div>
+<table>
+    <thead>
+    <tr>
+        <th>Item</th>
+        <th>OrderQuantity</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="poDetail : ${poDetailList}">
+        <td th:text="${poDetail.item}">-</td>
+        <td th:text="${poDetail.orderQuantity}">-</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

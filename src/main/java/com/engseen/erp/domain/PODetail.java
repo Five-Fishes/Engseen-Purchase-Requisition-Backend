@@ -1,10 +1,13 @@
 package com.engseen.erp.domain;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
+@ToString
 @Table(name = "PODetailViewLegacy", schema = "dbo")
 public class PODetail {
 
@@ -14,7 +17,7 @@ public class PODetail {
     private Integer id;
 
     @Column(name = "PONumber", nullable = false, length = 30)
-    private String pONumber;
+    private String poNumber;
 
     @Column(name = "LineNumber", nullable = false)
     private Integer lineNumber;
@@ -379,12 +382,12 @@ public class PODetail {
         this.lineNumber = lineNumber;
     }
 
-    public String getPONumber() {
-        return pONumber;
+    public String getPoNumber() {
+        return poNumber;
     }
 
-    public void setPONumber(String pONumber) {
-        this.pONumber = pONumber;
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
 
     public Integer getId() {

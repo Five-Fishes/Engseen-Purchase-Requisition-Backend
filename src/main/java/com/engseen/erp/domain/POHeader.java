@@ -14,7 +14,7 @@ public class POHeader {
     private Integer id;
 
     @Column(name = "PONumber", nullable = false, length = 30)
-    private String pONumber;
+    private String poNumber;
 
     @Column(name = "VendorID", nullable = false, length = 12)
     private String vendorID;
@@ -654,12 +654,12 @@ public class POHeader {
         this.vendorID = vendorID;
     }
 
-    public String getPONumber() {
-        return pONumber;
+    public String getPoNumber() {
+        return poNumber;
     }
 
-    public void setPONumber(String pONumber) {
-        this.pONumber = pONumber;
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
 
     public Integer getId() {
