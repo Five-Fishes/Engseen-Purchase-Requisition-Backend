@@ -6,6 +6,10 @@ import java.util.Objects;
 
 public final class TimestampUtil {
 
+    private TimestampUtil() {
+        throw new AssertionError("TimestampUtil should not be instantiated!");
+    }
+
     /**
      * <P>Utility function as temporary work around to solve null Instant to Timestamp conversion
      *
