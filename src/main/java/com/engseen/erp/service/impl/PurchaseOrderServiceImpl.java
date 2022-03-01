@@ -26,7 +26,6 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_ZIP_CODE;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -153,7 +152,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
                     poDetail.getPoNumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(),
-                    poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), TimestampUtil.fromInstant(poDetail.getETADate()),
+                    poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), TimestampUtil.fromInstant(poDetail.getEtaDate()),
                     TimestampUtil.fromInstant(poDetail.getNeedDate()), TimestampUtil.fromInstant(poDetail.getDateLastReceipt()), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(),
                     poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(),
                     poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(),
@@ -230,7 +229,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PODetail poDetail = new PODetail();
             poDetail.setPoNumber(poHeader.getPoNumber());
             poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
-            poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
+            poDetail.setEtaDate(purchaseItem.getDeliveryDate().toInstant());
             poDetail.setLineNumber(poDetails.size() + 1);
             poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
             double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
@@ -311,7 +310,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
-        String templatePath = AppConstant.EMAIL_TEMPLATE_DIRECTORY + "po-pdf-template";
+        String templatePath = AppConstant.PDF_TEMPLATE_DIRECTORY + "po-pdf-template";
         Context poPDFContext = new Context();
 
         poHeaderRepository.findById(purchaseOrderId.intValue())
