@@ -4,8 +4,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-import lombok.ToString;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -53,7 +51,7 @@ public class PODetail {
     private BigDecimal blanketQuantity;
 
     @Column(name = "ETADate", nullable = false)
-    private Instant eTADate;
+    private Instant etaDate;
 
     @Column(name = "NeedDate")
     private Instant needDate;
@@ -297,12 +295,12 @@ public class PODetail {
         this.needDate = needDate;
     }
 
-    public Instant getETADate() {
-        return eTADate;
+    public Instant getEtaDate() {
+        return etaDate;
     }
 
-    public void setETADate(Instant eTADate) {
-        this.eTADate = eTADate;
+    public void setEtaDate(Instant eTADate) {
+        this.etaDate = eTADate;
     }
 
     public BigDecimal getBlanketQuantity() {
