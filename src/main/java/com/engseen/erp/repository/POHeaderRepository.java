@@ -17,6 +17,8 @@ public interface POHeaderRepository extends JpaRepository<POHeader, Integer> {
 
     Page<POHeader> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable);
 
+    POHeader findOneByPoNumber(String poNumber);
+
     @Query(value = "EXEC POHeaderInsert :PONumber, :VendorID, :Buyer, :Contact, :Phone, :OurContact, :OrderStatus, :OriginalPODate, :PORevisionDate, :POReference, :PORevision, :LocationID, :ShipTo, :Address1, :Address2, :City, :State, :ZipCode, :Country, :ShipVia, :FOBPoint, :StandardTerms, :Cash1Percent, :Cash1Days, :Cash2Percent, :Cash2Days, :NetDays, :DueDay, :CutoffDay, :MonthsDelay, :BlanketOrder, :PrintPO, :Contract, :ControllingCurrency, :CurrencyCode, :ExchangeRate, :Remark, :Less1, :Less1Amount, :Less2, :Less2Amount, :OrderTotal, :NoOfLines, :PrintPONo, :CounterID, :POType, :ApprovalStatus, :CurrentApprover, :Imported, :GST, :Created, :CreatedBy, :Modified, :ModifiedBy, :Accessed, :AccessedBy, :PurchaseRequestApprovalId, :Emailed, :Downloaded", nativeQuery = true)
     POHeader insertPOHeader(@Param("PONumber") String PONumber, @Param("VendorID") String VendorID, @Param("Buyer") String Buyer, @Param("Contact") String Contact, @Param("Phone") String Phone, @Param("OurContact") String OurContact,
                             @Param("OrderStatus") Character OrderStatus, @Param("OriginalPODate") Timestamp OriginalPODate, @Param("PORevisionDate") Timestamp PORevisionDate, @Param("POReference") String POReference, @Param("PORevision") String PORevision, @Param("LocationID") Integer LocationID,

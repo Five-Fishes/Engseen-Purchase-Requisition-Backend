@@ -136,7 +136,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
-            poHeader = poHeaderRepository.insertPOHeader(poHeader.getPoNumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
+            poHeaderRepository.insertPOHeader(poHeader.getPoNumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
                     poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
                     poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
                     poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
@@ -147,6 +147,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     poHeader.getImported(), poHeader.getGst(), TimestampUtil.fromInstant(poHeader.getCreated()), poHeader.getCreatedBy(), TimestampUtil.fromInstant(poHeader.getModified()), poHeader.getModifiedBy(),
                     TimestampUtil.fromInstant(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
             );
+            poHeader = poHeaderRepository.findOneByPoNumber(poHeader.getPoNumber());
+
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
