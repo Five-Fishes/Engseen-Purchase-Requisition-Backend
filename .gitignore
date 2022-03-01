@@ -40,3 +40,6 @@ out/
 ### Log File
 **.log
 /nohup.out
+
+### Mac OS
+.DS_Store
