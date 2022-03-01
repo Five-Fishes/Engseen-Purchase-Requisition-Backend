@@ -28,7 +28,7 @@ public class Inventory {
     private String storeBin;
 
     @Column(name = "InventoryCode")
-    private char inventoryCode;
+    private Character inventoryCode;
 
     @Column(name = "Quantity")
     private BigDecimal quantity;
@@ -37,7 +37,7 @@ public class Inventory {
     private BigDecimal unitCost;
 
     @Column(name = "InspectionCode")
-    private char inspectionCode;
+    private Character inspectionCode;
 
     @Column(name = "ReceiptID")
     private int receiptID;
@@ -61,25 +61,25 @@ public class Inventory {
     private String referenceNo2;
 
     @Column(name = "OrderType")
-    private char orderType;
+    private Character orderType;
 
     @Column(name = "OrderNumber")
     private String orderNumber;
 
     @Column(name = "LineNumber")
-    private int lineNumber;
+    private Integer lineNumber;
 
     @Column(name = "FromID")
-    private int fromID;
+    private Integer fromID;
 
     @Column(name = "ToOrderType")
-    private char toOrderType;
+    private Character toOrderType;
 
     @Column(name = "ToOrderNumber")
     private String toOrderNumber;
 
     @Column(name = "ToLineNumber")
-    private int toLineNumber;
+    private Integer toLineNumber;
 
     @Column(name = "Weight")
     private BigDecimal weight;
@@ -134,11 +134,11 @@ public class Inventory {
         this.storeBin = storeBin;
     }
 
-    public char getInventoryCode() {
+    public Character getInventoryCode() {
         return inventoryCode;
     }
 
-    public void setInventoryCode(char inventoryCode) {
+    public void setInventoryCode(Character inventoryCode) {
         this.inventoryCode = inventoryCode;
     }
 
@@ -158,11 +158,11 @@ public class Inventory {
         this.unitCost = unitCost;
     }
 
-    public char getInspectionCode() {
+    public Character getInspectionCode() {
         return inspectionCode;
     }
 
-    public void setInspectionCode(char inspectionCode) {
+    public void setInspectionCode(Character inspectionCode) {
         this.inspectionCode = inspectionCode;
     }
 
@@ -222,11 +222,11 @@ public class Inventory {
         this.referenceNo2 = referenceNo2;
     }
 
-    public char getOrderType() {
+    public Character getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(char orderType) {
+    public void setOrderType(Character orderType) {
         this.orderType = orderType;
     }
 
@@ -238,27 +238,27 @@ public class Inventory {
         this.orderNumber = orderNumber;
     }
 
-    public int getLineNumber() {
+    public Integer getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(int lineNumber) {
+    public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
 
-    public int getFromID() {
+    public Integer getFromID() {
         return fromID;
     }
 
-    public void setFromID(int fromID) {
+    public void setFromID(Integer fromID) {
         this.fromID = fromID;
     }
 
-    public char getToOrderType() {
+    public Character getToOrderType() {
         return toOrderType;
     }
 
-    public void setToOrderType(char toOrderType) {
+    public void setToOrderType(Character toOrderType) {
         this.toOrderType = toOrderType;
     }
 
@@ -270,11 +270,11 @@ public class Inventory {
         this.toOrderNumber = toOrderNumber;
     }
 
-    public int getToLineNumber() {
+    public Integer getToLineNumber() {
         return toLineNumber;
     }
 
-    public void setToLineNumber(int toLineNumber) {
+    public void setToLineNumber(Integer toLineNumber) {
         this.toLineNumber = toLineNumber;
     }
 
