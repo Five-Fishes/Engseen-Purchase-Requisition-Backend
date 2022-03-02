@@ -7,8 +7,7 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-
-@ToString
+ 
 @Entity
 @ToString
 @Table(name = "PODetailViewLegacy", schema = "dbo")
