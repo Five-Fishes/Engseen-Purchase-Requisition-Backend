@@ -1,5 +1,8 @@
 package com.engseen.erp.controller.rest;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +13,10 @@ import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Rest Controller for managing {@link com.engseen.erp.entity.PurchaseOrder}
+ * Rest Controller for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
  */
 @RequestMapping("/api/purchase-order")
 @RestController
@@ -56,7 +62,7 @@ public class PurchaseOrderController {
      * {@code POST /purchase-order/{purchaseRequestApprovalId}} : Issue Purchase Order based on Purchase Request Approval Id
      * 
      * @param purchaseRequestApprovalId Id of Purchase Request Approval to Issue PO
-     * @throws Exception
+     * @throws Exception error while issuing PO
      */
     @PostMapping(value="/{purchaseRequestApprovalId}")
     public ResponseEntity<List<PurchaseOrderDto>> issuePurchaseOrder(@PathVariable Long purchaseRequestApprovalId) throws Exception {
@@ -81,21 +87,26 @@ public class PurchaseOrderController {
 
     /**
      * {@code POST /purchase-order/download/{purchaseOrderId}} : Download Purchase Order
-     * 
+     *
      * @param purchaseOrderId Id of Purchase Order
      */
-    @PostMapping(value="/download/{purchaseOrderId}")
-    public ResponseEntity<String> downloadPurchaseOrder(@PathVariable Long purchaseOrderId) {
+    @PostMapping(value = "/download/{purchaseOrderId}")
+    public ResponseEntity<Resource> downloadPurchaseOrder(@PathVariable Long purchaseOrderId) throws IOException {
         log.info("REST Request to downloadPurchaseOrder with Id: {}", purchaseOrderId);
-        String fileBase64String = purchaseOrderService.downloadPO(purchaseOrderId);
+
+        File poPdfFile = purchaseOrderService.downloadPOFile(purchaseOrderId);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(poPdfFile));
+
         return ResponseEntity.ok()
-            .body(fileBase64String);
+                .contentLength(poPdfFile.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     /**
-     * {@code POST /purchase-order/download-email/{purchaseRequestApprovalId}} : Download and Emaill all Purchase Order based on purchaseRequestApprovalId
+     * {@code POST /purchase-order/download-email/{purchaseRequestApprovalId}} : Download and Email all Purchase Order based on purchaseRequestApprovalId
      * 
-     * @param purchaseOrderId Id of Purchase Order
+     * @param purchaseRequestApprovalId Id of Purchase Request Approval
      */
     @PostMapping(value="/download-email/{purchaseRequestApprovalId}")
     public ResponseEntity<?> downloadAndEmailByPurchaseRequestApprvoalId(@PathVariable Long purchaseRequestApprovalId) throws Exception {

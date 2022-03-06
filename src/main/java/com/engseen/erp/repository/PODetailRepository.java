@@ -2,6 +2,7 @@ package com.engseen.erp.repository;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.engseen.erp.domain.PODetail;
 
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PODetailRepository extends JpaRepository<PODetail, Integer> {
+
+    List<PODetail> findAllByPoNumber(String PONumber);
 
     @Query(value = "EXEC PODetailInsert :PONumber, :LineNumber, :Item, :LineType, :LineSelector, :OrderQuantity, :QuantityReceived, :QuantityInInspection, :QuantityOnHand, :QuantityOnHold, :BlanketQuantity, :ETADate, :NeedDate, :DateLastReceipt, :LeadTime, :Discount, :LineStatus, :UnitPrice, :ExtendedPrice, :Remark, :VendorItem, :VIDescription, :VIConversion, :VIUnitOfMeasure, :VIOrderQuantity, :VIUnitPrice, :ItemFailure, :PrintUOM, :DepartmentCode, :SegmentCode, :Created, :CreatedBy, :Modified, :ModifiedBy", nativeQuery = true)
     PODetail insertPODetail(@Param("PONumber") String PONumber, @Param("LineNumber") Integer LineNumber, @Param("Item") String Item, @Param("LineType") Character LineType, @Param("LineSelector") Character LineSelector, @Param("OrderQuantity") BigDecimal OrderQuantity,

@@ -3,8 +3,9 @@ package com.engseen.erp.constant;
 import java.math.BigDecimal;
 
 public class AppConstant {
-    
+
     public static String EMAIL_TEMPLATE_DIRECTORY = "email-template/";
+    public static String PDF_TEMPLATE_DIRECTORY = "pdf-template/";
 
     // Purchase Order Default Value - PO Header Table
     public static String PO_HEADER_BUYER = "CHEAH";

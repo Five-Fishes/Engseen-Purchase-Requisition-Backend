@@ -24,21 +24,13 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_STATE;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ZIP_CODE;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
@@ -46,70 +38,58 @@ import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
-import com.engseen.erp.service.EmailService;
-import com.engseen.erp.service.PurchaseOrderService;
-import com.engseen.erp.service.PurchaseRequestApprovalItemService;
-import com.engseen.erp.service.PurchaseRequestApprovalService;
-import com.engseen.erp.service.VendorService;
+import com.engseen.erp.service.*;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 
+import com.engseen.erp.util.TimestampUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 /**
  * Service Implementation for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
  */
 @Service
+@RequiredArgsConstructor
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
 
-    private POHeaderRepository poHeaderRepository;
-    private PODetailRepository poDetailRepository;
-    private PurchaseRequestApprovalService purchaseRequestApprovalService;
-    private PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
-    private EmailService emailService;
-    private VendorService vendorService;
-
-    @Autowired
-    public PurchaseOrderServiceImpl(POHeaderRepository poHeaderRepository, PODetailRepository poDetailRepository,
-        PurchaseRequestApprovalService purchaseRequestApprovalService, PurchaseRequestApprovalItemService purchaseRequestApprovalItemService,
-        EmailService emailService, VendorService vendorService
-    ) {
-        this.poHeaderRepository = poHeaderRepository;
-        this.poDetailRepository = poDetailRepository;
-        this.purchaseRequestApprovalService = purchaseRequestApprovalService;
-        this.purchaseRequestApprovalItemService = purchaseRequestApprovalItemService;
-        this.emailService = emailService;
-        this.vendorService = vendorService;
-    }
+    private final POHeaderRepository poHeaderRepository;
+    private final PODetailRepository poDetailRepository;
+    private final PurchaseRequestApprovalService purchaseRequestApprovalService;
+    private final PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
+    private final EmailService emailService;
+    private final VendorService vendorService;
+    private final TemplateEngine templateEngine;
+    private final HtmlToPdfService htmlToPdfService;
 
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseOrderRequestApprovalDto> findAllGroupByPurchaseRequestApproval(Pageable pageable) {
         log.debug("Request to findAll Purchase Order group by Purchase Request Approval");
         return purchaseRequestApprovalService.findAll(pageable)
-            .stream()
-            .map(purchaseRequestApproval -> {
-                PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
-                purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
-                purchaseOrderRequestApprovalDto.setCreatedDate(purchaseRequestApproval.getCreatedDate());
-                purchaseOrderRequestApprovalDto.setPurchaseOrders(
-                    findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged())
-                );
-                return purchaseOrderRequestApprovalDto;
-            })
-            .collect(Collectors.toList());
+                .stream()
+                .map(purchaseRequestApproval -> {
+                    PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
+                    purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
+                    purchaseOrderRequestApprovalDto.setCreatedDate(purchaseRequestApproval.getCreatedDate());
+                    purchaseOrderRequestApprovalDto.setPurchaseOrders(
+                            findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged())
+                    );
+                    return purchaseOrderRequestApprovalDto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -151,30 +131,32 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             POHeader poHeader = constructPOHeader(vendorPurchaseRequestItem.getKey(), purchaseRequestApprovalId);
             List<PODetail> poDetailList = constructPODetail(vendorPurchaseRequestItem.getValue(), poHeader);
             BigDecimal orderTotalAmount = poDetailList.stream()
-                .map(PODetail::getExtendedPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(PODetail::getExtendedPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             poHeader.setOrderTotal(orderTotalAmount);
             log.debug("Saving PO Header: {}", poHeader);
-            poHeader = poHeaderRepository.insertPOHeader(poHeader.getPONumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
-                poHeader.getOrderStatus(), Timestamp.from(poHeader.getOriginalPODate()), Timestamp.from(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
-                poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
-                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
-                poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
-                poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
-                poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
-                poHeader.getNoOfLines(), poHeader.getPrintPONo(), poHeader.getCounterID(), poHeader.getPOType(), poHeader.getApprovalStatus(), poHeader.getCurrentApprover(),
-                poHeader.getImported(), poHeader.getGst(), Timestamp.from(poHeader.getCreated()), poHeader.getCreatedBy(), Timestamp.from(poHeader.getModified()), poHeader.getModifiedBy(),
-                Timestamp.from(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
+            poHeaderRepository.insertPOHeader(poHeader.getPoNumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
+                    poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                    poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
+                    poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
+                    poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
+                    poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
+                    poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
+                    poHeader.getNoOfLines(), poHeader.getPrintPONo(), poHeader.getCounterID(), poHeader.getPOType(), poHeader.getApprovalStatus(), poHeader.getCurrentApprover(),
+                    poHeader.getImported(), poHeader.getGst(), TimestampUtil.fromInstant(poHeader.getCreated()), poHeader.getCreatedBy(), TimestampUtil.fromInstant(poHeader.getModified()), poHeader.getModifiedBy(),
+                    TimestampUtil.fromInstant(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
             );
+            poHeader = poHeaderRepository.findOneByPoNumber(poHeader.getPoNumber());
+
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
             poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(
-                poDetail.getPONumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(), 
-                poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), Timestamp.from(poDetail.getETADate()),
-                Timestamp.from(poDetail.getNeedDate()), Timestamp.from(poDetail.getDateLastReceipt()), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(),
-                poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(), 
-                poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
-                Timestamp.from(poDetail.getCreated()), poDetail.getCreatedBy(), Timestamp.from(poDetail.getModified()), poDetail.getModifiedBy())
+                    poDetail.getPoNumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(),
+                    poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), TimestampUtil.fromInstant(poDetail.getEtaDate()),
+                    TimestampUtil.fromInstant(poDetail.getNeedDate()), TimestampUtil.fromInstant(poDetail.getDateLastReceipt()), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(),
+                    poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(),
+                    poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(),
+                    TimestampUtil.fromInstant(poDetail.getCreated()), poDetail.getCreatedBy(), TimestampUtil.fromInstant(poDetail.getModified()), poDetail.getModifiedBy())
             );
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
@@ -192,7 +174,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Request to constructPOHeader with vendorId: {}, purchaseRequestApprovalId: {}", vendorId, purchaseRequestApprovalId);
         POHeader poHeader = new POHeader();
         poHeader.setVendorID(vendorId);
-        poHeader.setPONumber(generatePONumber(vendorId));
+        poHeader.setPoNumber(generatePONumber(vendorId));
         poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
         poHeader.setOriginalPODate(Instant.now());
         poHeader.setPORevisionDate(Instant.now());
@@ -210,7 +192,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         poHeader.setCreated(Instant.now());
         poHeader.setCreatedBy("System");
-        
+
         poHeader.setBuyer(PO_HEADER_BUYER);
         poHeader.setPhone(PO_HEADER_PHONE);
         poHeader.setShipTo(PO_HEADER_SHIP_TO);
@@ -245,9 +227,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PODetail> poDetails = new ArrayList<>();
         purchaseRequestApprovalItemList.forEach(purchaseItem -> {
             PODetail poDetail = new PODetail();
-            poDetail.setPONumber(poHeader.getPONumber());
+            poDetail.setPoNumber(poHeader.getPoNumber());
             poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
-            poDetail.setETADate(purchaseItem.getDeliveryDate().toInstant());
+            poDetail.setEtaDate(purchaseItem.getDeliveryDate().toInstant());
             poDetail.setLineNumber(poDetails.size() + 1);
             poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
             double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
@@ -279,7 +261,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("PO Header: {}", poHeader);
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
         purchaseOrderDto.setId(Long.valueOf(poHeader.getId()));
-        purchaseOrderDto.setPoNumber(poHeader.getPONumber());
+        purchaseOrderDto.setPoNumber(poHeader.getPoNumber());
         purchaseOrderDto.setRevisionDate(Date.from(poHeader.getPORevisionDate()));
         purchaseOrderDto.setPurchaseRequisitionApprovalId(poHeader.getPurchaseRequestApprovalId());
         purchaseOrderDto.setEmailed(poHeader.getEmailed());
@@ -308,7 +290,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         // Dummy File Attachment
         File dummyFile = File.createTempFile("temp-file-name", ".tmp");
         dummyFile.deleteOnExit();
-        BufferedWriter out = new BufferedWriter (new FileWriter(dummyFile));
+        BufferedWriter out = new BufferedWriter(new FileWriter(dummyFile));
         out.write("Dummy Test File");
         out.close();
         emailContent.setPoAttachment(dummyFile);
@@ -316,10 +298,31 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public String downloadPO(Long purchaseOrderId) {
+    public String downloadPO(Long purchaseOrderId) throws IOException { // TODO: [LU] change method naming to a more explicit naming
         log.debug("Request to download PO by Purchase Order Id");
-        // TODO Auto-generated method stub
-        return null;
+        File poPdf = generatePoPdfFile(purchaseOrderId);
+        return Base64.getEncoder().encodeToString(new FileInputStream(poPdf).readAllBytes());
     }
-    
+
+    @Override
+    public File downloadPOFile(Long purchaseOrderId) throws IOException {
+        return generatePoPdfFile(purchaseOrderId);
+    }
+
+    private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
+        String templatePath = AppConstant.PDF_TEMPLATE_DIRECTORY + "po-pdf-template";
+        Context poPDFContext = new Context();
+
+        poHeaderRepository.findById(purchaseOrderId.intValue())
+                .ifPresentOrElse(
+                        poHeader -> {
+                            List<PODetail> poDetailList = poDetailRepository.findAllByPoNumber(poHeader.getPoNumber());
+                            poPDFContext.setVariable("poDetailList", poDetailList);
+                            poPDFContext.setVariable("poHeader", poHeader);
+                        },
+                        () -> log.warn("PO have no details")
+                );
+        String poPdf = templateEngine.process(templatePath, poPDFContext);
+        return htmlToPdfService.htmlToPdf(poPdf);
+    }
 }

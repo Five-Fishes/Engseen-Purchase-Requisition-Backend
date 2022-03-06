@@ -18,7 +18,7 @@ public class POHeader {
     private Integer id;
 
     @Column(name = "PONumber", nullable = false, length = 30)
-    private String pONumber;
+    private String poNumber;
 
     @Column(name = "VendorID", nullable = false, length = 12)
     private String vendorID;
@@ -171,10 +171,10 @@ public class POHeader {
     private Long purchaseRequestApprovalId;
 
     @Column(name = "Emailed", nullable = false)
-    private boolean emailed;
+    private Boolean emailed;
 
     @Column(name = "Downloaded", nullable = false)
-    private boolean downloaded;
+    private Boolean downloaded;
 
     @Column(name = "Created")
     private Instant created;
@@ -250,19 +250,19 @@ public class POHeader {
         this.purchaseRequestApprovalId = purchaseRequestApprovalId;
     }
 
-    public boolean getEmailed() {
+    public Boolean getEmailed() {
         return emailed;
     }
 
-    public void setEmailed(boolean emailed) {
+    public void setEmailed(Boolean emailed) {
         this.emailed = emailed;
     }
 
-    public boolean getDownloaded() {
+    public Boolean getDownloaded() {
         return downloaded;
     }
 
-    public void setDownloaded(boolean downloaded) {
+    public void setDownloaded(Boolean downloaded) {
         this.downloaded = downloaded;
     }
 
@@ -658,12 +658,12 @@ public class POHeader {
         this.vendorID = vendorID;
     }
 
-    public String getPONumber() {
-        return pONumber;
+    public String getPoNumber() {
+        return poNumber;
     }
 
-    public void setPONumber(String pONumber) {
-        this.pONumber = pONumber;
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
 
     public Integer getId() {
