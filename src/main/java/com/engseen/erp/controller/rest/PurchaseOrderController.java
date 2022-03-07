@@ -34,7 +34,7 @@ public class PurchaseOrderController {
 
     private final Logger log = LoggerFactory.getLogger(PurchaseOrderController.class);
 
-    private PurchaseOrderService purchaseOrderService;
+    private final PurchaseOrderService purchaseOrderService;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
@@ -114,7 +114,7 @@ public class PurchaseOrderController {
         List<PurchaseOrderDto> purchaseOrderDtoList = purchaseOrderService.findAllByPurchaseRequestApprovalId(purchaseRequestApprovalId, Pageable.unpaged()              );
         for (PurchaseOrderDto purchaseOrderDto : purchaseOrderDtoList) {
             Boolean emailSent = purchaseOrderService.emailPO(purchaseOrderDto.getId());
-            String fileBase64String = purchaseOrderService.downloadPO(purchaseOrderDto.getId());
+            String fileBase64String = purchaseOrderService.downloadPOPdfBase64String(purchaseOrderDto.getId());
         }
         return ResponseEntity.ok()
             .body(null);

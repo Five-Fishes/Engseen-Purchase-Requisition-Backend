@@ -56,7 +56,7 @@ public interface PurchaseOrderService {
      * @param purchaseOrderId exception while generating PO pdf base 64 string
      * @return Base64 encoded String of PO PDF file
      */
-	String downloadPO(Long purchaseOrderId) throws IOException;
+	String downloadPOPdfBase64String(Long purchaseOrderId) throws IOException;
 
 	/**
 	 * Generate PO as PDF file to download

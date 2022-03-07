@@ -25,13 +25,13 @@ import org.thymeleaf.context.Context;
 @Transactional
 public class EmailServiceImpl implements EmailService {
 
-    private Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     @Value("spring.mail.from")
     private String NOREPLY_ADDRESS;
 
-    private JavaMailSender emailSender;
-    private TemplateEngine templateEngine;
+    private final JavaMailSender emailSender;
+    private final TemplateEngine templateEngine;
     
     @Autowired
     public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine) {
@@ -64,7 +64,7 @@ public class EmailServiceImpl implements EmailService {
             return true;
         } catch (Exception e) {
             log.error("Exception on sendEmail: {}", e.getMessage());
-            log.error("Error: {}", e);
+            log.error("Error: ", e);
             return false;
         }
     }
@@ -73,8 +73,7 @@ public class EmailServiceImpl implements EmailService {
     public String constructEmailBodyFromTemplate(String templateName, Context context) {
         log.debug("Request to construct emailBody with template: {}", templateName);
         String templatePath = AppConstant.EMAIL_TEMPLATE_DIRECTORY + templateName;
-        String emailBody = templateEngine.process(templatePath, context);
-        return emailBody;
+        return templateEngine.process(templatePath, context);
     }
     
 }
