@@ -37,13 +37,18 @@ public class ComponentController {
     /**
      * {@code GET /component} : Get all Component by filters
      *
-     * @param component  Name of the component
-     * @param vendor Vendor that supply the component
+     * @param component   Name of the component
+     * @param vendor      Vendor that supply the component
      * @param packingSize PackingSize of a component
-     * @param pageable Pagination Info
+     * @param pageable    Pagination Info
      */
-    @GetMapping(value="")
-    public ResponseEntity<List<ComponentDTO>> getAllComponents(Pageable pageable, @RequestParam (required=false) String component, @RequestParam (required=false) String vendor, @RequestParam (required=false) Integer packingSize){
+    @GetMapping(value = "")
+    public ResponseEntity<List<ComponentDTO>> getAllComponents(
+            @RequestParam(required = false) Pageable pageable,
+            @RequestParam(required = false) String component,
+            @RequestParam(required = false) String vendor,
+            @RequestParam(required = false) Integer packingSize
+    ) {
         log.info("Rest Request to getAllComponents");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Component: {}, Vendor: {}, Packing Size: {}", component, vendor, packingSize);
@@ -58,8 +63,8 @@ public class ComponentController {
      * @param componentCode component code from frontend
      * @return stock balance
      */
-    @GetMapping(value="/stock-balance/{componentCode}")
-    public ResponseEntity<BigDecimal> getAllComponents(@PathVariable String componentCode){
+    @GetMapping(value = "/stock-balance/{componentCode}")
+    public ResponseEntity<BigDecimal> getAllComponents(@PathVariable String componentCode) {
         log.info("Rest Request to getAllComponents");
         log.info("componentCode: {}", componentCode);
         BigDecimal stockBalanceByComponentCode = componentService.getStockBalanceByComponentCode(componentCode);
@@ -70,8 +75,8 @@ public class ComponentController {
     /**
      * {@code POST /component/bulk-search} : Get all Component by filters in bulk
      */
-    @PostMapping(value="/bulk-search")
-    public ResponseEntity<List<ComponentDTO>> bulkGetAllComponents(@RequestBody List<ComponentBulkSearchDTO> componentBulkSearchDTOList){
+    @PostMapping(value = "/bulk-search")
+    public ResponseEntity<List<ComponentDTO>> bulkGetAllComponents(@RequestBody List<ComponentBulkSearchDTO> componentBulkSearchDTOList) {
         log.info("Rest Request to getAllComponents");
         log.debug("Component bulk search DTO: {}", componentBulkSearchDTOList.toString());
         List<ComponentDTO> componentDTOList = componentService.bulkFindAll(componentBulkSearchDTOList);
@@ -83,10 +88,10 @@ public class ComponentController {
     /**
      * {@code POST /component/item-cost} : Get all Component Item COst
      *
-     * @param pageable Pagination Info
+     * @param pageable   Pagination Info
      * @param components Components to search
      */
-    @PostMapping(value="/item-cost")
+    @PostMapping(value = "/item-cost")
     public ResponseEntity<List<ComponentItemCostDTO>> getComponentItemCostByComponents(Pageable pageable, @RequestBody List<ComponentDTO> components) {
         log.info("REST Request to get getComponentItemCostByComponents");
         log.debug("Pagination info: {}", pageable);

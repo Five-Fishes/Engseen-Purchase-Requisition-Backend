@@ -1,7 +1,6 @@
 package com.engseen.erp.repository;
 
 import com.engseen.erp.domain.VendorItem;
-import com.engseen.erp.domain.VendorMaster;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +15,21 @@ import java.util.Optional;
 public interface VendorItemRepository extends JpaRepository<VendorItem, Integer> {
     Page<VendorItem> findAllByItemContaining(Pageable pageable, String item);
 
+    List<VendorItem> findAllByItemContaining(String item);
+
     Page<VendorItem> findAllByViConversionIs(Pageable pageable, BigDecimal viConversion);
 
     Page<VendorItem> findAllByVendorIDContaining(Pageable pageable, String item);
+
+    List<VendorItem> findAllByVendorIDContaining(String item);
 
     Page<VendorItem> findAllByVendorIDContainingOrViConversionIs(Pageable pageable, String item, BigDecimal viConversion);
 
     Page<VendorItem> findAllByItemContainingOrViConversionIs(Pageable pageable, String item, BigDecimal viConversion);
 
-    Page<VendorItem> findAllByItemContainingOrVendorIDContaining(Pageable pageable, String item, String vendorId);
+    Page<VendorItem> findAllByItemContainingOrVendorIDContainingOrderByItemAscVendorIDAsc(Pageable pageable, String item, String vendorId);
+
+    List<VendorItem> findAllByItemContainingOrVendorIDContainingOrderByItemAscVendorIDAsc(String item, String vendorId);
 
     Page<VendorItem> findAllByIdIn(Pageable pageable, List<Integer> idList);
 
