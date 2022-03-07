@@ -14,6 +14,7 @@ public interface ComponentService {
 
     /**
      * Get all Component by search filters
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */
@@ -21,12 +22,14 @@ public interface ComponentService {
 
     /**
      * Get all Component by search filters in bulk
+     *
      * @return the list of entities
      */
     List<ComponentDTO> bulkFindAll(List<ComponentBulkSearchDTO> componentBulkSearchDTOList);
 
     /**
      * Get stock balance of component using componentCode
+     *
      * @param componentCode Item in db
      * @return stock balance
      */

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,7 +39,6 @@ public class ComponentServiceImpl implements ComponentService {
 
     @Override
     public List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize) {
-        // TODO: [LU] Refactor to remove packingSize from request query param as it is a frontend value, now keeping at backend to reduce changes from frontend side
         log.debug("Request to findAll Component by component, vendor and packing size");
 
         List<VendorItem> vendorItemList;
@@ -76,29 +74,65 @@ public class ComponentServiceImpl implements ComponentService {
 
 
         return vendorItemList
-                .parallelStream()
+                .stream()// Use stream(avoid parallel stream) because result sequence should be sorted
                 .map(vendorItemMapper::vendorItemToComponentDTO)
-                .peek(componentDTO -> {
-                    Optional<VendorMaster> vendorMasterOptional = vendorMasterRepository.findByVendorID(componentDTO.getVendorId());
-                    vendorMasterOptional.ifPresent(vendorMaster -> componentDTO.setVendorName(vendorMaster.getVendorName()));
-                })
+                .peek(this::assignVendorName)
+                .peek(componentDTO -> assignPackingSize(componentDTO, packingSize))
                 .collect(Collectors.toList());
+    }
+
+    private void assignVendorName(ComponentDTO componentDTO) {
+        Optional<VendorMaster> vendorMasterOptional = vendorMasterRepository.findByVendorID(componentDTO.getVendorId());
+        vendorMasterOptional.ifPresentOrElse(
+                vendorMaster -> componentDTO.setVendorName(vendorMaster.getVendorName()),
+                () -> componentDTO.setVendorName("")
+        );
+    }
+
+    private void assignPackingSize(ComponentDTO componentDTO, Integer packingSize) {
+        if (Objects.nonNull(packingSize)) {
+            componentDTO.setPackagingSize(BigDecimal.valueOf(packingSize));
+        }
     }
 
     @Override
     public List<ComponentDTO> bulkFindAll(List<ComponentBulkSearchDTO> componentBulkSearchDTOList) {
-        List<ComponentDTO> componentDTOList = new ArrayList<>();
-        componentBulkSearchDTOList.forEach(item -> {
-            ComponentDTO firstFoundItem = findAll(Pageable.ofSize(1), item.getComponentCode(), item.getVendorId(), item.getPackagingSize().intValue()).get(0);
-            componentDTOList.add(firstFoundItem);
-        });
-        return componentDTOList;
+        /*
+        Search Vendor Item for each Element
+         */
+        List<ComponentDTO> componentSearchResult = componentBulkSearchDTOList
+                .stream()// Use stream because sequence is important in next block of code
+                .map(componentBulkSearchDTO -> vendorItemRepository
+                        .findOneByVendorIDAndItem(componentBulkSearchDTO.getVendorId(), componentBulkSearchDTO.getComponentCode())
+                        .orElse(null))
+                .map(vendorItemMapper::vendorItemToComponentDTO)
+                .collect(Collectors.toList());
+
+        /*
+        Map packagingSize to the output list by index
+         */
+        for (int i = 0; i < componentSearchResult.size(); i++) {
+            BigDecimal packagingSize = componentBulkSearchDTOList.get(i).getPackagingSize();
+            ComponentDTO componentDTO = componentSearchResult.get(i);
+            if (Objects.nonNull(componentDTO)) {
+                componentSearchResult.get(i).setPackagingSize(packagingSize);
+            }
+        }
+
+        /*
+        Filter out null result
+         */
+        return componentSearchResult
+                .parallelStream() // Bulk search result sequence is not important, hence using parallel stream
+                .filter(Objects::nonNull)
+                .peek(this::assignVendorName)
+                .collect(Collectors.toList());
     }
 
     @Override
     public BigDecimal getStockBalanceByComponentCode(String componentCode) {
-        List<Inventory> inventoryList = inventoryRepository.findAllByItem(componentCode);
-        return inventoryList
+        return inventoryRepository
+                .findAllByItem(componentCode)
                 .stream()
                 .map(Inventory::getQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

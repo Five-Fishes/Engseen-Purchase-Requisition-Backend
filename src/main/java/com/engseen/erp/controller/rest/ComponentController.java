@@ -37,10 +37,9 @@ public class ComponentController {
     /**
      * {@code GET /component} : Get all Component by filters
      *
-     * @param component   Name of the component
-     * @param vendor      Vendor that supply the component
-     * @param packingSize PackingSize of a component
-     * @param pageable    Pagination Info
+     * @param component Name of the component
+     * @param vendor    Vendor that supply the component
+     * @param pageable  Pagination Info
      */
     @GetMapping(value = "")
     public ResponseEntity<List<ComponentDTO>> getAllComponents(

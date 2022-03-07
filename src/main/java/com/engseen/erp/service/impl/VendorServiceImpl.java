@@ -1,6 +1,8 @@
 package com.engseen.erp.service.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.repository.VendorItemRepository;
@@ -25,9 +27,9 @@ public class VendorServiceImpl implements VendorService {
 
     private final Logger log = LoggerFactory.getLogger(ComponentServiceImpl.class);
 
-    private VendorMasterMapper vendorMasterMapper;
-    private VendorMasterRepository vendorMasterRepository;
-    private VendorItemRepository vendorItemRepository;
+    private final VendorMasterMapper vendorMasterMapper;
+    private final VendorMasterRepository vendorMasterRepository;
+    private final VendorItemRepository vendorItemRepository;
 
     @Autowired
     public VendorServiceImpl(VendorMasterMapper vendorMasterMapper, VendorMasterRepository vendorMasterRepository, VendorItemRepository vendorItemRepository) {
@@ -43,6 +45,24 @@ public class VendorServiceImpl implements VendorService {
 
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public List<VendorMasterDTO> findAll(Pageable pageable, String vendorId) {
+        if (Objects.isNull(pageable)) {
+            return vendorMasterRepository
+                    .findAllByVendorIDContaining(vendorId)
+                    .parallelStream()
+                    .map(vendorMasterMapper::toDto)
+                    .collect(Collectors.toList());
+        } else {
+            return vendorMasterRepository
+                    .findAllByVendorIDContaining(pageable, vendorId)
+                    .toList()
+                    .parallelStream()
+                    .map(vendorMasterMapper::toDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

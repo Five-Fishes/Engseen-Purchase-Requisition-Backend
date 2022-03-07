@@ -17,23 +17,15 @@ public interface VendorItemRepository extends JpaRepository<VendorItem, Integer>
 
     List<VendorItem> findAllByItemContaining(String item);
 
-    Page<VendorItem> findAllByViConversionIs(Pageable pageable, BigDecimal viConversion);
-
     Page<VendorItem> findAllByVendorIDContaining(Pageable pageable, String item);
 
     List<VendorItem> findAllByVendorIDContaining(String item);
-
-    Page<VendorItem> findAllByVendorIDContainingOrViConversionIs(Pageable pageable, String item, BigDecimal viConversion);
-
-    Page<VendorItem> findAllByItemContainingOrViConversionIs(Pageable pageable, String item, BigDecimal viConversion);
 
     Page<VendorItem> findAllByItemContainingOrVendorIDContainingOrderByItemAscVendorIDAsc(Pageable pageable, String item, String vendorId);
 
     List<VendorItem> findAllByItemContainingOrVendorIDContainingOrderByItemAscVendorIDAsc(String item, String vendorId);
 
     Page<VendorItem> findAllByIdIn(Pageable pageable, List<Integer> idList);
-
-    Page<VendorItem> findAllByItemContainingOrVendorIDContainingOrViConversionIs(Pageable pageable, String item, String vendorId, BigDecimal viConversion);
 
 	Optional<VendorItem> findOneByVendorIDAndItem(String vendorId, String item);
 }
