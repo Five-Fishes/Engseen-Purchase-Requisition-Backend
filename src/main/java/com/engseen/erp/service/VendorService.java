@@ -19,6 +19,14 @@ public interface VendorService {
     List<ComponentVendorDTO> findAll(Pageable pageable, List<ComponentDTO> components );
 
     /**
+     * Get all ComponentCostItem
+     * @param pageable the pagination information
+     * @param vendorId vendorId to perform search
+     * @return the list of ComponentItemCost
+     */
+    List<VendorMasterDTO> findAll(Pageable pageable, String vendorId );
+
+    /**
      * Get Vendor based on vendorId
      * @param vendorId the vendorId of Vendor to retrieve
      * @return the vendorMasterDTO
