@@ -136,6 +136,8 @@ VALUES ('1', 'DBECOR300NEWW', 'BEGACRON GOLDEN YELLOW 2RS 200%', 1000.00, 120, '
        ('6', 'COMP-E', 'Component E', 100.00, 102, 'VEN-E', 'Vendor E', 100, '2022-01-20 12:47:52', 10, 2);
 
 --Item Master
+-- noinspection SqlInsertValues
+
 INSERT INTO ItemMaster
     (Item, UnitOfMeasure)
 VALUES ('COMP-A', 'KG'),
