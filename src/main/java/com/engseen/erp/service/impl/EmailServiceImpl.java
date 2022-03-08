@@ -2,6 +2,7 @@ package com.engseen.erp.service.impl;
 
 import javax.mail.internet.MimeMessage;
 
+import com.engseen.erp.config.EmailProperties;
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.dto.EmailContent;
@@ -9,7 +10,6 @@ import com.engseen.erp.service.dto.EmailContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,16 +27,15 @@ public class EmailServiceImpl implements EmailService {
 
     private final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    @Value("spring.mail.from")
-    private String NOREPLY_ADDRESS;
-
     private final JavaMailSender emailSender;
     private final TemplateEngine templateEngine;
-    
+    private final EmailProperties emailProperties;
+
     @Autowired
-    public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine) {
+    public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine, EmailProperties emailProperties) {
         this.emailSender = emailSender;
         this.templateEngine = templateEngine;
+        this.emailProperties = emailProperties;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setFrom(NOREPLY_ADDRESS);
+            helper.setFrom(emailProperties.getFrom());
             helper.setTo(emailContent.getToEmailList().toArray(String[]::new));
             helper.setSubject(emailContent.getSubject());
             helper.setText(emailContent.getBody(), true);
