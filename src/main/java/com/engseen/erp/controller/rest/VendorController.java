@@ -30,7 +30,10 @@ public class VendorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VendorMasterDTO>> findAll(Pageable pageable, String vendorId) {
+    public ResponseEntity<List<VendorMasterDTO>> findAll(
+            @RequestParam(required = false) Pageable pageable,
+            @RequestParam(required = false) String vendorId
+    ) {
         return ResponseEntity.ok(vendorService.findAll(pageable, vendorId));
     }
 }
