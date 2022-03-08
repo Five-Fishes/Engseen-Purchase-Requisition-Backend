@@ -360,13 +360,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param purchaseOrderId ID of POHeader
      */
     private void markPOAsDownloaded(Long purchaseOrderId) {
-        Optional<POHeader> poHeaderOptional = poHeaderRepository.findById(purchaseOrderId.intValue());
-        poHeaderOptional.ifPresent(poHeader -> {
-            poHeader.setDownloaded(true);
-            POHeader updatedPoHeader = poHeaderService.update(poHeader);
-            log.debug("PO ID: {}", purchaseOrderId);
-            log.debug("Updated POHeader{}", updatedPoHeader.toString());
-        });
+        try {
+            Optional<POHeader> poHeaderOptional = poHeaderRepository.findById(purchaseOrderId.intValue());
+            poHeaderOptional.ifPresent(poHeader -> {
+                poHeader.setDownloaded(true);
+                POHeader updatedPoHeader = poHeaderService.update(poHeader);
+                log.debug("PO ID: {}", purchaseOrderId);
+                log.debug("Updated POHeader{}", updatedPoHeader.toString());
+            });
+        } catch (Exception exception) {
+            log.error("Error marking PO as downloaded", exception); // TODO: [LU] inspect why sql error is thrown but entity updated successfully (remove try catch block as exception should not be handled)
+        }
+
     }
 
     /**
@@ -375,10 +380,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param purchaseOrderId ID of POHeader
      */
     private void markPOAsEmailed(Long purchaseOrderId) {
-        Optional<POHeader> poHeaderOptional = poHeaderRepository.findById(purchaseOrderId.intValue());
-        poHeaderOptional.ifPresent(poHeader -> {
-            poHeader.setEmailed(true);
-            poHeaderService.update(poHeader);
-        });
+        try {
+            Optional<POHeader> poHeaderOptional = poHeaderRepository.findById(purchaseOrderId.intValue());
+            poHeaderOptional.ifPresent(poHeader -> {
+                poHeader.setEmailed(true);
+                poHeaderService.update(poHeader);
+            });
+        } catch (Exception exception) {
+            log.error("Error marking PO as emailed", exception); // TODO: [LU] inspect why sql error is thrown but entity updated successfully (remove try catch block as exception should not be handled)
+        }
     }
 }
