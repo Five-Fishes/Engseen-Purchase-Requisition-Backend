@@ -1,5 +1,7 @@
 package com.engseen.erp.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.engseen.erp.domain.PODetail;
@@ -54,9 +56,29 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail) {
         log.debug("Request to constructPurchaseOrderItemDto");
         log.debug("PO Detail: {}", poDetail);
+        // TODO: complete construct of PO Item Dto
         PurchaseOrderItemDto purchaseOrderItemDto = new PurchaseOrderItemDto();
         purchaseOrderItemDto.setId(Long.valueOf(poDetail.getId()));
-        // TODO: complete construct of PO Item
+        purchaseOrderItemDto.setPoNumber(poDetail.getPoNumber());
+        purchaseOrderItemDto.setRemarks(poDetail.getRemark());
+        purchaseOrderItemDto.setDeliveryDate(Date.from(poDetail.getEtaDate()));
+        purchaseOrderItemDto.setOrderQuantityPack(poDetail.getOrderQuantity());
+        // purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity());
+        purchaseOrderItemDto.setReceivedQuantityPack(poDetail.getQuantityReceived());
+        // purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived());
+        BigDecimal oustandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
+        purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
+        // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
+        purchaseOrderItemDto.setReceivingQuantityPack(oustandingQuantity);
+        // purchaseOrderItemDto.setReceivingQuantity(oustandingQuantity);
+        // TODO: TBC Issued Quantity
+        // purchaseOrderItemDto.setUom(poDetail.getVIUnitOfMeasure());
+        // purchaseOrderItemDto.setUomPack(poDetail.getVIUnitOfMeasure());
+        String[] itemStrings = poDetail.getItem().split(" - ");
+        purchaseOrderItemDto.setComponentCode(itemStrings[0]);
+        if (itemStrings.length > 1) {
+            purchaseOrderItemDto.setComponentName(itemStrings[1]);
+        }
         return purchaseOrderItemDto;
     }
     
