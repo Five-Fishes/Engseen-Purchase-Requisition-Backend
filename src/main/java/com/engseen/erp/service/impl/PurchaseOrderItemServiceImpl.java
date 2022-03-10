@@ -2,16 +2,19 @@ package com.engseen.erp.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
 import com.engseen.erp.service.PurchaseOrderItemService;
+import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.PurchaseOrderItemDto;
+import com.engseen.erp.service.dto.VendorMasterDTO;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,9 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
 
     private final PODetailRepository poDetailRepository;
     private final POHeaderRepository poHeaderRepository;
+    private final VendorService vendorService;
+
+    private Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
 
     @Override
     @Transactional(readOnly = true)
@@ -79,7 +85,19 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         if (itemStrings.length > 1) {
             purchaseOrderItemDto.setComponentName(itemStrings[1]);
         }
+        mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber());
         return purchaseOrderItemDto;
+    }
+
+    private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber) {
+        VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.get(poNumber);
+        if (vendorMasterDTO == null) {
+            POHeader poHeader = poHeaderRepository.findOneByPoNumber(poNumber);
+            vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
+            vendorTemporaryCache.put(poNumber, vendorMasterDTO);
+        }
+        purchaseOrderItemDto.setVendorId(vendorMasterDTO.getVendorID());
+        purchaseOrderItemDto.setVendorName(vendorMasterDTO.getVendorName());
     }
     
 }
