@@ -9,6 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * <p>This implementation is to be gradually removed and should not be used in newer codes
+ * <p>This is because IText HTML to PDF rendering provide poor support on CSS
+ */
+@Deprecated(forRemoval = true)
 @Slf4j
 @Service
 @RequiredArgsConstructor
