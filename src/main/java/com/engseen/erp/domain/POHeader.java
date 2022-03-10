@@ -45,10 +45,10 @@ public class POHeader {
     private Instant pORevisionDate;
 
     @Column(name = "POReference", length = 20)
-    private String pOReference;
+    private String poReference;
 
     @Column(name = "PORevision", length = 2)
-    private String pORevision;
+    private String poRevision;
 
     @Column(name = "LocationID")
     private Integer locationID;
@@ -78,7 +78,7 @@ public class POHeader {
     private String shipVia;
 
     @Column(name = "FOBPoint", length = 40)
-    private String fOBPoint;
+    private String fobPoint;
 
     @Column(name = "StandardTerms", nullable = false)
     private Character standardTerms;
@@ -498,12 +498,12 @@ public class POHeader {
         this.standardTerms = standardTerms;
     }
 
-    public String getFOBPoint() {
-        return fOBPoint;
+    public String getFobPoint() {
+        return fobPoint;
     }
 
-    public void setFOBPoint(String fOBPoint) {
-        this.fOBPoint = fOBPoint;
+    public void setFobPoint(String fOBPoint) {
+        this.fobPoint = fOBPoint;
     }
 
     public String getShipVia() {
@@ -578,20 +578,20 @@ public class POHeader {
         this.locationID = locationID;
     }
 
-    public String getPORevision() {
-        return pORevision;
+    public String getPoRevision() {
+        return poRevision;
     }
 
-    public void setPORevision(String pORevision) {
-        this.pORevision = pORevision;
+    public void setPoRevision(String pORevision) {
+        this.poRevision = pORevision;
     }
 
-    public String getPOReference() {
-        return pOReference;
+    public String getPoReference() {
+        return poReference;
     }
 
-    public void setPOReference(String pOReference) {
-        this.pOReference = pOReference;
+    public void setPoReference(String pOReference) {
+        this.poReference = pOReference;
     }
 
     public Instant getPORevisionDate() {

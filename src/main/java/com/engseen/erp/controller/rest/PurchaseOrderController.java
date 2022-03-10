@@ -119,5 +119,10 @@ public class PurchaseOrderController {
         return ResponseEntity.ok()
             .body(null);
     }
+
+    @GetMapping("/po-html/{purchaseOrderId}")
+    public ResponseEntity<String> getPOHtmlString(@PathVariable Long purchaseOrderId) {
+        return ResponseEntity.ok(purchaseOrderService.getPOHtml(purchaseOrderId));
+    }
     
 }
