@@ -319,7 +319,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public File downloadPOFile(Long purchaseOrderId) throws IOException {
         markPOAsDownloaded(purchaseOrderId);
-        return generatePoPdfFile(purchaseOrderId);
+        return getPOPdfViaRestTemplate(purchaseOrderId);
     }
 
     @Override
@@ -349,12 +349,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
-     * Generate PO Pdf file
+     * <p>Generate PO Pdf file:
+     * <ul>
+     *     <li>use {@code getPOPdfViaRestTemplate} instead
+     *     <li>this uses IText which is less powerful in rendering PDF with HTML
+     * </ul>
      *
      * @param purchaseOrderId PO ID
      * @return Generated PDF File
      * @throws IOException IO exception while creating poPdf
      */
+    @Deprecated(forRemoval = true)
     private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
 
         String templatePath = AppConstant.PDF_TEMPLATE_DIRECTORY + "po-pdf-template";
