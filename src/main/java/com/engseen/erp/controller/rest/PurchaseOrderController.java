@@ -137,11 +137,7 @@ public class PurchaseOrderController {
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Vendor Id: {}", vendorId);
         List<PurchaseOrderItemDto> purchaseOrderItemDtoList;
-        if (vendorId == null || vendorId.isBlank()) {
-            purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItem(pageable);
-        } else {
-            purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItemByVendorId(pageable, vendorId);
-        }
+        purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItemByVendorId(pageable, vendorId);
         return ResponseEntity.ok()
             .body(purchaseOrderItemDtoList);
     }

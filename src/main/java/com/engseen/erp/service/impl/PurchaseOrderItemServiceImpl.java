@@ -15,10 +15,12 @@ import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.PurchaseOrderItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,32 +36,27 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private final POHeaderRepository poHeaderRepository;
     private final VendorService vendorService;
 
-    private Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<PurchaseOrderItemDto> findAllOutstandingPurchaseOrderItem(Pageable pageable) {
-        log.debug("Request to findAll Outstanding Purchase Order Item");
-        return poDetailRepository.findAllOutstandingItem(pageable)
-            .map(this::constructPurchaseOrderItemDto)
-            .getContent();
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseOrderItemDto> findAllOutstandingPurchaseOrderItemByVendorId(Pageable pageable, String vendorId) {
         log.debug("Request to findAll Outstanding Purchase Order Item by Vendor Id: {}", vendorId);
-        List<String> poNumberList = poHeaderRepository.findAllByVendorID(Pageable.unpaged(), vendorId)
-            .map(POHeader::getPoNumber)
-            .getContent();
-        log.debug("{} total number of PO for VendorId: {}", poNumberList.size(), vendorId);
-        log.debug("PO Number List: {}", poNumberList);
-        return poDetailRepository.findAllOutstandingItemInPoNumberList(pageable, poNumberList)
-            .map(this::constructPurchaseOrderItemDto)
+        Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
+        Page<PODetail> poDetailPage;
+        if (StringUtils.isBlank(vendorId)) {
+            poDetailPage = poDetailRepository.findAllOutstandingItem(pageable);
+        } else {
+            List<String> poNumberList = poHeaderRepository.findAllByVendorID(Pageable.unpaged(), vendorId)
+                .map(POHeader::getPoNumber)
+                .getContent();
+            log.debug("{} total number of PO for VendorId: {}", poNumberList.size(), vendorId);
+            log.debug("PO Number List: {}", poNumberList);
+            poDetailPage = poDetailRepository.findAllOutstandingItemInPoNumberList(pageable, poNumberList);
+        }
+        return poDetailPage.map(poDetail -> constructPurchaseOrderItemDto(poDetail, vendorTemporaryCache))
             .getContent();
     }
 
-    private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail) {
+    private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail, Map<String, VendorMasterDTO> vendorTemporaryCache) {
         log.debug("Request to constructPurchaseOrderItemDto");
         log.debug("PO Detail: {}", poDetail);
         // TODO: complete construct of PO Item Dto
@@ -85,11 +82,11 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         if (itemStrings.length > 1) {
             purchaseOrderItemDto.setComponentName(itemStrings[1]);
         }
-        mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber());
+        mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber(), vendorTemporaryCache);
         return purchaseOrderItemDto;
     }
 
-    private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber) {
+    private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber, Map<String, VendorMasterDTO> vendorTemporaryCache) {
         VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.get(poNumber);
         if (vendorMasterDTO == null) {
             POHeader poHeader = poHeaderRepository.findOneByPoNumber(poNumber);
