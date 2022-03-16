@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import com.engseen.erp.service.PurchaseOrderItemService;
 import com.engseen.erp.service.PurchaseOrderService;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
+import com.engseen.erp.service.dto.PurchaseOrderItemDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 
 import org.slf4j.Logger;
@@ -36,9 +38,12 @@ public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
 
+    private final PurchaseOrderItemService purchaseOrderItemService;
+
     @Autowired
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, PurchaseOrderItemService purchaseOrderItemService) {
         this.purchaseOrderService = purchaseOrderService;
+        this.purchaseOrderItemService = purchaseOrderItemService;
     }
 
     /**
@@ -118,6 +123,23 @@ public class PurchaseOrderController {
         }
         return ResponseEntity.ok()
             .body(null);
+    }
+
+    /**
+     * {@code GET /purchase-order/outstanding-item} : Get all Purchase Order Outstanding Item
+     * 
+     * @param pageable Pagination Info
+     * @param vendorId VendorId of Purchase Order for filtering
+     */
+    @GetMapping(value="/outstanding-item")
+    public ResponseEntity<List<PurchaseOrderItemDto>> getAllOutstandingPOItem(Pageable pageable, @RequestParam(required = false, name = "vendorId") String vendorId) {
+        log.info("REST Request to getAllOutstandingPOItem");
+        log.debug("Pagination Info: {}", pageable);
+        log.debug("Filter by Vendor Id: {}", vendorId);
+        List<PurchaseOrderItemDto> purchaseOrderItemDtoList;
+        purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItemByVendorId(pageable, vendorId);
+        return ResponseEntity.ok()
+            .body(purchaseOrderItemDtoList);
     }
     
 }
