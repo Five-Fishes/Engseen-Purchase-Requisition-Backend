@@ -5,13 +5,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.engseen.erp.constant.enumeration.POReceiptStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
 import com.engseen.erp.service.PurchaseOrderItemService;
+import com.engseen.erp.service.PurchaseOrderReceiptService;
 import com.engseen.erp.service.VendorService;
+import com.engseen.erp.service.dto.POReceiptDTO;
 import com.engseen.erp.service.dto.PurchaseOrderItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 
@@ -35,6 +40,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private final PODetailRepository poDetailRepository;
     private final POHeaderRepository poHeaderRepository;
     private final VendorService vendorService;
+    private final PurchaseOrderReceiptService purchaseOrderReceiptService;
 
     @Override
     @Transactional(readOnly = true)
@@ -74,6 +80,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
         purchaseOrderItemDto.setReceivingQuantityPack(oustandingQuantity);
         // purchaseOrderItemDto.setReceivingQuantity(oustandingQuantity);
+        purchaseOrderItemDto.setStatus(POReceiptStatus.CONFIRM.name());
         // TODO: TBC Issued Quantity
         // purchaseOrderItemDto.setUom(poDetail.getVIUnitOfMeasure());
         // purchaseOrderItemDto.setUomPack(poDetail.getVIUnitOfMeasure());
@@ -95,6 +102,37 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         }
         purchaseOrderItemDto.setVendorId(vendorMasterDTO.getVendorID());
         purchaseOrderItemDto.setVendorName(vendorMasterDTO.getVendorName());
+    }
+
+    @Override
+    public List<PurchaseOrderItemDto> findAllReceivedPurchaseOrderItemByGrnNo(Pageable pageable, String grnNo) {
+        log.debug("Request to findAll ReceivedPurchaseOrderItem ByGrnNo: {}", grnNo);
+        List<PurchaseOrderItemDto> purchaseOrderItemDtoList = purchaseOrderReceiptService.findAllByGrnNo(pageable, grnNo)
+            .parallelStream()
+            .map(this::convertToPurchaseOrderItemDto)
+            .collect(Collectors.toList());
+        return purchaseOrderItemDtoList;
+    }
+
+    private PurchaseOrderItemDto convertToPurchaseOrderItemDto(POReceiptDTO poReceiptDto) {
+        log.debug("Request to convertToPurchaseOrderItemDto");
+        log.debug("PO Receipt DTO: {}", poReceiptDto);
+        PurchaseOrderItemDto purchaseOrderItemDto = new PurchaseOrderItemDto();
+        Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
+        Optional<PODetail> poDetail = poDetailRepository.findById(poReceiptDto.getPid());
+        if (poDetail.isPresent()) {
+            purchaseOrderItemDto = constructPurchaseOrderItemDto(poDetail.get(), vendorTemporaryCache);
+            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantity().subtract(poDetail.get().getQuantityReceived());
+            purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
+            // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
+        }
+        purchaseOrderItemDto.setItemCost(poReceiptDto.getUnitCost().doubleValue());
+        purchaseOrderItemDto.setReceivedQuantityPack(poReceiptDto.getQuantityRecevied());
+        // purchaseOrderItemDto.setReceivedQuantity(poReceiptDto.getQuantityReceived());
+        purchaseOrderItemDto.setReceivingQuantityPack(BigDecimal.ZERO);
+        purchaseOrderItemDto.setReceivingQuantity(BigDecimal.ZERO);
+        purchaseOrderItemDto.setStatus(POReceiptStatus.RECEIVED.name());
+        return purchaseOrderItemDto;
     }
     
 }

@@ -141,5 +141,25 @@ public class PurchaseOrderController {
         return ResponseEntity.ok()
             .body(purchaseOrderItemDtoList);
     }
+
+    /**
+     * {@code GET /purchase-order/{grnNo}/outstanding-item/{vendorId}} : Get all Purchase Order Receipt
+     *
+     * @param grnNo GRN No for received PO Item
+     * @param vendorId VendorId for outstandin PO Item
+     */
+    @GetMapping(value = "/{grnNo}/outstanding-item/{vendorId}")
+    public ResponseEntity<List<PurchaseOrderItemDto>> getGrnPOReceiptWithVendorOutstandingPO(@RequestParam("vendorId") String vendorId, @RequestParam("grnNo") String grnNo) {
+        log.info("REST Request to getGrnPOReceiptWithVendorOutstandingPO");
+        log.debug("Vendor ID: {}", vendorId);
+        log.debug("GRN No: {}", grnNo);
+
+        List<PurchaseOrderItemDto> purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItemByVendorId(Pageable.unpaged(), vendorId);
+        List<PurchaseOrderItemDto> purchaseOrderItemCompletedList = purchaseOrderItemService.findAllReceivedPurchaseOrderItemByGrnNo(Pageable.unpaged(), grnNo);
+        purchaseOrderItemDtoList.addAll(purchaseOrderItemCompletedList);
+        
+        return ResponseEntity.ok()
+            .body(purchaseOrderItemDtoList);
+    }
     
 }
