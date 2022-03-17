@@ -1,3 +1,4 @@
+-- TODO: Add 4 parts DB Object name
 create view [dbo].[POReceiptHeaderViewLegacy]
 as
 select *
