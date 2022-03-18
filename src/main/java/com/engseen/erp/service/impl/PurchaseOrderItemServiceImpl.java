@@ -121,8 +121,10 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
         Optional<PODetail> poDetail = poDetailRepository.findById(poReceiptDto.getPid());
         if (poDetail.isPresent()) {
+            log.debug("PO Detail: {}", poDetail.get());
             purchaseOrderItemDto = constructPurchaseOrderItemDto(poDetail.get(), vendorTemporaryCache);
-            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantity().subtract(poDetail.get().getQuantityReceived());
+            log.debug("Constructed Purchase Order Item Dto: {}", purchaseOrderItemDto);
+            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityRecevied());
             purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
             // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
         }

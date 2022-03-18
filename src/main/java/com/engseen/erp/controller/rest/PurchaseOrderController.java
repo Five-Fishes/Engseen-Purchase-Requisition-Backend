@@ -3,6 +3,7 @@ package com.engseen.erp.controller.rest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -149,17 +150,20 @@ public class PurchaseOrderController {
      * @param vendorId VendorId for outstandin PO Item
      */
     @GetMapping(value = "/{grnNo}/outstanding-item/{vendorId}")
-    public ResponseEntity<List<PurchaseOrderItemDto>> getGrnPOReceiptWithVendorOutstandingPO(@RequestParam("vendorId") String vendorId, @RequestParam("grnNo") String grnNo) {
+    public ResponseEntity<List<PurchaseOrderItemDto>> getGrnPOReceiptWithVendorOutstandingPO(@PathVariable("grnNo") String grnNo, @PathVariable("vendorId") String vendorId) {
         log.info("REST Request to getGrnPOReceiptWithVendorOutstandingPO");
         log.debug("Vendor ID: {}", vendorId);
         log.debug("GRN No: {}", grnNo);
 
         List<PurchaseOrderItemDto> purchaseOrderItemDtoList = purchaseOrderItemService.findAllOutstandingPurchaseOrderItemByVendorId(Pageable.unpaged(), vendorId);
+        log.debug("Outstanding PO Item List: {}", purchaseOrderItemDtoList);
         List<PurchaseOrderItemDto> purchaseOrderItemCompletedList = purchaseOrderItemService.findAllReceivedPurchaseOrderItemByGrnNo(Pageable.unpaged(), grnNo);
-        purchaseOrderItemDtoList.addAll(purchaseOrderItemCompletedList);
+        log.debug("Received Item List by GRN No: {}", purchaseOrderItemCompletedList);
+        List<PurchaseOrderItemDto> resultList = new ArrayList<>(purchaseOrderItemDtoList);
+        resultList.addAll(purchaseOrderItemCompletedList);
         
         return ResponseEntity.ok()
-            .body(purchaseOrderItemDtoList);
+            .body(resultList);
     }
     
 }
