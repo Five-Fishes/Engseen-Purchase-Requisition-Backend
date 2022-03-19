@@ -3,8 +3,6 @@ package com.engseen.erp.service.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.engseen.erp.constant.enumeration.POReceiptStatus;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -80,8 +80,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
         purchaseOrderItemDto.setReceivingQuantityPack(oustandingQuantity);
         // purchaseOrderItemDto.setReceivingQuantity(oustandingQuantity);
-        purchaseOrderItemDto.setStatus(POReceiptStatus.CONFIRM.name());
-        // TODO: TBC Issued Quantity
+        purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
         // purchaseOrderItemDto.setUom(poDetail.getVIUnitOfMeasure());
         // purchaseOrderItemDto.setUomPack(poDetail.getVIUnitOfMeasure());
         String[] itemStrings = poDetail.getItem().split(" - ");
