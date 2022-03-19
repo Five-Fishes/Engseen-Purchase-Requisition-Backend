@@ -2,7 +2,6 @@ package com.engseen.erp.service.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,5 +42,7 @@ public class PurchaseOrderItemDto extends PurchaseRequestItemDto implements Seri
     private BigDecimal receivingQuantity;
 
     private BigDecimal receivingQuantityPack;
+    
+    private String status;
 
 }

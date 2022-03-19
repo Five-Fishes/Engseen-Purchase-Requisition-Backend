@@ -10,4 +10,6 @@ public interface PurchaseOrderItemService {
 
 	List<PurchaseOrderItemDto> findAllOutstandingPurchaseOrderItemByVendorId(Pageable pageable, String vendorId);
 
+	List<PurchaseOrderItemDto> findAllReceivedPurchaseOrderItemByGrnNo(Pageable pageable, String grnNo);
+
 }
