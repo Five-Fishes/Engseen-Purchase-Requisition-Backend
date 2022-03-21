@@ -29,5 +29,13 @@ public interface PurchaseOrderReceiptHeaderService {
      * @return the list of entities.
      */
     List<POReceiptHeaderDTO> findAll(Pageable pageable, Date startDate, Date endDate);
+
+    /**
+     * Creation of New PO Receipt with Inventory Insertion
+     * 
+     * @param poReceiptHeaderDto to be create
+     * @return PO Receipt Header created
+     */
+    POReceiptHeaderDTO createNewPOReceipt(POReceiptHeaderDTO poReceiptHeaderDto);
     
 }

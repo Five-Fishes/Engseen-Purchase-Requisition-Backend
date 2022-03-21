@@ -33,7 +33,7 @@ public class POReceipt {
     private Integer pid;
 
     @Column(name = "QuantityReceived", nullable = false)
-    private BigDecimal quantityRecevied;
+    private BigDecimal quantityReceived;
 
     @Column(name = "QuantityReversed")
     private BigDecimal quantityReversed;

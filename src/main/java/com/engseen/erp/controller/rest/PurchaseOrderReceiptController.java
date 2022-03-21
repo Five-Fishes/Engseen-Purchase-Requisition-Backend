@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.PurchaseOrderReceiptHeaderService;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 
@@ -70,8 +71,9 @@ public class PurchaseOrderReceiptController {
         log.info("REST Request to addPurchaseOrderReceipt");
         log.debug("Request Body PO Receipt Header DTO: {}", poReceiptHeaderDto);
         // TODO: Insert for PO Receipt Header, PO Receipt and related Inventory
+        POReceiptHeaderDTO poReceiptHeaderDTOcreated = purchaseOrderReceiptHeaderService.createNewPOReceipt(poReceiptHeaderDto);
         return ResponseEntity.ok()
-            .body(poReceiptHeaderDto);
+            .body(poReceiptHeaderDTOcreated);
     }
 
 }

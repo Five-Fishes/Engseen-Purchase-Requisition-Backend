@@ -20,7 +20,7 @@ public class POReceiptServiceImpl implements POReceiptService {
     @Override
     public POReceipt insert(POReceipt poReceipt) {
         log.debug("Request to insert POReceipt: {}", poReceipt);
-        poReceiptRepository.insertPOReceipt(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityRecevied(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
+        poReceiptRepository.insertPOReceipt(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityReceived(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
             poReceipt.getInspectionCode(), poReceipt.getIid(), poReceipt.getStoreNo(), poReceipt.getStoreBin(), poReceipt.getInventoryCode(), poReceipt.getLotNo(), 
             poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy());
         return poReceiptRepository.findOneByGrnNoAndPidAndIid(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getIid());
@@ -30,7 +30,7 @@ public class POReceiptServiceImpl implements POReceiptService {
     public POReceipt update(POReceipt poReceipt) {
         log.debug("Request to update POReceipt: {}", poReceipt);
         poReceiptRepository.updatePOReceipt(poReceipt.getId(), 
-            poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityRecevied(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
+            poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityReceived(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
             poReceipt.getInspectionCode(), poReceipt.getIid(), poReceipt.getStoreNo(), poReceipt.getStoreBin(), poReceipt.getInventoryCode(), poReceipt.getLotNo(), 
             poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy());
         return poReceiptRepository.findOneByGrnNoAndPidAndIid(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getIid());

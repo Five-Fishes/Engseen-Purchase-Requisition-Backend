@@ -123,12 +123,12 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             log.debug("PO Detail: {}", poDetail.get());
             purchaseOrderItemDto = constructPurchaseOrderItemDto(poDetail.get(), vendorTemporaryCache);
             log.debug("Constructed Purchase Order Item Dto: {}", purchaseOrderItemDto);
-            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityRecevied());
+            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityReceived());
             purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
             // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
         }
         purchaseOrderItemDto.setItemCost(poReceiptDto.getUnitCost().doubleValue());
-        purchaseOrderItemDto.setReceivedQuantityPack(poReceiptDto.getQuantityRecevied());
+        purchaseOrderItemDto.setReceivedQuantityPack(poReceiptDto.getQuantityReceived());
         // purchaseOrderItemDto.setReceivedQuantity(poReceiptDto.getQuantityReceived());
         purchaseOrderItemDto.setReceivingQuantityPack(BigDecimal.ZERO);
         purchaseOrderItemDto.setReceivingQuantity(BigDecimal.ZERO);

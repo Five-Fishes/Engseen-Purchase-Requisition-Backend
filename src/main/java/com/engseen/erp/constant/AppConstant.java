@@ -34,4 +34,7 @@ public class AppConstant {
     public static char PO_DETAIL_LINE_STATUS = 'R';
     public static BigDecimal PO_DETAIL_QUANTITY_COLUMN = BigDecimal.ZERO;
 
+    // Purchase Order Receipt Header Default Value - PO Receipt Header Table
+    public static char PO_RECEIPT_HEADER_STATUS =  'R';
+
 }
