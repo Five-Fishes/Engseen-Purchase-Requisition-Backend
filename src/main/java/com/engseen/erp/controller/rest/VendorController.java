@@ -1,8 +1,6 @@
 package com.engseen.erp.controller.rest;
 
 import com.engseen.erp.service.VendorService;
-import com.engseen.erp.service.dto.ComponentDTO;
-import com.engseen.erp.service.dto.ComponentVendorDTO;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -29,8 +28,22 @@ public class VendorController {
         this.vendorService = vendorService;
     }
 
+    /**
+     * {@code GET /vendor-master} : Get VendorMaster entity with query and pagination info
+     *
+     * @param pageable pagination info
+     * @param vendorId vendorId
+     * @return List of found VendorMaster entities that matches the provided query
+     */
     @GetMapping
-    public ResponseEntity<List<VendorMasterDTO>> findAll(Pageable pageable, String vendorId) {
+    public ResponseEntity<List<VendorMasterDTO>> findAll(
+            @RequestParam(required = false) Pageable pageable,
+            @RequestParam(required = false) String vendorId
+    ) {
+        log.info("Request to get List of Vendor Master");
+        log.debug("Pagination information: {}", Optional.of(pageable).orElse(Pageable.unpaged()));
+        log.debug("vendorId: {}", Optional.of(vendorId).orElse(""));
+
         return ResponseEntity.ok(vendorService.findAll(pageable, vendorId));
     }
 }
