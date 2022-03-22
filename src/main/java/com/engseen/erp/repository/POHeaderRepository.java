@@ -2,7 +2,6 @@ package com.engseen.erp.repository;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 import com.engseen.erp.domain.POHeader;
 
@@ -57,7 +56,5 @@ public interface POHeaderRepository extends JpaRepository<POHeader, Integer> {
 
     @Query(value = "EXEC POHeaderDelete :ID", nativeQuery = true)
     void deletePOHeader(@Param("ID") Integer ID);
-
-	Page<POHeader> findAllByVendorID(Pageable pageable, String vendorId);
 
 }

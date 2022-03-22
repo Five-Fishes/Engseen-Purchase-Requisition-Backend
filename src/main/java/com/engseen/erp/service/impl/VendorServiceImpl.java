@@ -49,11 +49,6 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public List<VendorMasterDTO> findAll(Pageable pageable, String vendorId) {
-
-        /*
-        check null for vendorId, use empty string to search if it is null
-         */
-        vendorId = Objects.isNull(vendorId) ? "" : vendorId;
         if (Objects.isNull(pageable)) {
             return vendorMasterRepository
                     .findAllByVendorIDContaining(vendorId)

@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.engseen.erp.domain.PODetail;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,14 +35,5 @@ public interface PODetailRepository extends JpaRepository<PODetail, Integer> {
 
     @Query(value = "EXEC PODetailDelete :ID", nativeQuery = true)
     void deletePODetail(@Param("ID")Integer ID);
-
-    @Query("SELECT pd FROM PODetail pd "
-        + "WHERE pd.orderQuantity > pd.quantityReceived ")
-    Page<PODetail> findAllOutstandingItem(Pageable pageable);
-    
-    @Query("SELECT pd FROM PODetail pd "
-        + "WHERE pd.orderQuantity > pd.quantityReceived "
-        + "AND pd.poNumber IN :poNumberList ")
-    Page<PODetail> findAllOutstandingItemInPoNumberList(Pageable pageable, List<String> poNumberList);
 
 }
