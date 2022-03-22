@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.PurchaseOrderReceiptHeaderService;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +58,22 @@ public class PurchaseOrderReceiptController {
         }
         return ResponseEntity.ok()
             .body(poReceiptHeaderDtoList);
+    }
+
+    /**
+     * {@code POST /purchase-order-receipt} : Add new PO Receipt Header, PO Receipt, Inventory Info
+     * 
+     * @param poReceiptHeaderDto PO Receipt Header DTO object to be add
+     * @return
+     */
+    @PostMapping(value = "")
+    public ResponseEntity<POReceiptHeaderDTO> addPurchaseOrderReceipt(@RequestBody POReceiptHeaderDTO poReceiptHeaderDto) {
+        log.info("REST Request to addPurchaseOrderReceipt");
+        log.debug("Request Body PO Receipt Header DTO: {}", poReceiptHeaderDto);
+        // TODO: Insert for PO Receipt Header, PO Receipt and related Inventory
+        POReceiptHeaderDTO poReceiptHeaderDTOcreated = purchaseOrderReceiptHeaderService.createNewPOReceipt(poReceiptHeaderDto);
+        return ResponseEntity.ok()
+            .body(poReceiptHeaderDTOcreated);
     }
 
 }

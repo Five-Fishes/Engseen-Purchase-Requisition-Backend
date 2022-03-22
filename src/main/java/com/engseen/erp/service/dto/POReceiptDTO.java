@@ -14,7 +14,7 @@ public class POReceiptDTO {
     private Integer id;
     private String grnNo;
     private Integer pid;
-    private BigDecimal quantityRecevied;
+    private BigDecimal quantityReceived;
     private BigDecimal quantityReversed;
     private BigDecimal unitCost;
     private BigDecimal origUnitCost;
@@ -27,5 +27,7 @@ public class POReceiptDTO {
     private Integer irid;
     private Instant created;
     private String createdBy;
+
+    private String componentCode;
 
 }
