@@ -3,7 +3,7 @@ package com.engseen.erp.domain;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @ToString
@@ -19,7 +19,7 @@ public class FavouriteVendor {
     private String vendorId;
 
     @Column(name = "CreatedDate")
-    private LocalDateTime createdDate;
+    private Instant createdDate;
 
     @Column(name = "CreatedBy", length = 10)
     private String createdBy;
@@ -32,11 +32,11 @@ public class FavouriteVendor {
         this.createdBy = createdBy;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public Instant getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
 

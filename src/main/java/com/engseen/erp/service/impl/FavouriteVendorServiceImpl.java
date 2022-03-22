@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public class FavouriteVendorServiceImpl implements FavouriteVendorService {
         }
 
         FavouriteVendor favouriteVendorToCreate = favouriteVendorMapper.toEntity(favouriteVendorDTO);
-        favouriteVendorToCreate.setCreatedDate(LocalDateTime.now());
+        favouriteVendorToCreate.setCreatedDate(Instant.now());
 
         return favouriteVendorMapper
                 .toDto(favouriteVendorRepository.save(favouriteVendorToCreate));
