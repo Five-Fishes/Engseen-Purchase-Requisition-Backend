@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class AppConstant {
 
+    public static String DEFAULT_AUDIT_BY = "CHEAH";
     public static String EMAIL_TEMPLATE_DIRECTORY = "email-template/";
     public static String PDF_TEMPLATE_DIRECTORY = "pdf-template/";
 
@@ -36,5 +37,9 @@ public class AppConstant {
 
     // Purchase Order Receipt Header Default Value - PO Receipt Header Table
     public static char PO_RECEIPT_HEADER_STATUS =  'R';
+
+    // Counter Table - Counter Code
+    public static final String COUNTER_CODE_PO = "PO";
+    public static final String COUNTER_CODE_GRN = "GRN";
 
 }

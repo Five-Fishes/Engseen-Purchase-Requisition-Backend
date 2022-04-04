@@ -9,6 +9,7 @@ import com.engseen.erp.domain.Inventory;
 import com.engseen.erp.domain.POReceipt;
 import com.engseen.erp.domain.POReceiptHeader;
 import com.engseen.erp.repository.POReceiptHeaderRepository;
+import com.engseen.erp.service.CounterTableService;
 import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.POReceiptHeaderService;
 import com.engseen.erp.service.POReceiptService;
@@ -43,6 +44,7 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
     private final PurchaseOrderReceiptService purchaseOrderReceiptService;
 
     private final InventoryService inventoryService;
+    private final CounterTableService counterTableService;
 
     @Override
     @Transactional(readOnly = true)
@@ -117,5 +119,19 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
         poReceipt.setCreated(Instant.now());
         poReceipt.setCreatedBy("System");
         return poReceipt;
+    }
+
+    @Override
+    public POReceiptHeaderDTO createPOReceiptHeaderByVendorId(String vendorId) {
+        String counterCode = AppConstant.COUNTER_CODE_GRN;
+        Integer nextGrnNo = counterTableService.getNextCounterValue(counterCode);
+        POReceiptHeader poReceiptHeader = new POReceiptHeader();
+        poReceiptHeader.setVendorID(vendorId);
+        poReceiptHeader.setGrnNo(counterCode + nextGrnNo);
+        poReceiptHeader.setGrnDate(Instant.now());
+        // TODO: complete PO Receipt Header values
+        poReceiptHeader.setCreated(Instant.now());
+        poReceiptHeader.setCreatedBy(AppConstant.DEFAULT_AUDIT_BY);
+        return poReceiptHeaderMapper.toDto(poReceiptHeaderService.insert(poReceiptHeader));
     }
 }
