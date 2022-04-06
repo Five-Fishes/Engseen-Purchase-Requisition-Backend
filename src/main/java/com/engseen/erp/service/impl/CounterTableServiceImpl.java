@@ -14,12 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CounterTableServiceImpl implements CounterTableService {
     
-    private CounterTableRepository counterTableRepository;
+    private final CounterTableRepository counterTableRepository;
 
     @Override
     public Integer getNextCounterValue(String counterCode) {
+        log.info("Request to get Next Counter Value");
         Integer value = 1;
         CounterTable counterTable = getCounterTableByCounterCode(counterCode);
+        log.debug("Counter Table found: {}", counterTable);
         if (counterTable != null) {
             value = counterTable.getLastCounter() + 1;
             counterTable.setLastCounter(value);

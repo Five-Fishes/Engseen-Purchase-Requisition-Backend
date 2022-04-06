@@ -6,7 +6,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE [dbo].[CounterTable]
 (
-    [ID]          BIGINT IDENTITY (1,1) NOT NULL,
+    [ID]          INTEGER IDENTITY (1,1) NOT NULL,
     [CounterCode]    VARCHAR(20)           NOT NULL,
     [CounterMask]    VARCHAR(20),
     [DefaultCounter]    VARCHAR(20),

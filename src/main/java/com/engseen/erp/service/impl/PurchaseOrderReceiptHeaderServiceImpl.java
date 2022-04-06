@@ -15,8 +15,10 @@ import com.engseen.erp.service.POReceiptHeaderService;
 import com.engseen.erp.service.POReceiptService;
 import com.engseen.erp.service.PurchaseOrderReceiptHeaderService;
 import com.engseen.erp.service.PurchaseOrderReceiptService;
+import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.POReceiptDTO;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
+import com.engseen.erp.service.dto.VendorMasterDTO;
 import com.engseen.erp.service.mapper.POReceiptHeaderMapper;
 
 import org.slf4j.Logger;
@@ -45,6 +47,7 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
 
     private final InventoryService inventoryService;
     private final CounterTableService counterTableService;
+    private final VendorService vendorService;
 
     @Override
     @Transactional(readOnly = true)
@@ -123,15 +126,39 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
 
     @Override
     public POReceiptHeaderDTO createPOReceiptHeaderByVendorId(String vendorId) {
+        log.info("Request to createPOReceiptHeaderByVendorId");
+        log.debug("Vendor Id for new PO Receipt Header", vendorId);
         String counterCode = AppConstant.COUNTER_CODE_GRN;
         Integer nextGrnNo = counterTableService.getNextCounterValue(counterCode);
+        String nextGrnNoValue = counterCode + nextGrnNo;
+        POReceiptHeader poReceiptHeader = constructPOReceiptHeader(nextGrnNoValue, vendorId);
+        log.debug("PO Receipt Header to be insert: {}", poReceiptHeader);
+        return poReceiptHeaderMapper.toDto(poReceiptHeaderService.insert(poReceiptHeader));
+    }
+
+    private POReceiptHeader constructPOReceiptHeader(String grnNo, String vendorId) {
+        log.debug("Perform constructPOReceiptHeader");
         POReceiptHeader poReceiptHeader = new POReceiptHeader();
-        poReceiptHeader.setVendorID(vendorId);
-        poReceiptHeader.setGrnNo(counterCode + nextGrnNo);
+        poReceiptHeader.setGrnNo(grnNo);
         poReceiptHeader.setGrnDate(Instant.now());
-        // TODO: complete PO Receipt Header values
+        poReceiptHeader.setStatus(AppConstant.PO_RECEIPT_HEADER_STATUS);
+        poReceiptHeader.setVendorID(vendorId);
+        VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(vendorId);
+        if (AppConstant.PO_HEADER_CURRENCY_CODE_RM.equals(vendorMasterDto.getCurrencyCode())) {
+            poReceiptHeader.setExchangeRate(AppConstant.PO_HEADER_EXCHANGE_RATE_RM);
+        } else {
+            poReceiptHeader.setExchangeRate(AppConstant.PO_HEADER_EXCHANGE_RATE_OTHER);
+        }
+        poReceiptHeader.setDiscountAmount(AppConstant.PO_RECEIPT_HEADER_DISCOUNT_AMOUNT);
+        poReceiptHeader.setGrnType(AppConstant.PO_RECEIPT_HEADER_GRN_TYPE);
+        poReceiptHeader.setInvoiceAmount(AppConstant.PO_RECEIPT_HEADER_INVOICE_AMOUNT);
+        poReceiptHeader.setHold(AppConstant.PO_RECEIPT_HEADER_HOLD);
+        poReceiptHeader.setPaid(AppConstant.PO_RECEIPT_HEADER_PAID);
         poReceiptHeader.setCreated(Instant.now());
         poReceiptHeader.setCreatedBy(AppConstant.DEFAULT_AUDIT_BY);
-        return poReceiptHeaderMapper.toDto(poReceiptHeaderService.insert(poReceiptHeader));
+        poReceiptHeader.setModified(Instant.now());
+        poReceiptHeader.setModifiedBy(AppConstant.DEFAULT_AUDIT_BY);
+        poReceiptHeader.setAccessed(Instant.now());
+        return poReceiptHeader;
     }
 }

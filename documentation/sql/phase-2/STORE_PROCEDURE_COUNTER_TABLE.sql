@@ -2,7 +2,7 @@
 
 -- Create CounterTableUpdate
 CREATE PROCEDURE CounterTableUpdate @ID INTEGER, 
-    @CouterCode VARCHAR(20), @CounterMask VARCHAR(20),  @DefaultCounter VARCHAR(20), @LastCounter INTEGER, @FileName VARCHAR(20)
+    @CounterCode VARCHAR(20), @CounterMask VARCHAR(20),  @DefaultCounter VARCHAR(20), @LastCounter INTEGER, @FileName VARCHAR(20)
 AS
 BEGIN
     SET XACT_ABORT ON;

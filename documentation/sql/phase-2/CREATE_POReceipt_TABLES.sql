@@ -59,3 +59,21 @@ Create Table [dbo].[POReceiptHeader]
     [CustomFormNo] varchar(20)
 );
 GO
+
+--- Alter Decimal column with scale
+ALTER TABLE [dbo].[POReceiptHeader]
+ALTER COLUMN [ExchangeRate] decimal(18, 5);
+GO
+ALTER TABLE [dbo].[POReceiptHeader]
+ALTER COLUMN [DiscountAmount] decimal(18, 2);
+GO
+ALTER TABLE [dbo].[POReceiptHeader]
+ALTER COLUMN [InvoiceAmount] decimal(18, 2);
+GO
+
+ALTER TABLE [dbo].[POReceipt]
+ALTER COLUMN [UnitCost] decimal(18, 2);
+GO
+ALTER TABLE [dbo].[POReceipt]
+ALTER COLUMN [OrigUnitCost] decimal(18, 2);
+GO

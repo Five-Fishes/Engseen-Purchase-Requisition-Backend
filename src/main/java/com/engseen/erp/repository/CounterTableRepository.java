@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CounterTableRepository extends JpaRepository<CounterTable, Long> {
+public interface CounterTableRepository extends JpaRepository<CounterTable, Integer> {
 
     CounterTable findOneByCounterCode(String counterCode);
 
@@ -20,7 +20,7 @@ public interface CounterTableRepository extends JpaRepository<CounterTable, Long
     @SuppressWarnings("UnusedReturnValue")
     @Query(value = "EXEC CounterTableUpdate :ID, :CounterCode, :CounterMask, :DefaultCounter, :LastCounter, :FileName", 
         nativeQuery = true)
-    void updateCounterTable(@Param("ID") Integer id, @Param("CounterCode") String counterCode, @Param("CounterMask") String counterMask,
+    CounterTable updateCounterTable(@Param("ID") Integer id, @Param("CounterCode") String counterCode, @Param("CounterMask") String counterMask,
         @Param("DefaultCounter") String defaultCounter, @Param("LastCounter") Integer lastCounter, @Param("FileName") String fileName);
 
 }
