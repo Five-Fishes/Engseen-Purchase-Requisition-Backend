@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.PurchaseOrderReceiptHeaderService;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 
@@ -61,7 +60,17 @@ public class PurchaseOrderReceiptController {
     }
 
     /**
-     * {@code POST /purchase-order-receipt} : Add new PO Receipt Header, PO Receipt, Inventory Info
+     * {@code POST /purchase-order-receipt} : Add records for receiving of Purchase Order Items
+     * <p>Update PO Detail: increase “QuantityReceived”, “QuantityOnHand”, “PackReceived”, update “DateLastReceipt” with GRNDate</p>
+     * <p>Insert Inventory" for each PO receipt</p>
+     * <p>Insert Inventory Pack: only 1 record per item per location, increase “Pack” if record already exists</p>
+     * <p>Insert InventoryHistory: only 1 record per item per month, increase “QuantityReceived”,”CostReceived” if record already exists</p>
+     * <p>Insert PO Receipt: for each Item</p>
+     * 
+     * <p>If Unit Price changed::</p>
+     * <p>Update ItemMaster: VariableOverheadCost = new price, TotalCost = new price, RolledVariableOverheadCost = new price, TotalRolledCost = new price, Modified, ModifiedBy</p>
+     * <p>Insert HistoryItemMaster: UserAction = “E”, Item = Item Code, VariableOverheadCost = new price, TotalCost = new price, Modified, ModifiedBy</p>
+     * <p>Insert ItemCostBook: with “Updated” set to “N”
      * 
      * @param poReceiptHeaderDto PO Receipt Header DTO object to be add
      * @return

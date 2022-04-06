@@ -7,6 +7,8 @@ public class AppConstant {
     public static String DEFAULT_AUDIT_BY = "CHEAH";
     public static String EMAIL_TEMPLATE_DIRECTORY = "email-template/";
     public static String PDF_TEMPLATE_DIRECTORY = "pdf-template/";
+    public static final String DEFAULT_STORE_NO = "00";
+    public static final String DEFAULT_STORE_BIN = "BACKYARD";
 
     // Purchase Order Default Value - PO Header Table
     public static String PO_HEADER_BUYER = "CHEAH";
@@ -46,5 +48,13 @@ public class AppConstant {
     // Counter Table - Counter Code
     public static final String COUNTER_CODE_PO = "PO";
     public static final String COUNTER_CODE_GRN = "GRN";
+
+    // Item Cost Book
+    public static final Character ITEM_COST_BOOK_UPDATED = 'N';
+
+    // Inventory Default Value
+    public static final char INVENTORY_INVENTORY_CODE = 'O';
+    public static final char INVENTORY_INSPECTION_CODE = 'G';
+    public static final char INVENTORY_ORDER_TYPE = 'P';
 
 }

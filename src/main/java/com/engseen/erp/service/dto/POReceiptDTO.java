@@ -29,5 +29,7 @@ public class POReceiptDTO {
     private String createdBy;
 
     private String componentCode;
+    private BigDecimal receivingQuantity;
+    private BigDecimal receivingQuantityPack;
 
 }

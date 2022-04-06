@@ -16,4 +16,6 @@ public interface ItemMasterRepository extends JpaRepository<ItemMaster, Integer>
     List<ItemMaster> findAllByItemContaining(String item);
 
     Page<ItemMaster> findAllByItemContaining(Pageable pageable, String item);
+
+	ItemMaster findOneByItem(String item);
 }

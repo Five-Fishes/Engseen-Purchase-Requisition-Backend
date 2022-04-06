@@ -1,6 +1,7 @@
 package com.engseen.erp.service.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,10 @@ import java.util.stream.Collectors;
 import com.engseen.erp.constant.enumeration.POReceiptStatus;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
+import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
+import com.engseen.erp.service.PODetailService;
 import com.engseen.erp.service.PurchaseOrderItemService;
 import com.engseen.erp.service.PurchaseOrderReceiptService;
 import com.engseen.erp.service.VendorService;
@@ -39,6 +42,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
 
     private final PODetailRepository poDetailRepository;
     private final POHeaderRepository poHeaderRepository;
+    private final PODetailService poDetailService;
     private final VendorService vendorService;
     private final PurchaseOrderReceiptService purchaseOrderReceiptService;
 
@@ -134,6 +138,29 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         purchaseOrderItemDto.setReceivingQuantity(BigDecimal.ZERO);
         purchaseOrderItemDto.setStatus(POReceiptStatus.RECEIVED.name());
         return purchaseOrderItemDto;
+    }
+
+    @Override
+    public PODetail updatePODetailForPOReceipt(POReceiptDTO poReceiptDto) {
+        log.info("Request to updatePODetailForPOReceipt");
+        log.debug("PO Receipt DTO: {}", poReceiptDto);
+        PODetail poDetail = poDetailRepository.findById(poReceiptDto.getPid())
+            .orElseThrow(() -> new BadRequestException("PO Detail not found with ID: " + poReceiptDto.getPid()));
+        BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantity());
+        if (totalReceivedQuantity.compareTo(poDetail.getOrderQuantity()) > 0) {
+            throw new BadRequestException("Received Quantity cannot be more than Order Quantity");
+        }
+        poDetail.setQuantityReceived(totalReceivedQuantity);
+        BigDecimal totalQuantityOnHand = poDetail.getQuantityOnHand().add(poReceiptDto.getReceivingQuantity());
+        poDetail.setQuantityOnHand(totalQuantityOnHand);
+        // TODO: complete on update of pack quantity
+        // BigDecimal totalReceivedQuantityPack = poDetail.getPackReceived().add(poReceiptDto.getReceivingQuantityPack());
+        // if (totalReceivedQuantityPack.compareTo(poDetail.getOrderPack()) > 0) {
+        //     throw new BadRequestException("Received Pack cannot be more than Order Pack");
+        // }
+        // poDetail.setPackReceived(totalReceivedQuantityPack);
+        poDetail.setDateLastReceipt(Instant.now());
+        return poDetailService.update(poDetail);
     }
     
 }

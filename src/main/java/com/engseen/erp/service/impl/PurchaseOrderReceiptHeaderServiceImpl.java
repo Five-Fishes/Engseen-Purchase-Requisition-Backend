@@ -6,13 +6,18 @@ import java.util.List;
 
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.domain.Inventory;
+import com.engseen.erp.domain.InventoryPack;
+import com.engseen.erp.domain.ItemMaster;
+import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POReceipt;
 import com.engseen.erp.domain.POReceiptHeader;
 import com.engseen.erp.repository.POReceiptHeaderRepository;
 import com.engseen.erp.service.CounterTableService;
+import com.engseen.erp.service.InventoryPackService;
 import com.engseen.erp.service.InventoryService;
+import com.engseen.erp.service.ItemMasterService;
 import com.engseen.erp.service.POReceiptHeaderService;
-import com.engseen.erp.service.POReceiptService;
+import com.engseen.erp.service.PurchaseOrderItemService;
 import com.engseen.erp.service.PurchaseOrderReceiptHeaderService;
 import com.engseen.erp.service.PurchaseOrderReceiptService;
 import com.engseen.erp.service.VendorService;
@@ -41,13 +46,15 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
     private final POReceiptHeaderRepository poReceiptHeaderRepository;
     private final POReceiptHeaderMapper poReceiptHeaderMapper;
     private final POReceiptHeaderService poReceiptHeaderService;
-    private final POReceiptService poReceiptService;
 
     private final PurchaseOrderReceiptService purchaseOrderReceiptService;
+    private final PurchaseOrderItemService purchaseOrderItemService;
 
     private final InventoryService inventoryService;
+    private final InventoryPackService inventoryPackService;
     private final CounterTableService counterTableService;
     private final VendorService vendorService;
+    private final ItemMasterService itemMasterService;
 
     @Override
     @Transactional(readOnly = true)
@@ -80,48 +87,22 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
     @Override
     public POReceiptHeaderDTO createNewPOReceipt(POReceiptHeaderDTO poReceiptHeaderDto) {
         log.debug("Request to createNewPOReceipt with PO Receipt Header DTO: {}", poReceiptHeaderDto);
-        // Insert PO Receipt Header
-        POReceiptHeader poReceiptHeader = poReceiptHeaderService.insert(constructPOReceiptHeader(poReceiptHeaderDto));
+        // Get PO Receipt Header
+        POReceiptHeader poReceiptHeader = poReceiptHeaderRepository.findOneByGrnNo(poReceiptHeaderDto.getGrnNo());
         poReceiptHeaderDto.getPoReceiptDtoList().forEach(poReceiptDto -> {
             log.debug("PO Receipt DTO: {}", poReceiptDto);
+            // Update PO Detail
+            PODetail poDetail = purchaseOrderItemService.updatePODetailForPOReceipt(poReceiptDto);
             // Insert Inventory
-            Inventory inventory = inventoryService.insert(constructInventory(poReceiptDto, poReceiptHeader));
-            // TBC Insert Inventory Receipt
+            Inventory inventory = inventoryService.insertInventoryForPOReceipt(poReceiptDto, poReceiptHeader, poDetail);
+            // Insert Inventory Pack
+            InventoryPack inventoryPack = inventoryPackService.updateInventoryPackForPOReceipt(poReceiptDto);
             // Insert PO Receipt
-            POReceipt poReceipt = poReceiptService.insert(consctructPOReceipt(poReceiptDto, poReceiptHeader, inventory));
+            POReceipt poReceipt = purchaseOrderReceiptService.createPOReceipt(poReceiptDto, poReceiptHeader, inventory);
+            // Update Item Master and Item Cost Book if Unit Price changed
+            ItemMaster itemMaster = itemMasterService.checkAndUpdateUnitPrice(poReceiptDto.getComponentCode(), poReceiptDto.getUnitCost());
         });
         return poReceiptHeaderMapper.toDto(poReceiptHeader);
-    }
-
-    private POReceiptHeader constructPOReceiptHeader(POReceiptHeaderDTO poReceiptHeaderDto) {
-        POReceiptHeader poReceiptHeader = poReceiptHeaderMapper.toEntity(poReceiptHeaderDto);
-        poReceiptHeader.setStatus(AppConstant.PO_RECEIPT_HEADER_STATUS);
-        poReceiptHeader.setCreated(Instant.now());
-        poReceiptHeader.setCreatedBy("System");
-        return poReceiptHeader;
-    }
-
-    private Inventory constructInventory(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader) {
-        Inventory inventory = new Inventory();
-        inventory.setItem(poReceiptDto.getComponentCode());
-        inventory.setReceiptID(poReceiptHeader.getId());
-        inventory.setReceiptDate(Date.from(poReceiptHeader.getGrnDate()));
-        inventory.setCreated(new Date());
-        inventory.setCreatedBy("System");
-        return inventory;
-    }
-
-    private POReceipt consctructPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, Inventory inventory) {
-        POReceipt poReceipt = new POReceipt();
-        poReceipt.setGrnNo(poReceiptHeader.getGrnNo());
-        poReceipt.setIid(inventory.getId());
-        poReceipt.setPid(poReceiptDto.getPid());
-        poReceipt.setQuantityReceived(poReceiptDto.getQuantityReceived());
-        poReceipt.setStoreNo(inventory.getStoreNo());
-        poReceipt.setStoreBin(inventory.getStoreBin());
-        poReceipt.setCreated(Instant.now());
-        poReceipt.setCreatedBy("System");
-        return poReceipt;
     }
 
     @Override

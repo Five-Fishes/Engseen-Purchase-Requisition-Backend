@@ -6,7 +6,10 @@ import lombok.Data;
 
 /**
  * A general DTO for the Inventory Receipt Header {@link com.engseen.erp.domain.InventoryReceiptHeader}
+ * 
+ * Unused at POR phase
  */
+@Deprecated
 @Data
 public class InventoryReceiptHeaderDTO {
     
