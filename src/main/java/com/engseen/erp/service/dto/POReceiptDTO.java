@@ -27,6 +27,8 @@ public class POReceiptDTO {
     private Integer irid;
     private Instant created;
     private String createdBy;
+    private Integer packReceived;
+    private Integer packReversed;
 
     private String componentCode;
     private BigDecimal receivingQuantity;

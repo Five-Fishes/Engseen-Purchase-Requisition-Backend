@@ -89,12 +89,15 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
         log.debug("Request to createNewPOReceipt with PO Receipt Header DTO: {}", poReceiptHeaderDto);
         // Get PO Receipt Header
         POReceiptHeader poReceiptHeader = poReceiptHeaderRepository.findOneByGrnNo(poReceiptHeaderDto.getGrnNo());
+        POReceiptHeaderDTO poReceiptHeaderDtoSaved = poReceiptHeaderMapper.toDto(poReceiptHeader);
+        poReceiptHeaderDtoSaved.setDoNumber(poReceiptHeaderDto.getDoNumber());
+        poReceiptHeaderDtoSaved.setInvoiceNumber(poReceiptHeaderDto.getInvoiceNumber());
         poReceiptHeaderDto.getPoReceiptDtoList().forEach(poReceiptDto -> {
             log.debug("PO Receipt DTO: {}", poReceiptDto);
             // Update PO Detail
             PODetail poDetail = purchaseOrderItemService.updatePODetailForPOReceipt(poReceiptDto);
             // Insert Inventory
-            Inventory inventory = inventoryService.insertInventoryForPOReceipt(poReceiptDto, poReceiptHeader, poDetail);
+            Inventory inventory = inventoryService.insertInventoryForPOReceipt(poReceiptDto, poReceiptHeaderDtoSaved, poDetail);
             // Insert Inventory Pack
             InventoryPack inventoryPack = inventoryPackService.updateInventoryPackForPOReceipt(poReceiptDto);
             // Insert PO Receipt

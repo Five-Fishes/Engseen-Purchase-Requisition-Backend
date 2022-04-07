@@ -9,6 +9,7 @@ import com.engseen.erp.domain.POReceiptHeader;
 import com.engseen.erp.repository.InventoryRepository;
 import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.dto.POReceiptDTO;
+import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 import com.engseen.erp.util.TimestampUtil;
 
 import org.springframework.stereotype.Service;
@@ -24,32 +25,30 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
 
     @Override
-    public Inventory insertInventoryForPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, PODetail poDetail) {
+    public Inventory insertInventoryForPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeaderDTO poReceiptHeaderDto, PODetail poDetail) {
         log.info("Request to insertInventoryForPOReceipt");
-        Inventory inventory = constructInventory(poReceiptDto, poReceiptHeader, poDetail);
+        Inventory inventory = constructInventory(poReceiptDto, poReceiptHeaderDto, poDetail);
         return insert(inventory);
     }
 
-    private Inventory constructInventory(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, PODetail poDetail) {
-        // TODO: Complete Construct of inventory
+    private Inventory constructInventory(POReceiptDTO poReceiptDto, POReceiptHeaderDTO poReceiptHeader, PODetail poDetail) {
         Inventory inventory = new Inventory();
         inventory.setItem(poReceiptDto.getComponentCode());
         inventory.setStoreNo(AppConstant.DEFAULT_STORE_NO);
         inventory.setStoreBin(AppConstant.DEFAULT_STORE_BIN);
         inventory.setInventoryCode(AppConstant.INVENTORY_INVENTORY_CODE);
         inventory.setQuantity(poReceiptDto.getQuantityReceived());
-        // inventory.setUnitCost(unitCost);
+        inventory.setUnitCost(poReceiptDto.getUnitCost());
         inventory.setInspectionCode(AppConstant.INVENTORY_INSPECTION_CODE);
         inventory.setReceiptID(poReceiptHeader.getId());
         inventory.setReceiptDate(Date.from(poReceiptHeader.getGrnDate()));
         inventory.setVendorID(poReceiptHeader.getVendorID());
         inventory.setgRNNo(poReceiptHeader.getGrnNo());
-        // inventory.setReferenceNo(doNumberWithVenPrefix);
-        // inventory.setReferenceNo2(invoiceNumber);
+        inventory.setReferenceNo(poReceiptHeader.getDoNumber());
+        inventory.setReferenceNo2(poReceiptHeader.getInvoiceNumber());
         inventory.setOrderType(AppConstant.INVENTORY_ORDER_TYPE);
         inventory.setOrderNumber(poDetail.getPoNumber());
         inventory.setLineNumber(poDetail.getLineNumber());
-        // inventory.setFromID(fromID);
         inventory.setCreated(new Date());
         inventory.setCreatedBy(AppConstant.DEFAULT_AUDIT_BY);
         return inventory;

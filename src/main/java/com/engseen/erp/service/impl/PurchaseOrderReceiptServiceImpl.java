@@ -57,7 +57,7 @@ public class PurchaseOrderReceiptServiceImpl implements PurchaseOrderReceiptServ
         POReceipt poReceipt = new POReceipt();
         poReceipt.setGrnNo(poReceiptHeader.getGrnNo());
         poReceipt.setPid(poReceiptDto.getPid());
-        poReceipt.setQuantityReceived(poReceiptDto.getQuantityReceived());
+        poReceipt.setQuantityReceived(poReceiptDto.getReceivingQuantity());
         poReceipt.setQuantityReversed(poReceiptDto.getQuantityReversed());
         poReceipt.setUnitCost(poReceiptDto.getUnitCost());
         poReceipt.setOrigUnitCost(poReceiptDto.getOrigUnitCost());
@@ -68,6 +68,8 @@ public class PurchaseOrderReceiptServiceImpl implements PurchaseOrderReceiptServ
         poReceipt.setInventoryCode(inventory.getInventoryCode());
         poReceipt.setCreated(Instant.now());
         poReceipt.setCreatedBy(AppConstant.DEFAULT_AUDIT_BY);
+        poReceipt.setPackReceived(poReceiptDto.getReceivingQuantityPack().intValue());
+        poReceipt.setPackReversed(poReceiptDto.getPackReversed());
         return poReceipt;
     }
 }

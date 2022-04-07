@@ -2,8 +2,8 @@ package com.engseen.erp.service;
 
 import com.engseen.erp.domain.Inventory;
 import com.engseen.erp.domain.PODetail;
-import com.engseen.erp.domain.POReceiptHeader;
 import com.engseen.erp.service.dto.POReceiptDTO;
+import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 
 public interface InventoryService {
 
@@ -14,7 +14,7 @@ public interface InventoryService {
      * @param poDetail
      * @return inventory inserted
      */
-    Inventory insertInventoryForPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, PODetail poDetail);
+    Inventory insertInventoryForPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeaderDTO poReceiptHeaderDto, PODetail poDetail);
  
     /**
      * Create new Inventory
