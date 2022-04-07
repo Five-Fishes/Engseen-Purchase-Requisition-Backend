@@ -94,14 +94,18 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
         poReceiptHeaderDtoSaved.setInvoiceNumber(poReceiptHeaderDto.getInvoiceNumber());
         poReceiptHeaderDto.getPoReceiptDtoList().forEach(poReceiptDto -> {
             log.debug("PO Receipt DTO: {}", poReceiptDto);
+            // Insert PO Receipt
+            POReceipt poReceipt = purchaseOrderReceiptService.createPOReceipt(poReceiptDto, poReceiptHeader);
+            poReceiptDto.setId(poReceipt.getId());
             // Update PO Detail
             PODetail poDetail = purchaseOrderItemService.updatePODetailForPOReceipt(poReceiptDto);
             // Insert Inventory
             Inventory inventory = inventoryService.insertInventoryForPOReceipt(poReceiptDto, poReceiptHeaderDtoSaved, poDetail);
             // Insert Inventory Pack
             InventoryPack inventoryPack = inventoryPackService.updateInventoryPackForPOReceipt(poReceiptDto);
-            // Insert PO Receipt
-            POReceipt poReceipt = purchaseOrderReceiptService.createPOReceipt(poReceiptDto, poReceiptHeader, inventory);
+            // Update POReceipt with Inventory ID 
+            // Due to stupid Legacy DB design having 2 ways binding of FK between PO Receipt and Inventory Table
+            poReceipt = purchaseOrderReceiptService.updatePOReceiptWithInventory(poReceipt, inventory);
             // Update Item Master and Item Cost Book if Unit Price changed
             ItemMaster itemMaster = itemMasterService.checkAndUpdateUnitPrice(poReceiptDto.getComponentCode(), poReceiptDto.getUnitCost());
         });

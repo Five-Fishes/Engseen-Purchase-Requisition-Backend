@@ -16,6 +16,8 @@ public interface PurchaseOrderReceiptService {
 
 	List<POReceiptDTO> findAllByGrnNo(Pageable pageable, String grnNo);
 
-	POReceipt createPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, Inventory inventory);
+	POReceipt createPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader);
+
+	POReceipt updatePOReceiptWithInventory(POReceipt poReceipt, Inventory inventory);
     
 }

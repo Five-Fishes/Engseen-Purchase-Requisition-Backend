@@ -6,7 +6,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE [dbo].[ItemCostBook]
 (
-    [ID]       BIGINT IDENTITY (1,1) NOT NULL,
+    [ID]       INTEGER IDENTITY (1,1) NOT NULL,
     [Item]     VARCHAR(30),
     [Updated]  CHAR(1),
     [CreatedBy] VARCHAR(8),

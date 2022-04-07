@@ -43,16 +43,15 @@ public class PurchaseOrderReceiptServiceImpl implements PurchaseOrderReceiptServ
     }
 
     @Override
-    public POReceipt createPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, Inventory inventory) {
+    public POReceipt createPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader) {
         log.info("Request to createPOReceipt");
         log.debug("PO Receipt DTO: {}", poReceiptDto);
         log.debug("PO Receipt Header: {}", poReceiptHeader);
-        log.debug("Inventory: {}", inventory);
-        POReceipt poReceipt = constructPOReceipt(poReceiptDto, poReceiptHeader, inventory);
+        POReceipt poReceipt = constructPOReceipt(poReceiptDto, poReceiptHeader);
         return poReceiptService.insert(poReceipt);
     }
 
-    private POReceipt constructPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader, Inventory inventory) {
+    private POReceipt constructPOReceipt(POReceiptDTO poReceiptDto, POReceiptHeader poReceiptHeader) {
         log.debug("Perform constructPOReceipt");
         POReceipt poReceipt = new POReceipt();
         poReceipt.setGrnNo(poReceiptHeader.getGrnNo());
@@ -61,15 +60,23 @@ public class PurchaseOrderReceiptServiceImpl implements PurchaseOrderReceiptServ
         poReceipt.setQuantityReversed(poReceiptDto.getQuantityReversed());
         poReceipt.setUnitCost(poReceiptDto.getUnitCost());
         poReceipt.setOrigUnitCost(poReceiptDto.getOrigUnitCost());
-        poReceipt.setInspectionCode(inventory.getInspectionCode());
-        poReceipt.setIid(inventory.getId());
-        poReceipt.setStoreNo(inventory.getStoreNo());
-        poReceipt.setStoreBin(inventory.getStoreBin());
-        poReceipt.setInventoryCode(inventory.getInventoryCode());
         poReceipt.setCreated(Instant.now());
         poReceipt.setCreatedBy(AppConstant.DEFAULT_AUDIT_BY);
         poReceipt.setPackReceived(poReceiptDto.getReceivingQuantityPack().intValue());
         poReceipt.setPackReversed(poReceiptDto.getPackReversed());
         return poReceipt;
+    }
+
+    @Override
+    public POReceipt updatePOReceiptWithInventory(POReceipt poReceipt, Inventory inventory) {
+        log.info("Request to updatePOReceiptWithInventory");
+        log.debug("PO Receipt: {}", poReceipt);
+        log.debug("Inventory: {}", inventory);
+        poReceipt.setInspectionCode(inventory.getInspectionCode());
+        poReceipt.setIid(inventory.getId());
+        poReceipt.setStoreNo(inventory.getStoreNo());
+        poReceipt.setStoreBin(inventory.getStoreBin());
+        poReceipt.setInventoryCode(inventory.getInventoryCode());
+        return poReceiptService.update(poReceipt);
     }
 }

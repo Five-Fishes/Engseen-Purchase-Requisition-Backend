@@ -153,12 +153,9 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         poDetail.setQuantityReceived(totalReceivedQuantity);
         BigDecimal totalQuantityOnHand = poDetail.getQuantityOnHand().add(poReceiptDto.getReceivingQuantity());
         poDetail.setQuantityOnHand(totalQuantityOnHand);
-        // TODO: complete on update of pack quantity
-        // BigDecimal totalReceivedQuantityPack = poDetail.getPackReceived().add(poReceiptDto.getReceivingQuantityPack());
-        // if (totalReceivedQuantityPack.compareTo(poDetail.getOrderPack()) > 0) {
-        //     throw new BadRequestException("Received Pack cannot be more than Order Pack");
-        // }
-        // poDetail.setPackReceived(totalReceivedQuantityPack);
+        Integer totalReceivedQuantityPack = poDetail.getPackReceived() == null ? 0 : poDetail.getPackReceived();
+        totalReceivedQuantityPack += poReceiptDto.getReceivingQuantityPack().intValue();
+        poDetail.setPackReceived(totalReceivedQuantityPack);
         poDetail.setDateLastReceipt(Instant.now());
         return poDetailService.update(poDetail);
     }

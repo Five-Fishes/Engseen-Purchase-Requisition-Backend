@@ -52,7 +52,7 @@ public class ItemMasterServiceImpl implements ItemMasterService {
     public ItemMaster checkAndUpdateUnitPrice(String componentCode, BigDecimal newUnitCost) {
         log.info("Request to check unit price and update if different");
         ItemMaster itemMaster = itemMasterRepository.findOneByItem(componentCode);
-        if (itemMaster.getTotalCost().compareTo(newUnitCost) != 0) {
+        if (itemMaster.getTotalCost() == null || itemMaster.getTotalCost().compareTo(newUnitCost) != 0) {
             itemMaster.setVariableOverheadCost(newUnitCost);
             itemMaster.setTotalCost(newUnitCost);
             itemMaster.setRolledVariableOverheadCost(newUnitCost);
@@ -69,9 +69,11 @@ public class ItemMasterServiceImpl implements ItemMasterService {
     public ItemMaster updateItemMaster(ItemMaster itemMaster) {
         log.info("Request to updateItemMaster");
         log.debug("Item Master to update: {}", itemMaster);
-        // TODO: Complete Store Procedure for Item Master Update
-        // itemMasterRepository.updateItemMaster(itemMaster.getId(),
-        //     itemMaster.getItem());
+        // TODO: Enhance to have a complete table column update store procedure
+        itemMasterRepository.updateItemMaster(itemMaster.getId(), 
+            itemMaster.getItem(), itemMaster.getItemDescription(), itemMaster.getUnitOfMeasure(), 
+            itemMaster.getVariableOverheadCost(), itemMaster.getTotalCost(), itemMaster.getRolledVariableOverheadCost(), itemMaster.getTotalRolledCost(), 
+            itemMaster.getModified(), itemMaster.getModifiedBy(), itemMaster.getAccessed(), itemMaster.getAccessedBy());
         return itemMasterRepository.findById(itemMaster.getId()).get();
     }
 }

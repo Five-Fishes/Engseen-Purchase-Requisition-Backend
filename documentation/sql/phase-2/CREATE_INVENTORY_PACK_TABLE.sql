@@ -6,7 +6,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE [dbo].[InventoryPack]
 (
-    [ID]       BIGINT IDENTITY (1,1) NOT NULL,
+    [ID]       INTEGER IDENTITY (1,1) NOT NULL,
     [Item]     VARCHAR(30) NOT NULL,
     [StoreNo]  VARCHAR(4) NOT NULL,
     [StoreBin] VARCHAR(12) NOT NULL,

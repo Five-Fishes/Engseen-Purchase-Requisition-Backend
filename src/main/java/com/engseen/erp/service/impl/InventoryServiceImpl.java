@@ -5,7 +5,6 @@ import java.util.Date;
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.domain.Inventory;
 import com.engseen.erp.domain.PODetail;
-import com.engseen.erp.domain.POReceiptHeader;
 import com.engseen.erp.repository.InventoryRepository;
 import com.engseen.erp.service.InventoryService;
 import com.engseen.erp.service.dto.POReceiptDTO;
@@ -37,10 +36,9 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setStoreNo(AppConstant.DEFAULT_STORE_NO);
         inventory.setStoreBin(AppConstant.DEFAULT_STORE_BIN);
         inventory.setInventoryCode(AppConstant.INVENTORY_INVENTORY_CODE);
-        inventory.setQuantity(poReceiptDto.getQuantityReceived());
+        inventory.setQuantity(poReceiptDto.getReceivingQuantity());
         inventory.setUnitCost(poReceiptDto.getUnitCost());
         inventory.setInspectionCode(AppConstant.INVENTORY_INSPECTION_CODE);
-        inventory.setReceiptID(poReceiptHeader.getId());
         inventory.setReceiptDate(Date.from(poReceiptHeader.getGrnDate()));
         inventory.setVendorID(poReceiptHeader.getVendorID());
         inventory.setgRNNo(poReceiptHeader.getGrnNo());
@@ -62,7 +60,7 @@ public class InventoryServiceImpl implements InventoryService {
             inventory.getReferenceNo(), inventory.getReferenceNo2(), inventory.getOrderType(), inventory.getOrderNumber(), inventory.getLineNumber(), inventory.getFromID(), 
             inventory.getToOrderType(), inventory.getToOrderNumber(), inventory.getToLineNumber(), inventory.getWeight(), inventory.getSellingPrice(), inventory.getfUnitCost(), 
             inventory.getfCurrencyCode(), inventory.getfExchangeRate(), TimestampUtil.fromInstant(inventory.getCreated().toInstant()), inventory.getCreatedBy());
-        return inventoryRepository.findOneByItemAndStoreNoAndStoreBin(inventory.getItem(), inventory.getStoreNo(), inventory.getStoreBin());
+        return inventoryRepository.findOneByItemAndStoreNoAndStoreBinAndReceiptID(inventory.getItem(), inventory.getStoreNo(), inventory.getStoreBin(), inventory.getReceiptID());
     }
 
     @Override
