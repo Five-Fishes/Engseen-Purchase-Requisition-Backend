@@ -1,5 +1,6 @@
 package com.engseen.erp.service.impl;
 
+import static com.engseen.erp.constant.AppConstant.DEFAULT_AUDIT_BY;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_SELECTOR;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_STATUS;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_TYPE;
@@ -24,10 +25,20 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_STATE;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ZIP_CODE;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.AppConstant;
@@ -38,15 +49,20 @@ import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
-import com.engseen.erp.service.*;
+import com.engseen.erp.service.EmailService;
+import com.engseen.erp.service.HtmlToPdfService;
+import com.engseen.erp.service.PODetailService;
+import com.engseen.erp.service.POHeaderService;
+import com.engseen.erp.service.PurchaseOrderService;
+import com.engseen.erp.service.PurchaseRequestApprovalItemService;
+import com.engseen.erp.service.PurchaseRequestApprovalService;
+import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 
-import com.engseen.erp.util.TimestampUtil;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +72,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Service Implementation for managing {@link com.engseen.erp.domain.POHeader} and {@link com.engseen.erp.domain.PODetail}.
@@ -69,6 +87,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final POHeaderRepository poHeaderRepository;
     private final POHeaderService poHeaderService;
     private final PODetailRepository poDetailRepository;
+    private final PODetailService poDetailService;
     private final PurchaseRequestApprovalService purchaseRequestApprovalService;
     private final PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
     private final EmailService emailService;
@@ -134,7 +153,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
-            poDetailList.forEach(poDetail -> poDetailRepository.insertPODetail(poDetail.getPoNumber(), poDetail.getLineNumber(), poDetail.getItem(), poDetail.getLineType(), poDetail.getLineSelector(), poDetail.getOrderQuantity(), poDetail.getQuantityReceived(), poDetail.getQuantityInInspection(), poDetail.getQuantityOnHand(), poDetail.getQuantityOnHold(), poDetail.getBlanketQuantity(), TimestampUtil.fromInstant(poDetail.getEtaDate()), TimestampUtil.fromInstant(poDetail.getNeedDate()), TimestampUtil.fromInstant(poDetail.getDateLastReceipt()), poDetail.getLeadTime(), poDetail.getDiscount(), poDetail.getLineStatus(), poDetail.getUnitPrice(), poDetail.getExtendedPrice(), poDetail.getRemark(), poDetail.getVendorItem(), poDetail.getVIDescription(), poDetail.getVIConversion(), poDetail.getVIUnitOfMeasure(), poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), TimestampUtil.fromInstant(poDetail.getCreated()), poDetail.getCreatedBy(), TimestampUtil.fromInstant(poDetail.getModified()), poDetail.getModifiedBy()));
+            poDetailList.forEach(poDetail -> poDetailService.insert(poDetail));
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
@@ -168,7 +187,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);
         }
         poHeader.setCreated(Instant.now());
-        poHeader.setCreatedBy("System");
+        poHeader.setCreatedBy(DEFAULT_AUDIT_BY);
 
         poHeader.setBuyer(PO_HEADER_BUYER);
         poHeader.setPhone(PO_HEADER_PHONE);
@@ -227,7 +246,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             poDetail.setBlanketQuantity(PO_DETAIL_QUANTITY_COLUMN);
             poDetail.setLineStatus(PO_DETAIL_LINE_STATUS);
             poDetail.setCreated(Instant.now());
-            poDetail.setCreatedBy("System");
+            poDetail.setCreatedBy(DEFAULT_AUDIT_BY);
+            poDetail.setPackReceived(0);
             poDetails.add(poDetail);
         });
         return poDetails;

@@ -120,6 +120,28 @@ public class PODetail {
     @Column(name = "ModifiedBy", length = 8)
     private String modifiedBy;
 
+    @Column(name = "PackReceived")
+    private Integer packReceived;
+
+    @Column(name = "Pack")
+    private Integer pack;
+
+    public Integer getPack() {
+        return pack;
+    }
+
+    public void setPack(Integer pack) {
+        this.pack = pack;
+    }
+
+    public Integer getPackReceived() {
+        return packReceived;
+    }
+
+    public void setPackReceived(Integer packReceived) {
+        this.packReceived = packReceived;
+    }
+
     public String getModifiedBy() {
         return modifiedBy;
     }

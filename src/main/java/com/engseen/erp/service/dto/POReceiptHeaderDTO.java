@@ -41,4 +41,7 @@ public class POReceiptHeaderDTO {
 
     private List<POReceiptDTO> poReceiptDtoList;
 
+    private String doNumber;
+    private String invoiceNumber;
+
 }

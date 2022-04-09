@@ -22,7 +22,7 @@ public class POReceiptServiceImpl implements POReceiptService {
         log.debug("Request to insert POReceipt: {}", poReceipt);
         poReceiptRepository.insertPOReceipt(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityReceived(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
             poReceipt.getInspectionCode(), poReceipt.getIid(), poReceipt.getStoreNo(), poReceipt.getStoreBin(), poReceipt.getInventoryCode(), poReceipt.getLotNo(), 
-            poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy());
+            poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy(), poReceipt.getPackReceived(), poReceipt.getPackReversed());
         return poReceiptRepository.findOneByGrnNoAndPidAndIid(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getIid());
     }
 
@@ -32,7 +32,7 @@ public class POReceiptServiceImpl implements POReceiptService {
         poReceiptRepository.updatePOReceipt(poReceipt.getId(), 
             poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getQuantityReceived(), poReceipt.getQuantityReversed(), poReceipt.getUnitCost(), poReceipt.getOrigUnitCost(), 
             poReceipt.getInspectionCode(), poReceipt.getIid(), poReceipt.getStoreNo(), poReceipt.getStoreBin(), poReceipt.getInventoryCode(), poReceipt.getLotNo(), 
-            poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy());
+            poReceipt.getIrid(), TimestampUtil.fromInstant(poReceipt.getCreated()), poReceipt.getCreatedBy(), poReceipt.getPackReceived(), poReceipt.getPackReversed());
         return poReceiptRepository.findOneByGrnNoAndPidAndIid(poReceipt.getGrnNo(), poReceipt.getPid(), poReceipt.getIid());
     }
 

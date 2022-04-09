@@ -70,5 +70,11 @@ public class POReceipt {
 
     @Column(name = "CreatedBy", length = 8)
     private String createdBy;
+
+    @Column(name = "PackReceived")
+    private Integer packReceived;
+
+    @Column(name = "PackReversed")
+    private Integer packReversed;
     
 }
