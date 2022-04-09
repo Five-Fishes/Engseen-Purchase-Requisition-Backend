@@ -13,7 +13,9 @@ public interface POReceiptHeaderMapper extends EntityMapper<POReceiptHeaderDTO, 
     @Mappings({
         @Mapping(target = "poReceiptDtoList", ignore = true),
         @Mapping(target = "doNumber", ignore = true),
-        @Mapping(target = "invoiceNumber", ignore = true)
+        @Mapping(target = "invoiceNumber", ignore = true),
+        @Mapping(target = "startGrnDate", ignore = true),
+        @Mapping(target = "endGrnDate", ignore = true)
     })
     @Override
     POReceiptHeaderDTO toDto(POReceiptHeader entity);
