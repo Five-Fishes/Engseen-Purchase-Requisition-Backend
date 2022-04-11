@@ -3,6 +3,7 @@ package com.engseen.erp.repository;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 import com.engseen.erp.domain.POReceiptHeader;
 
@@ -49,5 +50,14 @@ public interface POReceiptHeaderRepository extends JpaRepository<POReceiptHeader
 
 	@Query(value = "EXEC POReceiptHeaderDelete :ID", nativeQuery = true)
     void deletePOReceiptHeader(@Param("ID") Integer ID);
+
+	@Query(value = "SELECT porh FROM POReceiptHeader porh " + 
+		"WHERE (:grnNo is NULL OR porh.grnNo LIKE %:grnNo%) " + 
+		"AND (:vendorID is NULL OR porh.vendorID LIKE %:vendorID%) " + 
+		"AND (:doNumber is NULL OR porh.packingListNumber LIKE %:doNumber%) " + 
+		"AND (:startGrnDate is NULL OR porh.grnDate >= :startGrnDate) " + 
+		"AND (:endGrnDate is NULL OR porh.grnDate <= :endGrnDate)")
+	List<POReceiptHeader> search(@Param("grnNo") String grnNo, @Param("vendorID") String vendorID, @Param("doNumber") String doNumber, 
+		@Param("startGrnDate") Instant startGrnDate, @Param("endGrnDate") Instant endGrnDate, Pageable pageable);
 	
 }

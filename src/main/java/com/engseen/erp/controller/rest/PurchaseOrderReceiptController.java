@@ -60,6 +60,24 @@ public class PurchaseOrderReceiptController {
     }
 
     /**
+     * {@code POST /purchase-order-receipt/search} : Search Purchase Order Receipt
+     *
+     * @param pageable  Pagination Info
+     * @param poReceiptHeaderDto search criteria for po receipt header records
+     */
+    @PostMapping(value = "/search")
+    public ResponseEntity<List<POReceiptHeaderDTO>> searchPurchaseOrderReceiptHeader(Pageable pageable, @RequestBody POReceiptHeaderDTO poReceiptHeaderDto) {
+        log.info("REST Request to getAllPurchaseOrderReceipt");
+        log.debug("Pagination Info: {}", pageable);
+        log.debug("Filter Criteria: {}", poReceiptHeaderDto);
+
+        List<POReceiptHeaderDTO> poReceiptHeaderDtoList = purchaseOrderReceiptHeaderService.search(poReceiptHeaderDto, pageable);
+
+        return ResponseEntity.ok()
+            .body(poReceiptHeaderDtoList);
+    }
+
+    /**
      * {@code POST /purchase-order-receipt} : Add records for receiving of Purchase Order Items
      * <p>Update PO Detail: increase “QuantityReceived”, “QuantityOnHand”, “PackReceived”, update “DateLastReceipt” with GRNDate</p>
      * <p>Insert Inventory" for each PO receipt</p>

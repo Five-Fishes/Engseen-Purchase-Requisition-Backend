@@ -45,5 +45,13 @@ public interface PurchaseOrderReceiptHeaderService {
      * @return PO Receipt Header created
      */
 	POReceiptHeaderDTO createPOReceiptHeaderByVendorId(String vendorId);
+
+    /**
+     * Search PO Receipt Header based on criteria
+     * 
+     * @param poReceiptHeaderDto search criteria
+     * @return PO Receipt Header List
+     */
+	List<POReceiptHeaderDTO> search(POReceiptHeaderDTO poReceiptHeaderDto, Pageable pageable);
     
 }

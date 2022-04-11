@@ -25,6 +25,7 @@ import com.engseen.erp.service.dto.POReceiptDTO;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 import com.engseen.erp.service.mapper.POReceiptHeaderMapper;
+import com.engseen.erp.util.TimestampUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,19 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
             // Update Item Master and Item Cost Book if Unit Price changed
             ItemMaster itemMaster = itemMasterService.checkAndUpdateUnitPrice(poReceiptDto.getComponentCode(), poReceiptDto.getUnitCost());
         });
+        updatePOReceiptHeaderNumber(poReceiptHeader, poReceiptHeaderDto);
         return poReceiptHeaderMapper.toDto(poReceiptHeader);
+    }
+
+    private POReceiptHeader updatePOReceiptHeaderNumber(POReceiptHeader poReceiptHeader, POReceiptHeaderDTO poReceiptHeaderDto) {
+        if (poReceiptHeader.getFreightBillNumber() != null && poReceiptHeader.getPackingListNumber() != null) {
+            return poReceiptHeader;
+        } else if (poReceiptHeaderDto.getDoNumber() != null) {
+            poReceiptHeader.setPackingListNumber(poReceiptHeaderDto.getDoNumber());
+        } else if (poReceiptHeaderDto.getInvoiceNumber() != null) {
+            poReceiptHeader.setFreightBillNumber(poReceiptHeaderDto.getInvoiceNumber());
+        }
+        return poReceiptHeaderService.update(poReceiptHeader);
     }
 
     @Override
@@ -148,5 +161,15 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
         poReceiptHeader.setModifiedBy(AppConstant.DEFAULT_AUDIT_BY);
         poReceiptHeader.setAccessed(Instant.now());
         return poReceiptHeader;
+    }
+
+    @Override
+    public List<POReceiptHeaderDTO> search(POReceiptHeaderDTO poReceiptHeaderDto, Pageable pageable) {
+        log.info("Request to search Purchase Order Receipt Header");
+        log.debug("PO Receipt Header DTO Search Criteria: {}", poReceiptHeaderDto);
+        List<POReceiptHeader> poReceiptHeaderList = poReceiptHeaderRepository.search(poReceiptHeaderDto.getGrnNo(), poReceiptHeaderDto.getVendorID(), poReceiptHeaderDto.getDoNumber(),
+            poReceiptHeaderDto.getStartGrnDate(), poReceiptHeaderDto.getEndGrnDate(),
+            pageable);
+        return poReceiptHeaderMapper.toDto(poReceiptHeaderList);
     }
 }
