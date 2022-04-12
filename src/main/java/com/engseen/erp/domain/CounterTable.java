@@ -23,13 +23,13 @@ public class CounterTable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @Column(name = "CounterCode", nullable = false, length = 20)
+    @Column(name = "CounterCode", columnDefinition = "nvarchar", nullable = false, length = 20)
     private String counterCode;
 
-    @Column(name = "CounterMask", length = 20)
+    @Column(name = "CounterMask", columnDefinition = "nvarchar", length = 20)
     private String counterMask;
 
-    @Column(name = "DefaultCounter", length = 20)
+    @Column(name = "DefaultCounter", columnDefinition = "nvarchar", length = 20)
     private String defaultCounter;
 
     @Column(name = "LastCounter", nullable = false)
