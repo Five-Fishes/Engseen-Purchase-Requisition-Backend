@@ -26,7 +26,7 @@ public interface VendorItemMapper {
             @Mapping(target = "componentCode", ignore = true), // Need to retrieve from ItemMaster
             @Mapping(target = "vendorId", source = "source.vendorID"),
             @Mapping(target = "packagingSize", ignore = true),
-            @Mapping(target = "itemCost", source = "source.vIUnitPrice")
+            @Mapping(target = "itemCost", source = "source.viUnitPrice")
     })
     ComponentItemCostDTO vendorItemToComponentItemCostDTO(VendorItem source);
 }

@@ -16,7 +16,6 @@ public class AppConstant {
     public static char PO_HEADER_STANDARD_TERMS = 'D';
     public static int PO_HEADER_CASH_DAYS_COLUMN = 0;
     public static BigDecimal PO_HEADER_CASH_PERCENT_COLUMN = BigDecimal.ZERO;
-    public static int PO_HEADER_DAY_COLUMN = 0;
     public static char PO_HEADER_BLANKET_ORDER = 'N';
     public static char PO_HEADER_PRINT_PO = 'N';
     public static String PO_HEADER_CURRENCY_CODE_RM = "RM";
@@ -30,12 +29,16 @@ public class AppConstant {
     public static String PO_HEADER_STATE = "Penang";
     public static String PO_HEADER_ZIP_CODE = "13400";
     public static String PO_HEADER_COUNTRY = "Malaysia";
+    public static char PO_HEADER_PO_TYPE = 'P';
+    public static char PO_HEADER_IMPORTED = 'N';
+    public static int PO_HEADER_GST = 10;
 
     // Purchase Order Default Value - PO Detail Table
     public static char PO_DETAIL_LINE_TYPE = 'D';
     public static char PO_DETAIL_LINE_SELECTOR = 'N';
     public static char PO_DETAIL_LINE_STATUS = 'R';
     public static BigDecimal PO_DETAIL_QUANTITY_COLUMN = BigDecimal.ZERO;
+    public static int PO_DETAIL_DISCOUNT = 1;
 
     // Purchase Order Receipt Header Default Value - PO Receipt Header Table
     public static char PO_RECEIPT_HEADER_STATUS =  'O';

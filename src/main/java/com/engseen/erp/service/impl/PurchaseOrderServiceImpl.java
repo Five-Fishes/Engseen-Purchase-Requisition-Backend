@@ -5,6 +5,7 @@ import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_SELECTOR;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_STATUS;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_LINE_TYPE;
 import static com.engseen.erp.constant.AppConstant.PO_DETAIL_QUANTITY_COLUMN;
+import static com.engseen.erp.constant.AppConstant.PO_DETAIL_DISCOUNT;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ADDRESS1;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ADDRESS2;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_BLANKET_ORDER;
@@ -14,7 +15,6 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_CASH_PERCENT_COLUMN
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_CITY;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_COUNTRY;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_CURRENCY_CODE_RM;
-import static com.engseen.erp.constant.AppConstant.PO_HEADER_DAY_COLUMN;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_OTHER;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_EXCHANGE_RATE_RM;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ORDER_STATUS;
@@ -24,6 +24,9 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_SHIP_TO;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_STANDARD_TERMS;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_STATE;
 import static com.engseen.erp.constant.AppConstant.PO_HEADER_ZIP_CODE;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_PO_TYPE;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_IMPORTED;
+import static com.engseen.erp.constant.AppConstant.PO_HEADER_GST;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,17 +41,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
+import com.engseen.erp.domain.CounterTable;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
+import com.engseen.erp.service.CounterTableService;
 import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.HtmlToPdfService;
 import com.engseen.erp.service.PODetailService;
@@ -94,6 +98,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final VendorService vendorService;
     private final TemplateEngine templateEngine;
     private final HtmlToPdfService htmlToPdfService;
+    private final CounterTableService counterTableService;
 
     @Override
     @Transactional(readOnly = true)
@@ -169,28 +174,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private POHeader constructPOHeader(String vendorId, Long purchaseRequestApprovalId) {
         log.debug("Request to constructPOHeader with vendorId: {}, purchaseRequestApprovalId: {}", vendorId, purchaseRequestApprovalId);
         POHeader poHeader = new POHeader();
-        poHeader.setVendorID(vendorId);
         poHeader.setPoNumber(generatePONumber(vendorId));
-        poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
-        poHeader.setOriginalPODate(Instant.now());
-        poHeader.setPORevisionDate(Instant.now());
-        poHeader.setEmailed(Boolean.FALSE);
-        poHeader.setDownloaded(Boolean.FALSE);
-        VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(vendorId);
-        poHeader.setNetDays(0);
-        poHeader.setMonthsDelay(0);
-        poHeader.setControllingCurrency(vendorMasterDto.getControllingCurrency());
-        poHeader.setCurrencyCode(vendorMasterDto.getCurrencyCode());
-        if (vendorMasterDto.getCurrencyCode().equals(PO_HEADER_CURRENCY_CODE_RM)) {
-            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_RM);
-        } else {
-            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);
-        }
-        poHeader.setCreated(Instant.now());
-        poHeader.setCreatedBy(DEFAULT_AUDIT_BY);
-
+        poHeader.setVendorID(vendorId);
         poHeader.setBuyer(PO_HEADER_BUYER);
         poHeader.setPhone(PO_HEADER_PHONE);
+        poHeader.setOrderStatus(PO_HEADER_ORDER_STATUS);
+        poHeader.setOriginalPODate(Instant.now());
+        poHeader.setPORevisionDate(Instant.now());
+        poHeader.setLocationID(0);
         poHeader.setShipTo(PO_HEADER_SHIP_TO);
         poHeader.setAddress1(PO_HEADER_ADDRESS1);
         poHeader.setAddress2(PO_HEADER_ADDRESS2);
@@ -198,23 +189,45 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         poHeader.setState(PO_HEADER_STATE);
         poHeader.setZipCode(PO_HEADER_ZIP_CODE);
         poHeader.setCountry(PO_HEADER_COUNTRY);
-        poHeader.setOrderStatus(PO_HEADER_ORDER_STATUS);
         poHeader.setStandardTerms(PO_HEADER_STANDARD_TERMS);
-        poHeader.setCash1Days(PO_HEADER_CASH_DAYS_COLUMN);
         poHeader.setCash1Percent(PO_HEADER_CASH_PERCENT_COLUMN);
-        poHeader.setCash2Days(PO_HEADER_CASH_DAYS_COLUMN);
+        poHeader.setCash1Days(PO_HEADER_CASH_DAYS_COLUMN);
         poHeader.setCash2Percent(PO_HEADER_CASH_PERCENT_COLUMN);
-        poHeader.setCutoffDay(PO_HEADER_DAY_COLUMN);
-        poHeader.setDueDay(PO_HEADER_DAY_COLUMN);
+        poHeader.setCash2Days(PO_HEADER_CASH_DAYS_COLUMN);
+        VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(vendorId);
+        poHeader.setNetDays(vendorMasterDto.getNetDays());
+        poHeader.setDueDay(vendorMasterDto.getDueDay());
+        poHeader.setCutoffDay(vendorMasterDto.getCutoffDay());
+        poHeader.setMonthsDelay(vendorMasterDto.getMonthsDelay());
         poHeader.setBlanketOrder(PO_HEADER_BLANKET_ORDER);
         poHeader.setPrintPO(PO_HEADER_PRINT_PO);
+        poHeader.setControllingCurrency(vendorMasterDto.getControllingCurrency());
+        poHeader.setCurrencyCode(vendorMasterDto.getCurrencyCode());
+        if (vendorMasterDto.getCurrencyCode().equals(PO_HEADER_CURRENCY_CODE_RM)) {
+            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_RM);
+        } else {
+            poHeader.setExchangeRate(PO_HEADER_EXCHANGE_RATE_OTHER);
+        }
+        poHeader.setLess1Amount(BigDecimal.ZERO);
+        CounterTable counterTable = counterTableService.getCounterTableByCounterCode(AppConstant.COUNTER_CODE_PO);
+        poHeader.setCounterID(counterTable.getId());
+        poHeader.setPOType(PO_HEADER_PO_TYPE);
+        poHeader.setImported(PO_HEADER_IMPORTED);
+        poHeader.setGst(PO_HEADER_GST);
+        poHeader.setCreated(Instant.now());
+        poHeader.setCreatedBy(DEFAULT_AUDIT_BY);
+        poHeader.setPurchaseRequestApprovalId(purchaseRequestApprovalId);
+        poHeader.setEmailed(Boolean.FALSE);
+        poHeader.setDownloaded(Boolean.FALSE);
         return poHeader;
     }
 
     private String generatePONumber(String vendorId) {
         log.debug("Request to generatePONumber for vendorId: {}", vendorId);
-        int poNumberValue = 1000 + new Random().nextInt(9000);
-        return vendorId + "-" + poNumberValue;
+        String counterCode = AppConstant.COUNTER_CODE_PO;
+        Integer nextPoNo = counterTableService.getNextCounterValue(counterCode);
+        String nextPoNoValue = counterCode + "-" + nextPoNo;
+        return nextPoNoValue;
     }
 
     private List<PODetail> constructPODetail(List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList, POHeader poHeader) {
@@ -224,29 +237,34 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseRequestApprovalItemList.forEach(purchaseItem -> {
             PODetail poDetail = new PODetail();
             poDetail.setPoNumber(poHeader.getPoNumber());
-            poDetail.setItem(purchaseItem.getComponentCode() + " - " + purchaseItem.getComponentName());
-            poDetail.setEtaDate(purchaseItem.getDeliveryDate().toInstant());
             poDetail.setLineNumber(poDetails.size() + 1);
-            poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
-            double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
-            poDetail.setUnitPrice(BigDecimal.valueOf(itemCost));
-            poDetail.setExtendedPrice(BigDecimal.valueOf(purchaseItem.getQuantity() * itemCost));
-            // Vendor Information
-            VendorItem vendorItem = vendorService.findOneVendorItemByVendorAndItem(poHeader.getVendorID(), purchaseItem.getComponentCode());
-            poDetail.setVIConversion(vendorItem.getViConversion());
-            poDetail.setVIOrderQuantity(vendorItem.getViConversion().multiply(BigDecimal.valueOf(purchaseItem.getQuantity())));
-            poDetail.setVIUnitPrice(vendorItem.getViConversion().multiply(BigDecimal.valueOf(itemCost)));
-            // End Vendor Information
+            poDetail.setItem(purchaseItem.getComponentCode());
             poDetail.setLineType(PO_DETAIL_LINE_TYPE);
             poDetail.setLineSelector(PO_DETAIL_LINE_SELECTOR);
+            poDetail.setOrderQuantity(BigDecimal.valueOf(purchaseItem.getQuantity()));
             poDetail.setQuantityReceived(PO_DETAIL_QUANTITY_COLUMN);
             poDetail.setQuantityInInspection(PO_DETAIL_QUANTITY_COLUMN);
             poDetail.setQuantityOnHand(PO_DETAIL_QUANTITY_COLUMN);
             poDetail.setQuantityOnHold(PO_DETAIL_QUANTITY_COLUMN);
             poDetail.setBlanketQuantity(PO_DETAIL_QUANTITY_COLUMN);
+            poDetail.setEtaDate(purchaseItem.getDeliveryDate().toInstant());
+            poDetail.setDiscount(PO_DETAIL_DISCOUNT);
             poDetail.setLineStatus(PO_DETAIL_LINE_STATUS);
+            double itemCost = Objects.requireNonNullElse(purchaseItem.getItemCost(), 0d);
+            poDetail.setUnitPrice(BigDecimal.valueOf(itemCost));
+            poDetail.setExtendedPrice(BigDecimal.valueOf(purchaseItem.getQuantity() * itemCost));
+            poDetail.setVendorItem(purchaseItem.getComponentCode());
+            // Vendor Information
+            VendorItem vendorItem = vendorService.findOneVendorItemByVendorAndItem(poHeader.getVendorID(), purchaseItem.getComponentCode());
+            poDetail.setVIDescription(vendorItem.getViDescription());
+            poDetail.setVIConversion(vendorItem.getViConversion());
+            poDetail.setVIUnitOfMeasure(vendorItem.getViUnitOfMeasure());
+            poDetail.setVIOrderQuantity(vendorItem.getViConversion().multiply(BigDecimal.valueOf(purchaseItem.getQuantity())));
+            poDetail.setVIUnitPrice(vendorItem.getViConversion().multiply(BigDecimal.valueOf(itemCost)));
+            // End Vendor Information
             poDetail.setCreated(Instant.now());
             poDetail.setCreatedBy(DEFAULT_AUDIT_BY);
+            poDetail.setPack(purchaseItem.getNoOfPacks().intValue());
             poDetail.setPackReceived(0);
             poDetails.add(poDetail);
         });

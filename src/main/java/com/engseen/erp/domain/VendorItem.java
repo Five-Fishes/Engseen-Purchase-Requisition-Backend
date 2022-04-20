@@ -28,16 +28,16 @@ public class VendorItem {
     private String vendorItem;
 
     @Column(name = "VIDescription")
-    private String vIDescription;
+    private String viDescription;
 
     @Column(name = "VIConversion")
     private BigDecimal viConversion;
 
     @Column(name = "VIUnitOfMeasure")
-    private String vIUnitOfMeasure;
+    private String viUnitOfMeasure;
 
     @Column(name = "VIUnitPrice")
-    private BigDecimal vIUnitPrice;
+    private BigDecimal viUnitPrice;
 
     @Column(name = "EffectiveDate")
     private Date effectiveDate;
@@ -89,12 +89,12 @@ public class VendorItem {
         this.vendorItem = vendorItem;
     }
 
-    public String getvIDescription() {
-        return vIDescription;
+    public String getViDescription() {
+        return viDescription;
     }
 
-    public void setvIDescription(String vIDescription) {
-        this.vIDescription = vIDescription;
+    public void setViDescription(String vIDescription) {
+        this.viDescription = vIDescription;
     }
 
     public BigDecimal getViConversion() {
@@ -105,20 +105,20 @@ public class VendorItem {
         this.viConversion = vIConversion;
     }
 
-    public String getvIUnitOfMeasure() {
-        return vIUnitOfMeasure;
+    public String getViUnitOfMeasure() {
+        return viUnitOfMeasure;
     }
 
-    public void setvIUnitOfMeasure(String vIUnitOfMeasure) {
-        this.vIUnitOfMeasure = vIUnitOfMeasure;
+    public void setViUnitOfMeasure(String vIUnitOfMeasure) {
+        this.viUnitOfMeasure = vIUnitOfMeasure;
     }
 
-    public BigDecimal getvIUnitPrice() {
-        return vIUnitPrice;
+    public BigDecimal getViUnitPrice() {
+        return viUnitPrice;
     }
 
-    public void setvIUnitPrice(BigDecimal vIUnitPrice) {
-        this.vIUnitPrice = vIUnitPrice;
+    public void setViUnitPrice(BigDecimal vIUnitPrice) {
+        this.viUnitPrice = vIUnitPrice;
     }
 
     public Date getEffectiveDate() {

@@ -30,7 +30,8 @@ public class CounterTableServiceImpl implements CounterTableService {
         return value;
     }
 
-    private CounterTable getCounterTableByCounterCode(String counterCode) {
+    @Override
+    public CounterTable getCounterTableByCounterCode(String counterCode) {
         log.info("Request to get Counter Table by counter code");
         log.debug("Counter Code to retrieve: {}", counterCode);
         return counterTableRepository.findOneByCounterCode(counterCode);

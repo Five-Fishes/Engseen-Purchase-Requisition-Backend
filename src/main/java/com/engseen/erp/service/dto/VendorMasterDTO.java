@@ -34,4 +34,12 @@ public class VendorMasterDTO {
     
     private char controllingCurrency;
 
+    private int netDays;
+
+    private int dueDay;
+
+    private int cutoffDay;
+
+    private int monthsDelay;
+
 }
