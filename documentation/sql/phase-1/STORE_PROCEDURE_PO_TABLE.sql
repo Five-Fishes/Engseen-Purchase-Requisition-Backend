@@ -15,7 +15,9 @@ AS
     BEGIN
 	    DECLARE @ID INTEGER;
         SET XACT_ABORT ON;
-            INSERT INTO [dbo].[POHeaderViewLegacy]
+        -- noinspection SqlInsertValues
+
+        INSERT INTO [dbo].[POHeaderViewLegacy]
                 (PONumber, VendorID, Buyer, Contact, Phone, OurContact, 
                 OrderStatus, OriginalPODate, PORevisionDate, POReference, PORevision, LocationID, 
                 ShipTo, Address1, Address2, City, [State], ZipCode, 
@@ -162,7 +164,9 @@ CREATE PROCEDURE PODetailInsert
 AS
     BEGIN
         SET XACT_ABORT ON;
-            INSERT INTO [dbo].[PODetailViewLegacy]
+        -- noinspection SqlInsertValues
+
+        INSERT INTO [dbo].[PODetailViewLegacy]
                 (PONumber, LineNumber, Item, LineType, LineSelector, OrderQuantity, 
                 QuantityReceived, QuantityInInspection, QuantityOnHand, QuantityOnHold, BlanketQuantity, ETADate, 
                 NeedDate, DateLastReceipt, LeadTime, Discount, LineStatus, UnitPrice, 
@@ -191,6 +195,8 @@ AS
 BEGIN
     SET XACT_ABORT ON;
     DECLARE @ID INTEGER;
+    -- noinspection SqlInsertValues
+
     INSERT INTO [dbo].[PODetailViewLegacy]
     (PONumber, LineNumber, Item, LineType, LineSelector, OrderQuantity,
      QuantityReceived, QuantityInInspection, QuantityOnHand, QuantityOnHold, BlanketQuantity, ETADate,

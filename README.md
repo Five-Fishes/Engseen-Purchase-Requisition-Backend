@@ -46,3 +46,12 @@ docker-compose -f src/main/docker/mssql.yml start
 ```shell
 docker-compose -f src/main/docker/mssql.yml down
 ```
+## Deployment
+Deployment checklist :
+- [ ] Passed CI
+- [ ] Deployable changes merged
+- [ ] Update db credentials in application.properties
+- [ ] Execute bootJar gradle task
+- [ ] Copy file to target host
+- [ ] Run file with ```java -jar xxxx.jar``` in cmd if you wish to test only
+- [ ] Run file with ```javaw -jar xxxx.jar``` in cmd if you wish to deploy and run as servlet

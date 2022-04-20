@@ -2,7 +2,10 @@ package com.engseen.erp.service.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -40,5 +43,11 @@ public class POReceiptHeaderDTO {
     private String customFormNo;
 
     private List<POReceiptDTO> poReceiptDtoList;
+
+    private String doNumber;
+    private String invoiceNumber;
+
+    private Instant startGrnDate;    
+    private Instant endGrnDate;
 
 }
