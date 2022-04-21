@@ -147,11 +147,11 @@
             <tr th:each="poDetail,iter : ${poDetailList}">
                 <td th:text="${iter.index}">-</td>
                 <td th:text="${poDetail.item}">-</td>
-                <td style="text-align: end" th:text="${poDetail.orderQuantity}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.orderQuantity, 1, 2)}">-</td>
                 <td th:text="${poDetail.printUOM}">-</td>
-                <td th:text="${poDetail.etaDate}">-</td>
-                <td style="text-align: end" th:text="${poDetail.unitPrice}">-</td>
-                <td style="text-align: end" th:text="${poDetail.extendedPrice}">-</td>
+                <td th:text="${{#temporals.format(poDetail.etaDate, 'dd/MM/yyyy')}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.unitPrice)}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.extendedPrice)}">-</td>
             </tr>
             </tbody>
         </table>

@@ -13,4 +13,6 @@ public interface ItemMasterService {
     ItemMaster checkAndUpdateUnitPrice(String componentCode, BigDecimal unitCost);
     
     ItemMaster updateItemMaster(ItemMaster itemMaster);
+
+	ItemMaster findOneByItem(String item);
 }

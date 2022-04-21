@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
 import com.engseen.erp.domain.CounterTable;
+import com.engseen.erp.domain.ItemMaster;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.domain.VendorItem;
@@ -55,6 +56,7 @@ import com.engseen.erp.repository.POHeaderRepository;
 import com.engseen.erp.service.CounterTableService;
 import com.engseen.erp.service.EmailService;
 import com.engseen.erp.service.HtmlToPdfService;
+import com.engseen.erp.service.ItemMasterService;
 import com.engseen.erp.service.PODetailService;
 import com.engseen.erp.service.POHeaderService;
 import com.engseen.erp.service.PurchaseOrderService;
@@ -62,10 +64,12 @@ import com.engseen.erp.service.PurchaseRequestApprovalItemService;
 import com.engseen.erp.service.PurchaseRequestApprovalService;
 import com.engseen.erp.service.VendorService;
 import com.engseen.erp.service.dto.EmailContent;
+import com.engseen.erp.service.dto.PODetailDTO;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
 import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
 import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
+import com.engseen.erp.service.mapper.PODetailMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -99,6 +103,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final TemplateEngine templateEngine;
     private final HtmlToPdfService htmlToPdfService;
     private final CounterTableService counterTableService;
+    private final ItemMasterService itemMasterService;
+    private final PODetailMapper poDetailMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -368,7 +374,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Context poPDFContext = new Context();
 
         poHeaderRepository.findById(purchaseOrderId.intValue()).ifPresentOrElse(poHeader -> {
-            List<PODetail> poDetailList = poDetailRepository.findAllByPoNumber(poHeader.getPoNumber());
+            List<PODetailDTO> poDetailList = poDetailRepository.findAllByPoNumber(poHeader.getPoNumber())
+                .stream()
+                .map(poDetail -> {
+                    PODetailDTO poDetailDto = poDetailMapper.toDto(poDetail);
+                    ItemMaster itemMaster = itemMasterService.findOneByItem(poDetail.getItem());
+                    poDetailDto.setItemDescription(itemMaster.getItemDescription());
+                    poDetailDto.setPrintUOM(itemMaster.getUnitOfMeasure());
+                    return poDetailDto;
+                })
+                .collect(Collectors.toList());
             poPDFContext.setVariable("poDetailList", poDetailList);
             poPDFContext.setVariable("poHeader", poHeader);
         }, () -> log.warn("PO have no details"));
