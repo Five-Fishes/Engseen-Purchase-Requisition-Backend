@@ -126,9 +126,14 @@ public class PurchaseOrderController {
             .body(null);
     }
 
+    @GetMapping("/po-html/{purchaseOrderId}")
+    public ResponseEntity<String> getPOHtmlString(@PathVariable Long purchaseOrderId) {
+        return ResponseEntity.ok(purchaseOrderService.getPOHtml(purchaseOrderId));
+    }
+
     /**
      * {@code GET /purchase-order/outstanding-item} : Get all Purchase Order Outstanding Item
-     * 
+     *
      * @param pageable Pagination Info
      * @param vendorId VendorId of Purchase Order for filtering
      */
@@ -161,9 +166,9 @@ public class PurchaseOrderController {
         log.debug("Received Item List by GRN No: {}", purchaseOrderItemCompletedList);
         List<PurchaseOrderItemDto> resultList = new ArrayList<>(purchaseOrderItemDtoList);
         resultList.addAll(purchaseOrderItemCompletedList);
-        
+
         return ResponseEntity.ok()
             .body(resultList);
     }
-    
+
 }

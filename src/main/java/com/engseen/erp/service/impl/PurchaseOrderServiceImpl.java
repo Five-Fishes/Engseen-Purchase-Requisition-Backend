@@ -30,6 +30,7 @@ import static com.engseen.erp.constant.AppConstant.PO_HEADER_GST;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -63,6 +64,8 @@ import com.engseen.erp.service.PurchaseOrderService;
 import com.engseen.erp.service.PurchaseRequestApprovalItemService;
 import com.engseen.erp.service.PurchaseRequestApprovalService;
 import com.engseen.erp.service.VendorService;
+import com.engseen.erp.repository.VendorMasterRepository;
+import com.engseen.erp.service.*;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PODetailDTO;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
@@ -74,10 +77,12 @@ import com.engseen.erp.service.mapper.PODetailMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -100,11 +105,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final PurchaseRequestApprovalItemService purchaseRequestApprovalItemService;
     private final EmailService emailService;
     private final VendorService vendorService;
+    private final VendorMasterRepository vendorMasterRepository;
     private final TemplateEngine templateEngine;
     private final HtmlToPdfService htmlToPdfService;
     private final CounterTableService counterTableService;
     private final ItemMasterService itemMasterService;
     private final PODetailMapper poDetailMapper;
+    private final RestTemplateBuilder restTemplateBuilder;
 
     @Override
     @Transactional(readOnly = true)
@@ -329,7 +336,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             /*
             Generate POPdf
              */
-            File generatedPoPdfFile = generatePoPdfFile(poHeader.getPurchaseRequestApprovalId());
+            File generatedPoPdfFile = getPOPdfViaRestTemplate(poHeader.getPurchaseRequestApprovalId());
             generatedPoPdfFile.deleteOnExit();
 
             /*
@@ -358,16 +365,47 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public File downloadPOFile(Long purchaseOrderId) throws IOException {
         markPOAsDownloaded(purchaseOrderId);
-        return generatePoPdfFile(purchaseOrderId);
+        return getPOPdfViaRestTemplate(purchaseOrderId);
+    }
+
+    @Override
+    public String getPOHtml(Long purchaseOrderId) {
+        String templatePath = AppConstant.PDF_TEMPLATE_DIRECTORY + "po-pdf-template";
+        Context poPDFContext = new Context();
+
+        poHeaderRepository.findById(purchaseOrderId.intValue())
+                .ifPresent(poHeader -> {
+                    List<PODetail> poDetailList = poDetailRepository.findAllByPoNumber(poHeader.getPoNumber());
+                    poPDFContext.setVariable("poDetailList", poDetailList);
+                    poPDFContext.setVariable("poHeader", poHeader);
+
+                    vendorMasterRepository.findByVendorID(poHeader.getVendorID())
+                            .ifPresent(vendorMaster -> poPDFContext.setVariable("vendorMaster", vendorMaster));
+
+                    BigDecimal totalCost = poDetailList
+                            .stream()
+                            .map((poDetail) -> poDetail.getOrderQuantity().multiply(poDetail.getUnitPrice()))
+                            .reduce(BigDecimal::add)
+                            .orElse(BigDecimal.ZERO);
+
+                    poPDFContext.setVariable("totalCost", totalCost);
+                });
+
+        return templateEngine.process(templatePath, poPDFContext);
     }
 
     /**
-     * Generate PO Pdf file
+     * <p>Generate PO Pdf file:
+     * <ul>
+     *     <li>use {@code getPOPdfViaRestTemplate} instead
+     *     <li>this uses IText which is less powerful in rendering PDF with HTML
+     * </ul>
      *
      * @param purchaseOrderId PO ID
      * @return Generated PDF File
      * @throws IOException IO exception while creating poPdf
      */
+    @Deprecated(forRemoval = true)
     private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
 
         String templatePath = AppConstant.PDF_TEMPLATE_DIRECTORY + "po-pdf-template";
@@ -389,6 +427,24 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }, () -> log.warn("PO have no details"));
         String poPdf = templateEngine.process(templatePath, poPDFContext);
         return htmlToPdfService.htmlToPdf(poPdf);
+    }
+
+    private File getPOPdfViaRestTemplate(Long purchaseOrderId) throws IOException {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        byte[] bytes = restTemplate
+                .postForObject(
+                        "http://localhost:8002/api/purchase-order/download/" + purchaseOrderId.toString(),
+                        null,
+                        byte[].class
+                );
+
+        File file = File.createTempFile("PDF", "pdf");
+        try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
+            assert bytes != null;
+            outputStream.write(bytes);
+        }
+
+        return file;
     }
 
     /**

@@ -18,9 +18,9 @@ public class POHeaderServiceImpl implements POHeaderService {
     @Override
     public POHeader insert(POHeader poHeader) {
         poHeaderRepository.insertPOHeader(poHeader.getPoNumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
-                poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPoReference(), poHeader.getPoRevision(), poHeader.getLocationID(),
                 poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
-                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
+                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFobPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
                 poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
                 poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
                 poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),
@@ -34,9 +34,9 @@ public class POHeaderServiceImpl implements POHeaderService {
     @Override
     public POHeader update(POHeader poHeader) {
         poHeaderRepository.updatePOHeader(poHeader.getId(), poHeader.getPoNumber(), poHeader.getVendorID(), poHeader.getBuyer(), poHeader.getContact(), poHeader.getPhone(), poHeader.getOurContact(),
-                poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPOReference(), poHeader.getPORevision(), poHeader.getLocationID(),
+                poHeader.getOrderStatus(), TimestampUtil.fromInstant(poHeader.getOriginalPODate()), TimestampUtil.fromInstant(poHeader.getPORevisionDate()), poHeader.getPoReference(), poHeader.getPoRevision(), poHeader.getLocationID(),
                 poHeader.getShipTo(), poHeader.getAddress1(), poHeader.getAddress2(), poHeader.getCity(), poHeader.getState(), poHeader.getZipCode(),
-                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFOBPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
+                poHeader.getCountry(), poHeader.getShipVia(), poHeader.getFobPoint(), poHeader.getStandardTerms(), poHeader.getCash1Percent(), poHeader.getCash1Days(),
                 poHeader.getCash2Percent(), poHeader.getCash2Days(), poHeader.getNetDays(), poHeader.getDueDay(), poHeader.getCutoffDay(), poHeader.getMonthsDelay(),
                 poHeader.getBlanketOrder(), poHeader.getPrintPO(), poHeader.getContract(), poHeader.getControllingCurrency(), poHeader.getCurrencyCode(), poHeader.getExchangeRate(),
                 poHeader.getRemark(), poHeader.getLess1(), poHeader.getLess1Amount(), poHeader.getLess2(), poHeader.getLess2Amount(), poHeader.getOrderTotal(),

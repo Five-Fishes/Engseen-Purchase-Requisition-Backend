@@ -1,149 +1,160 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Title</title>
     <style>
-        .mh-5-em {
-            margin-left: 5em;
-            margin-right: 5em;
-        }
+      .mh-5-em {
+        margin-left: 5em;
+        margin-right: 5em;
+      }
 
-        .mh-2-em {
-            margin-left: 2em;
-            margin-right: 2em;
-        }
+      .mh-2-em {
+        margin-left: 2em;
+        margin-right: 2em;
+      }
 
-        .mh-7-em {
-            margin-left: 7em;
-            margin-right: 7em;
-        }
+      .mh-7-em {
+        margin-left: 7em;
+        margin-right: 7em;
+      }
 
-        .mh-10-em {
-            margin-left: 10em;
-            margin-right: 10em;
-        }
+      .mh-10-em {
+        margin-left: 10em;
+        margin-right: 10em;
+      }
 
-        .mv-2-em {
-            margin-top: 2em;
-            margin-bottom: 2em;
-        }
+      .mv-2-em {
+        margin-top: 2em;
+        margin-bottom: 2em;
+      }
 
-        .mv-5-em {
-            margin-top: 5em;
-            margin-bottom: 5em;
-        }
+      .mv-5-em {
+        margin-top: 5em;
+        margin-bottom: 5em;
+      }
 
-        ._2-parts-container-horizontal {
-            display: flex;
-            width: 100%;
-        }
+      ._2-parts-container-horizontal {
+        display: flex;
+        width: 100%;
+      }
 
-        .left {
-            width: 50%;
-        }
+      .left {
+        width: 50%;
+      }
 
-        .right {
-            width: 50%;
-        }
+      .right {
+        width: 50%;
+      }
 
-        .no-bullets {
-            list-style-type: none; /* Remove bullets */
-            padding: 0; /* Remove padding */
-            margin: 0; /* Remove margins */
-        }
+      .no-bullets {
+        list-style-type: none; /* Remove bullets */
+        padding: 0; /* Remove padding */
+        margin: 0; /* Remove margins */
+      }
 
-        .po-table-border > table, th, td {
-            border-style: solid;
-            border-color: black;
-            border-width: 0.5px;
-            border-spacing: 0;
-        }
+      .po-table-border > table,
+      .po-table-border > table > thead > tr > th,
+      .po-table-border > table > tbody > tr > td {
+        border-style: solid;
+        border-color: black;
+        border-width: 0.5px;
+        border-spacing: 0;
+      }
 
-        /*.plain-table-border > table, th, td {*/
-        /*    border-color: black;*/
-        /*    border-width: 0px;*/
-        /*    border-spacing: 0px;*/
-        /*}*/
+      .title-header {
+          margin: 4px 0;
+      }
+
+      @media print {
+        .new-page {
+          page-break-before: always;
+          /* change the margins as you want them to be. */
+        }
+      }
+
+      .plain-table-border > table {
+        border-color: black;
+        border-width: 0;
+        border-spacing: 0;
+      }
     </style>
-</head>
-<body style="margin: 0">
-<div id="purchase-order-container" class="mh-2-em mv-2-em">
-    <div id="section-1" class="_2-parts-container-horizontal mv-2-em">
+  </head>
+  <body style="margin: 0">
+    <div id="purchase-order-container" class="mh-2-em mv-2-em new-page">
+      <div id="section-1" class="_2-parts-container-horizontal mv-2-em">
         <div class="left">
-            <b>Engseen Bleaching & Dyeing Sdn Bhd</b>
-            <ul class="no-bullets">
-                <li>Lot 2958, Acku Inds. Estate Jalan Bagan Lalang</li>
-                <li>13400 Butterworth</li>
-                <li>Penang Malaysia</li>
-                <li>Phone: 04-4844208</li>
-            </ul>
+          <h2 class="title-header">Engseen Bleaching & Dyeing Sdn Bhd</h2>
+          <ul class="no-bullets">
+            <li>Lot 2958, Acku Inds. Estate Jalan Bagan Lalang</li>
+            <li>13400 Butterworth</li>
+            <li>Penang Malaysia</li>
+            <li>Phone: 04-4844208</li>
+          </ul>
         </div>
         <div class="right plain-table-border">
-            <b>PURCHASE ORDER</b>
-            <table>
-                <tr>
-                    <td>DATE:</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>PO:</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>PO Rev:</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>Your Ref:</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>Page:</td>
-                    <td>-</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div id="section-2" class="_2-parts-container-horizontal mv-2-em">
-        <div class="left">
-            <span>VENDOR</span><br>
-            <span>addr-1</span><br>
-            <span>addr-2</span><br>
-            <span>addr3</span><br><br>
-            <span>Phone: -</span>
-        </div>
-        <div class="right">
-            <span>SHIP TO/PLACE OF DELIVERY</span><br>
-            <span>Engseen Bleaching & Dyeing Sdn Bhd Lot 2958, Acku Inds. Estate</span><br>
-            <span>Jalan Bagan Lalang</span><br>
-            <span>13400 Butterworth</span><br>
-            <span>Penang Malaysia</span><br>
-        </div>
-    </div>
-    <div id="section-3" class="_2-parts-container-horizontal mv-2-em">
-        <div class="left">
-            <span>SHIP VIA:</span><br>
-            <span>FOB:</span><br>
-        </div>
-        <div class="right">
-            <span>TERMS OF PAYMENT:</span><br>
-        </div>
-    </div>
-    <div class="po-table-border">
-        <table style="width: 100%" class="mv-2-em">
-            <thead>
+          <h2 class="title-header">PURCHASE ORDER</h2>
+          <table>
             <tr>
-                <th>Line</th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>UOM</th>
-                <th>Delivery Date</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+              <td>DATE:</td>
+              <td th:text="${poHeader.originalPODate}">-</td>
             </tr>
-            </thead>
-            <tbody>
+            <tr>
+              <td>PO:</td>
+              <td th:text="${poHeader.poNumber}">-</td>
+            </tr>
+            <tr>
+              <td>PO Rev:</td>
+              <td th:text="${poHeader.poRevision}">-</td>
+            </tr>
+            <tr>
+              <td>Your Ref:</td>
+              <td th:text="${poHeader.poReference}">-</td>
+            </tr>
+            <tr>
+              <td>Page:</td>
+              <td>-</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div id="section-2" class="_2-parts-container-horizontal mv-2-em">
+        <div class="left">
+          <span th:text="${vendorMaster.vendorName}">-</span><br />
+          <span th:text="${vendorMaster.address1}">-</span><br />
+          <span th:text="${vendorMaster.address2}">-</span><br />
+          <span th:text="${vendorMaster.zipCode}">-</span> <span th:text="${vendorMaster.city}">-</span><br /><br />
+          <span>Phone: </span><span th:text="${vendorMaster.phone}">-</span>
+        </div>
+        <div class="right">
+          <span>SHIP TO/PLACE OF DELIVERY</span><br />
+          <span>Engseen Bleaching & Dyeing Sdn Bhd Lot 2958, Acku Inds. Estate</span><br />
+          <span>Jalan Bagan Lalang</span><br />
+          <span>13400 Butterworth</span><br />
+          <span>Penang Malaysia</span><br />
+        </div>
+      </div>
+      <div id="section-3" class="_2-parts-container-horizontal mv-2-em">
+        <div class="left">
+          <span>SHIP VIA:</span> <span th:text="${poHeader.shipVia}">-</span><br />
+          <span>FOB:</span> <span th:text="${poHeader.fobPoint}">-</span><br />
+        </div>
+        <div class="right"><span>TERMS OF PAYMENT:</span> Net <span th:text="${poHeader.netDays}">-</span> days<br /></div>
+      </div>
+      <div class="po-table-border">
+        <table style="width: 100%" class="mv-2-em">
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>UOM</th>
+              <th>Delivery Date</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
             <tr th:each="poDetail,iter : ${poDetailList}">
                 <td th:text="${iter.index + 1}">-</td>
                 <td th:text="${poDetail.item}">-</td>
@@ -153,564 +164,310 @@
                 <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.unitPrice, 1, 2)}">-</td>
                 <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.extendedPrice, 1, 2)}">-</td>
             </tr>
-            </tbody>
+          </tbody>
         </table>
-    </div>
-    <div style="display: flex;flex-direction: row-reverse;">
-        <div style="display: flex;flex-direction: row-reverse;">
-            <span><b>Total(RM): -</b></span>
+      </div>
+      <div style="display: flex; flex-direction: row-reverse">
+        <div style="display: flex; flex-direction: row-reverse">
+          <span><b>Total(RM):</b> <b th:text="${totalCost}"> - </b></span>
         </div>
-    </div>
-    <div><span>**This is a computer generated PO and does not require signature**</span></div>
-    <hr>
-    <div><span>Terms and Conditions Apply (Kindly refer to the "General Purchase Terms and Conditions" sheet)</span>
-    </div>
-    <div><span><b>Acceptance of Order</b></span></div>
-    <div class="_2-parts-container-horizontal">
+      </div>
+      <div><span>**This is a computer generated PO and does not require signature**</span></div>
+      <hr />
+      <div><span>Terms and Conditions Apply (Kindly refer to the "General Purchase Terms and Conditions" sheet)</span></div>
+      <div>
+        <span><b>Acceptance of Order</b></span>
+      </div>
+      <div class="_2-parts-container-horizontal">
         <div class="left">
-            <ul class="no-bullets">
-                <li>Name:</li>
-                <li>Designation:</li>
-                <li>Date:</li>
-            </ul>
+          <ul class="no-bullets">
+            <li>Name:</li>
+            <li>Designation:</li>
+            <li>Date:</li>
+          </ul>
         </div>
-        <div class="right" style="display: flex; flex-direction: column-reverse;">
-            <div style="display: flex;flex-direction: row-reverse;">
-                <span style="border-style: solid; border-color: black; border-width: 1px 0 0 0">Authorized Signatory & Company Stamp</span>
-            </div>
+        <div class="right" style="display: flex; flex-direction: column-reverse">
+          <div style="display: flex; flex-direction: row-reverse">
+            <span style="border-style: solid; border-color: black; border-width: 1px 0 0 0">Authorized Signatory & Company Stamp</span>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<div id="terms-and-conditions-container" style="font-family: Arial,serif" class="mh-7-em mv-5-em">
-    <div style="width: 100%;display: flex; justify-content: center;">
-        <span style="font-size: 12px"><b><u>GENERAL PURCHASE TERMS AND CONDITIONS (GPTC)</u></b></span>
+    <div id="terms-and-conditions-container" style="font-family: Arial, serif" class="mh-2-em mv-5-em new-page">
+      <div style="width: 100%; display: flex; justify-content: center">
+        <span style="font-size: 12px"
+          ><b><u>GENERAL PURCHASE TERMS AND CONDITIONS (GPTC)</u></b></span
+        >
+      </div>
+      <div id="terms-and-condition-content" style="column-count: 2; column-gap: 50px; font-size: 6px" class="mv-2-em">
+        <div>
+          <b>CLAUSE 1. APPLICATION OF GENERAL PURCHASE TERMS AND CONDITIONS</b>
+          <br />
+          1.1 The present GPTC shall apply to all Orders placed by Engseen Bleaching & Dyeing Sdn. Bhd. (“Engseen”) with a supplier (“Supplier”) for the purchase of goods (“Goods”) or engagement of
+          services for the performance of the works (“Works”) specified in the Order. Consequently, the acceptance of any Order by the Supplier entails the automatic acceptance of the present GPTC,
+          which shall prevail over any other document provided by the Supplier whether in the form of the terms of the commercial offer, estimate, general terms of purchase or such other documents in
+          whatever form.
+        </div>
+        <div>
+          <b>CLAUSE 2. CONTRACT FORMATION</b>
+          <br />
+          2.1 The Order (including the present GPTC), its written acceptance by the Supplier as well as any document provided by Engseen pursuant to the Order (technical documents, projects,
+          specifications, requirements etc.) shall constitute the contract. All Orders placed verbally, by e-mail or by phone shall only be valid after written acceptance by Engseen. Any commencement
+          of performance of the Order by the Supplier entails the acceptance of all the conditions of the Order, including the present GPTC. Any amendment proposed by the Supplier to any element of
+          the Order shall only be binding on Engseen upon Engseen’s acceptance and agreement as evidenced in writing.
+        </div>
+        <div>
+          <b>CLAUSE 3. PRICES, TERMS OF PAYMENT AND INVOICING</b>
+          <br />
+          3.1 Unless otherwise agreed, all Order prices shall be fixed, firm and not subject to revision.
+          <br />
+          3.2 Unless otherwise specified in the Order, all Goods shall be delivered to Engseen’s designated location with all customs, duties, taxes, freight charges, insurance and other costs and
+          expenses relating to the transportation and delivery of the Goods being paid by the Supplier.
+          <br />
+          3.3 The terms of payment are indicated in the Order. The payment of an invoice shall not constitute acceptance of the Goods delivered or Works executed. If retention sum is applicable,
+          Engseen shall be entitled to withhold or deduct any sum for payment to the Supplier in accordance with terms set out in the Order for any such retention.
+          <br />
+          3.4 Invoicing shall be made in accordance with the arrangements set out in the Order. Any invoice issued by the Supplier not stating the relevant Order number shall be deferred without
+          additional expenses for Engseen.
+          <br />
+          3.5 To secure the performance of the Supplier in the execution of the Works, Engseen may require the Supplier to provide a performance security at the amount to be specified in the Order
+          from a third party approved by Engseen according to the terms stated in the Order.
+        </div>
+        <div>
+          <b>CLAUSE 4. QUALITY AND SAFETY</b>
+          <br />
+          4.1 All Goods supplied shall:
+          <br />
+          4.1.1 be in accordance with the quantity, quality, description and other particulars contained in the Order and any sample, drawing, description and specification given to the Supplier by
+          Engseen and all applicable standards under the applicable law (“Specifications”);
+          <br />
+          4.1.2 be of satisfactory quality, fit for purpose or any intended use expressly or impliedly made known to the Supplier; and
+          <br />
+          4.1.3 free from defects in title, lien, encumbrances and claims.
+          <br />
+          4.2 All Works performed shall:
+          <br />
+          4.2.1 comply with the performance Specifications in the Contract and in accordance with the best industry practice and all applicable standards, regulations and such other statutory
+          requirements relating to the Works to be executed.
+          <br />
+          4.2.2 be executed in a proper and skillful manner by properly qualified and experienced personnel of the Supplier and in accordance with the best industry practice.
+          <br />
+          4.3 The Goods and/or Works referred to in Sub-Clause 4.1 and Sub-Clause 4.2 shall include and apply to any replacement, repaired, substituted or remedial Goods and/or Works provided by the
+          Supplier pursuant to Clause 11.
+          <br />
+          4.4 In case of attendance at any Engseen’s premises or such other premises designated by Engseen, the Supplier shall be responsible for ensuring compliance with all provisions applying to
+          the premises concerning hygiene, security and environment, both by itself and by its employees who are under its responsibility. The Supplier shall not be entitled to claim for any
+          compensation resulting therefrom. The Supplier is required to obtain information as to the existence of such provisions before carrying out the Order. Works on Engseen’s premises or such
+          other premises designated by Engseen shall be executed in compliance with applicable on–site rules and regulations and as part of instructions on security, administrative rules and general
+          conditions of execution transmitted or given verbally before admission to site.
+        </div>
+        <div>
+          <b>CLAUSE 5. VARIATION</b>
+          <br />
+          5.1 Engseen may make any variation to the form, quality or quantity of the Goods and/or Works or any schedule for the execution of the Works or any part thereof (“Variation”) but the effect,
+          if any, of any such Variation shall be valued in accordance with schedule of rates where applicable and if not applicable, prices shall be reasonably agreed between the parties.
+          <br />
+          5.2 Any instructions for Variation by Engseen (“Variation Order”) shall contain information as to the quantities and scope of Works and signed by Engseen’s authorised representatives. No
+          Variation can be undertaken without a Variation Order.
+        </div>
+        <div>
+          <b>CLAUSE 6. DELIVERY OF GOODS AND COMPLETION OF WORKS</b>
+          <br />
+          6.1 The Supplier commits to inspect the Goods, before delivery, for compliance with the Specifications and to properly pack them so that they shall not be damaged during transportation. The
+          Supplier is obliged to comply with all contractual lead-times provided and set out under the Order (“Delivery Date”). Engseen shall be entitled to terminate the Order if it is not executed
+          within the contractual lead-times or after the extended lead-times set out by Engseen. Engseen reserves the right to refuse partial or early deliveries and may return the Goods at the
+          Supplier’s costs and risks.
+          <br />
+          6.2 The Supplier shall commence the Works on the date specified in the Order and shall complete within the period specified in the Order or the Works schedule agreed in writing by Engseen
+          (“Completion Date”).
+          <br />
+          6.3 Time is of the essence in the Supplier’s delivery of Goods and/or completion of Works under this Contract. The Supplier will promptly notify Engseen if the Delivery Date and/or
+          Completion Date cannot be met or is likely to be delayed or disrupted together with supporting details (“Delay Notice”).
+          <br />
+          6.4 On receipt of the Delay Notice, Engseen shall be entitled but is under no obligation to extend the Delivery Date and/or Completion Date as appropriate which shall not constitute
+          Engseen’s waiver of any of the Supplier’s obligations or prejudice any of Engseen’s rights under the Contract.
+          <br />
+          6.5 If the Supplier fails to deliver the Goods on Delivery Date and/or complete the Works on Completion Date, the Supplier shall be liable to pay the amount specified in the Order as
+          liquidated damages for each day for which the Supplier fails to deliver the Goods and/ or complete the Works by the Delivery Date and/or Completion Date, as applicable. Notwithstanding the
+          aforementioned, the Supplier shall also be liable for all actual and reasonable costs and damages which Engseen incurs as a result of the late delivery of the Goods and/or late completion of
+          the Works.
+          <br />
+          6.6 Engseen may at any time instruct the Supplier to suspend the delivery of the Goods and/or execution of the Works or any part thereof, provided that Engseen has reasonable cause to do so
+          and Engseen in so doing, shall act in good faith. The Supplier shall not be entitled to be paid any additional cost during the suspension period, unless otherwise agreed by the Parties.
+        </div>
+        <div>
+          <b>CLAUSE 7. TRANSFER OF TITLE AND RISK</b>
+          <br />
+          7.1 The transfer of title to the Goods takes place after delivery at the place specified in the Order. Unless expressly accepted by Engseen, any title retention clause shall be deemed
+          invalid. If the Goods must be manufactured or performed over a certain period of time, the transfer of title to Engseen shall take place gradually according to the progression of the
+          manufacturing operations or performance, with the exception of risks that shall remain the responsibility of the Supplier according to the provisions hereunder.
+          <br />
+          7.2 If the Goods or any part thereof are nonconforming, the Supplier shall continue to bear the risk of loss as to them until the cure of the defect or acceptance by Engseen, whichever is
+          earlier.
+          <br />
+          7.3 Title to any Goods that are rejected on receipt or retention of which is refused by Engseen, or acceptance of which is justifiably revoked, shall re-vest in the Supplier, whereupon the
+          Supplier shall bear all responsibility for the Goods and liability under all applicable environmental laws, including liability for disposal thereof, against which the Supplier shall
+          indemnify Engseen.
+        </div>
+        <div>
+          <b>CLAUSE 8. INSPECTION AND TESTING</b>
+          <br />
+          8.1 The Buyer reserves the right to inspect and test the Goods and/or the Works at any stage at the site at which the Works are to be executed (“Site”) and/or the Supplier’s premises and the
+          Supplier shall give rights of access to premises and such facilities as Engseen may reasonably require for such inspection at the Supplier’s cost and expense.
+          <br />
+          8.2 The Supplier shall comply strictly and fully with the test requirements as stipulated by Engseen in accordance with the Specifications, drawings, instructions or standards supplied or
+          agreed by Engseen, as specified in the Order and required under the law and shall furnish the test results to Engseen.
+          <br />
+          8.3 Passing of inspection and testing or acceptance of inspection and testing results in respect of the Goods and/or Works will not constitute Engseen’s waiver of any of the Supplier’s
+          obligations or prejudice any of Engseen’s rights under the Contract.
+        </div>
+        <div>
+          <b>CLAUSE 9. ACCEPTANCE OR TAKING-OVER</b>
+          <br />
+          9.1 The receipt of Goods shall be made according to the applicable Site rules. Engseen shall not be deemed to have accepted any Goods until it has had reasonable time to verify if they
+          conform to the Specifications set out in the Order. The release given at the time of receipt as evidenced by the delivery note signed by Engseen shall not be deemed as discharging the
+          Supplier where later inspection reveal that the Goods delivered do not conform to the Order’s Specifications.
+          <br />
+          9.2 Engseen shall notify the Supplier when he considers that the Supplier has completed the Works in accordance with this Contract stating the date accordingly (“Taking-Over Notice”).
+          <br />
+          9.3 Upon issuance of the Taking-Over Notice, Engseen shall take over the Works and subject to Clause 11, the Supplier shall promptly complete any outstanding work, remove from the site at
+          which the Works are to be performed any and all their equipment, materials, employees, wreckage, rubbish or temporary works no longer required and shall make the Works ready for use and in a
+          good working condition within the period specified by Engseen.
+          <br />
+          9.4 Any payment made in respect of Goods and/or Works provided by the Supplier prior to the inspection by Engseen shall not constitute acceptance of the Goods and/or Works. Acceptance shall
+          be deemed to have occurred after Engseen has tested and inspected the Goods and/or Works in accordance with this Clause.
+        </div>
+        <div>
+          <b>CLAUSE 10. WARRANTY</b>
+          <br />
+          10.1 The Supplier guarantees in all circumstances, including in the case of authorised subcontracting, that the Goods and/or Works delivered shall comply with the Specifications. In
+          particular, it guarantees that the Goods and/or Works shall be free from defect in design, material and workmanship, that they shall satisfactorily fulfil the performance requirements
+          expected by Engseen and that they shall meet all applicable laws and regulations.
+          <br />
+          10.2 In the event of non-conformity of the Goods delivered or Works executed with the Specifications, Engseen reserves the right without prejudice to any potential claims for loss and
+          damages, after sending written notice and at any time, (i) to terminate all or part of the Order according to Clause 16 (return the Goods at the Supplier’s sole costs and risks), (ii) accept
+          such Goods and/or Works with an equitable reduction in price, (iii) to reject the non-conforming Goods and/or Works and require at the Supplier’s costs and risks, the delivery of replacement
+          Goods or the re-performance of the Works or the making of necessary repairs to such Goods and/or Works as promptly as reasonably practicable.
+          <br />
+          10.3 The Supplier shall warrant that the Goods and/or Works executed pursuant to the performance of the Works shall be free from defect within the period specified in the Order (“Warranty
+          Period”). In the event of any defects found within the Warranty Period, Clause 11 shall apply.
+          <br />
+          10.4 In the event of any part replaced or repaired during the Warranty Period suffers from recurrent defect, the Warranty Period for the Goods or the parts of the Works that suffer from such
+          defect shall be deemed to start anew and commence from the day on which such Goods or Works are changed, modified, remedied or replaced for and additional period equivalent to the Warranty
+          Period.
+        </div>
+        <div>
+          <b>CLAUSE 11. REMEDYING DEFECTS OR REPAIR AND REPLACEMENT</b>
+          <br />
+          11.1 In the event of a defect or failure or non-conformity with the Specifications in the Goods and/or Works (“Defects”) which becomes apparent within the Warranty Period, the Supplier
+          shall, within forty eight (48) hours after receipt of a written notice from Engseen, submit to Engseen a proposal for remedial actions. Upon Engseen’s approval, the Supplier shall with due
+          diligence, make good or correct the Defects or replace the Goods, all at Supplier’s sole cost and expense within seven (7) days or such other period agreed by Engseen.
+          <br />
+          11.2 The rejected Goods and/or non-conforming or defective Works shall be held entirety at the risk of the Supplier and shall be removed by the Supplier at its own risk and expense. The
+          Supplier shall reimburse and refund Engseen the whole or part of any payment made in respect of any rejected Goods and/or non- conforming Works or Defects which cannot be rectified or
+          repaired by the Supplier.
+          <br />
+          11.3 All costs and charges incurred in remedying the Defects, including but not limited to any costs relating to the repair, replacement, packing, handling, transportation and delivery of
+          Goods and/or Works shall be fully borne by the Supplier.
+        </div>
+        <div>
+          <b>CLAUSE 12. INTELLECTUAL PROPERTY</b>
+          <br />
+          12.1 The Supplier represents and warrants that (i) any matter it furnishes for delivery of the Goods and/or execution of the Works does not infringe or violate any trademarks, patents,
+          registered design, copyright, trademark or trade name or other legal rights of any third parties; and (ii) it has all necessary permits and licences to allow it to sell the Goods and execute
+          the Works to and for the Engseen.
+          <br />
+          12.2 The Supplier shall fully indemnify and hold Engseen harmless against all actions or claims, liability, loss, costs, attorney’s fees, expenses and damages due to or arising from any
+          infringement of intellectual property rights. The Supplier shall, at its own expense, defend Engseen against all such claims, proceedings and suits.
+          <br />
+          12.3 In case any item delivered by the Supplier under this GPTC is in any such suit held to constitute an infringement, and its use is enjoined, the Supplier shall at its option and
+          expense:(i) procure for Engseen the right to continue using the item concerned; or(ii) replace or modify the item so that it becomes non- infringing yet remains functionally and
+          substantially equivalent.
+        </div>
+        <div>
+          <b>CLAUSE 13. BUYER’S DRAWINGS AND DOCUMENTS</b>
+          <br />
+          13.1 The ownership and intellectual property rights in all documents and software including but not limited to all drawings, blueprints, tracings and other items provided by Engseen to the
+          Supplier or developed by the Supplier in the course of executing the Works based on Engseen’s Specifications (collectively, “Documents”) shall be the sole property of the Engseen at all
+          times. All Documents and any copies shall be delivered to Engseen upon the delivery of the Goods and/or completion of the Works regardless of whether payment has been made to the Supplier.
+        </div>
+        <div>
+          <b>CLAUSE 14. INSURANCE</b>
+          <br />
+          14.1 In addition to its legal liability, the Supplier remains automatically liable to Engseen as well as any third party for damages of any nature likely to be caused to them by the Supplier
+          in the course of the supply of the Goods and/or execution of the Works. These damages may be the direct and/or indirect consequences arising from the supply of the Goods and/or the execution
+          of the Works. The Supplier also undertakes to fully indemnify Engseen for any recourse and/or any claim that third parties may bring against Engseen within the context of the Order and to be
+          responsible for all financial consequences, which may result from such recourse and/or claim.
+          <br />
+          14.2 The Supplier shall procure all necessary insurance to cover for all the liabilities it incurs or may incur pursuant to the Order and as described in the foregoing Sub-Clause 14.1. The
+          Supplier undertakes to provide Engseen, without delay, with all certificates for the insurance covers it has procured in accordance with this Clause and with the requirements of Engseen.
+          These obligations do not release the Supplier in any event from its liability. In particular, the Supplier remains liable for the damages for its account where the financial consequences may
+          not be covered, totally or in part, by its insurance.
+        </div>
+        <div>
+          <b>CLAUSE 15. CONFIDENTIALITY AND PUBLICITY</b>
+          <br />
+          15.1 The Supplier shall keep and cause to keep in confidence, all data it may receive at the time pursuant to the Order. The Supplier agrees to refrain from disclosing any such data to third
+          parties and/or using them in any form whatsoever, for purposes other than carrying out the Order without the prior written consent of Engseen.
+          <br />
+          15.2 The Supplier shall not carry out any advertising or publicity in respect of the Order without the prior written approval of Engseen.
+        </div>
+        <div>
+          <b>CLAUSE 16. TERMINATION</b>
+          <br />
+          16.1 If the Supplier fails to perform or partially perform any of its obligations in respect of an Order, including in the event the Supplier‘s financial condition may reasonably be
+          construed as preventing the proper performance of the Order and the Supplier fails to remedy any such performance within the period prescribed in the formal letter of demand issued by
+          Engseen to the Supplier notifying the Supplier of its default, such Order may be terminated in whole or part by Engseen by giving the Supplier a fifteen (15) days prior notice and such
+          termination shall take effect upon expiry of such fifteen (15) days. Any termination shall be without prejudice to any liquidated damages and to any damages that could be claimed by Engseen
+          from the Supplier.
+          <br />
+          16.2 Any breach of the confidentiality obligations provided in Clause 15 by the Supplier may automatically give rise to the termination of the Order, at the demand of Engseen, without
+          prejudice to any potential claims for loss and damages by Engseen.
+          <br />
+          16.3 Engseen shall be entitled to charge to the Supplier any positive cost differential between the replacement Goods which Engseen is required to acquire from other suppliers and/or the
+          appointment of a new contractor to execute the uncompleted Works due to the termination of the Order and the prices of the Goods and/or Works as stated in the Order.
+          <br />
+          16.4 Engseen shall be entitled to terminate the Order or part thereof at its convenience provided always that the Supplier shall be paid the amounts payable for any Goods delivered and
+          accepted by the Engseen and/or Works executed up to the date of termination of the Order and all reasonable costs which have been committed by the Supplier in anticipation of the full
+          delivery of the Goods and/ or the completion of the Works. Upon the termination of the Order pursuant to this Sub-Clause, the Supplier shall immediately cease the performance of the whole or
+          part of the work in progress and take all reasonable steps to minimize the incurrence of costs allocable to the work and the Engseen’s sole liability is to pay the Supplier the amounts
+          payable for any Goods delivered and accepted by the Engseen and/or Works up to the date of termination of the Contract.
+          <br />
+          16.5 The termination of the Order shall be without prejudice to the rights and remedies of the parties which have accrued prior to the termination of the Order.
+          <br />
+          16.6 Relevant obligations of the parties set out in clauses of this GPTC relating to confidentiality, ownership, intellectual property rights, indemnities and any rights arising on
+          termination shall survive the termination.
+        </div>
+        <div>
+          <b>CLAUSE 17. SUB-CONTRACTING</b>
+          <br />
+          17.1 Any subcontracting of the whole or a part of the Order must have received the prior written agreement of Engseen. In any event, the Supplier remains solely liable for the performance of
+          the Order and guarantees that its subcontractor(s) shall conform to the terms hereof. The Supplier in particular undertakes to ensure that its subcontractors adhere to the present GPTC.
+        </div>
+        <div>
+          <b>CLAUSE 18. ASSIGNMENT</b>
+          <br />
+          18.1 The Order is neither assignable nor transferable by the Supplier, whether in whole or in part, without the prior written and express approval of Engseen. The Supplier shall inform
+          Engseen without delay of any important change to its legal structure or any change of control of its capital. In such cases, Engseen may terminate the Order as of right without any
+          compensation to the Supplier if Engseen is of the reasonable view that any such change shall adversely affect the proper performance of the Supplier in respect of the Order.
+        </div>
+        <div>
+          <b>CLAUSE 19. STAMP DUTY</b>
+          <br />
+          19.1 The stamp duty payable for the sale of the Goods and/or execution of the Works pursuant to or in relation to this Order shall be borne by the Supplier.
+        </div>
+        <div>
+          <b>CLAUSE 20. ENTIRE AGREEMENT</b>
+          <br />
+          20.1 This Contract constitutes the entire agreement between Engseen and the Employer with respect to the subject matter of this Contract and supersedes all communications, negotiations and
+          agreements whether made in writing or orally of both parties made prior to the date of this Contract
+        </div>
+        <div>
+          <b>CLAUSE 21. GOVERNING LAW</b>
+          <br />
+          21.1 The Order shall be exclusively governed and construed in accordance with the laws of Malaysia.
+        </div>
+      </div>
     </div>
-    <div id="terms-and-condition-content" style="column-count: 2; column-gap: 70px; font-size: 9px" class="mv-2-em">
-        <div><b>CLAUSE 1. APPLICATION OF GENERAL PURCHASE TERMS AND CONDITIONS</b>
-            <br>
-            1.1 The present GPTC shall apply to all Orders placed by Engseen Bleaching & Dyeing Sdn. Bhd. (“Engseen”)
-            with a
-            supplier (“Supplier”) for the purchase of goods (“Goods”) or engagement of services for the performance of
-            the
-            works (“Works”) specified in the Order. Consequently, the acceptance of any Order by the Supplier entails
-            the
-            automatic acceptance of the present GPTC, which shall prevail over any other document provided by the
-            Supplier
-            whether in the form of the terms of the commercial offer, estimate, general terms of purchase or such other
-            documents in whatever form.
-        </div>
-        <div><b>CLAUSE 2. CONTRACT FORMATION</b>
-            <br>
-            2.1 The Order (including the present GPTC), its written acceptance by the Supplier as well as any document
-            provided
-            by Engseen pursuant to the Order (technical documents, projects, specifications, requirements etc.) shall
-            constitute
-            the contract. All Orders placed verbally, by e-mail or by phone shall only be valid after written acceptance
-            by
-            Engseen. Any commencement of performance of the Order by the Supplier entails the acceptance of all the
-            conditions
-            of the Order, including the present GPTC. Any amendment proposed by the Supplier to any element of the Order
-            shall
-            only be binding on Engseen upon Engseen’s acceptance and agreement as evidenced in writing.
-        </div>
-        <div><b>CLAUSE 3. PRICES, TERMS OF PAYMENT AND INVOICING</b>
-            <br>
-            3.1 Unless otherwise agreed, all Order prices shall be fixed, firm and not subject to revision.
-            <br>
-            3.2 Unless otherwise specified in the Order, all Goods shall be delivered to Engseen’s designated location
-            with
-            all
-            customs, duties, taxes, freight charges, insurance and other costs and expenses relating to the
-            transportation
-            and
-            delivery of the Goods being paid by the Supplier.
-            <br>
-            3.3 The terms of payment are indicated in the Order. The payment of an invoice shall not constitute
-            acceptance
-            of
-            the Goods delivered or Works executed. If retention sum is applicable, Engseen shall be entitled to withhold
-            or
-            deduct any sum for payment to the Supplier in accordance with terms set out in the Order for any such
-            retention.
-            <br>
-            3.4 Invoicing shall be made in accordance with the arrangements set out in the Order. Any invoice issued by
-            the
-            Supplier not stating the relevant Order number shall be deferred without additional expenses for Engseen.
-            <br>
-            3.5 To secure the performance of the Supplier in the execution of the Works, Engseen may require the
-            Supplier to
-            provide a performance security at the amount to be specified in the Order from a third party approved by
-            Engseen
-            according to the terms stated in the Order.
-        </div>
-        <div><b>CLAUSE 4. QUALITY AND SAFETY</b>
-            <br>
-            4.1 All Goods supplied shall:
-            <br>
-            4.1.1 be in accordance with the quantity, quality, description and other particulars contained in the Order
-            and
-            any
-            sample, drawing, description and specification given to the Supplier by Engseen and all applicable standards
-            under
-            the applicable law (“Specifications”);
-            <br>
-            4.1.2 be of satisfactory quality, fit for purpose or any intended use expressly or impliedly made known to
-            the
-            Supplier; and
-            <br>
-            4.1.3 free from defects in title, lien, encumbrances and claims.
-            <br>
-            4.2 All Works performed shall:
-            <br>
-            4.2.1 comply with the performance Specifications in the Contract and in accordance with the best industry
-            practice
-            and all applicable standards, regulations and such other statutory requirements relating to the Works to be
-            executed.
-            <br>
-            4.2.2 be executed in a proper and skillful manner by properly qualified and experienced personnel of the
-            Supplier
-            and in accordance with the best industry practice.
-            <br>
-            4.3 The Goods and/or Works referred to in Sub-Clause 4.1 and Sub-Clause 4.2 shall include and apply to any
-            replacement, repaired, substituted or remedial Goods and/or Works provided by the Supplier pursuant to
-            Clause
-            11.
-            <br>
-            4.4 In case of attendance at any Engseen’s premises or such other premises designated by Engseen, the
-            Supplier
-            shall
-            be responsible for ensuring compliance with all provisions applying to the premises concerning hygiene,
-            security
-            and
-            environment, both by itself and by its employees who are under its responsibility. The Supplier shall not be
-            entitled to claim for any compensation resulting therefrom. The Supplier is required to obtain information
-            as to
-            the
-            existence of such provisions before carrying out the Order. Works on Engseen’s premises or such other
-            premises
-            designated by Engseen shall be executed in compliance with applicable on–site rules and regulations and as
-            part
-            of
-            instructions on security, administrative rules and general conditions of execution transmitted or given
-            verbally
-            before admission to site.
-        </div>
-        <div><b>CLAUSE 5. VARIATION</b>
-            <br>
-            5.1 Engseen may make any variation to the form, quality or quantity of the Goods and/or Works or any
-            schedule
-            for
-            the execution of the Works or any part thereof (“Variation”) but the effect, if any, of any such Variation
-            shall
-            be
-            valued in accordance with schedule of rates where applicable and if not applicable, prices shall be
-            reasonably
-            agreed between the parties.
-            <br>
-            5.2 Any instructions for Variation by Engseen (“Variation Order”) shall contain information as to the
-            quantities
-            and
-            scope of Works and signed by Engseen’s authorised representatives. No Variation can be undertaken without a
-            Variation Order.
-        </div>
-        <div><b>CLAUSE 6. DELIVERY OF GOODS AND COMPLETION OF WORKS</b>
-            <br>
-            6.1 The Supplier commits to inspect the Goods, before delivery, for compliance with the Specifications and
-            to
-            properly pack them so that they shall not be damaged during transportation. The Supplier is obliged to
-            comply
-            with
-            all contractual lead-times provided and set out under the Order (“Delivery Date”). Engseen shall be entitled
-            to
-            terminate the Order if it is not executed within the contractual lead-times or after the extended lead-times
-            set
-            out
-            by Engseen. Engseen reserves the right to refuse partial or early deliveries and may return the Goods at the
-            Supplier’s costs and risks.
-            <br>
-            6.2 The Supplier shall commence the Works on the date specified in the Order and shall complete within the
-            period
-            specified in the Order or the Works schedule agreed in writing by Engseen (“Completion Date”).
-            <br>
-            6.3 Time is of the essence in the Supplier’s delivery of Goods and/or completion of Works under this
-            Contract.
-            The
-            Supplier will promptly notify Engseen if the Delivery Date and/or Completion Date cannot be met or is likely
-            to
-            be
-            delayed or disrupted together with supporting details (“Delay Notice”).
-            <br>
-            6.4 On receipt of the Delay Notice, Engseen shall be entitled but is under no obligation to extend the
-            Delivery
-            Date
-            and/or Completion Date as appropriate which shall not constitute Engseen’s waiver of any of the Supplier’s
-            obligations or prejudice any of Engseen’s rights under the Contract.
-            <br>
-            6.5 If the Supplier fails to deliver the Goods on Delivery Date and/or complete the Works on Completion
-            Date,
-            the
-            Supplier shall be liable to pay the amount specified in the Order as liquidated damages for each day for
-            which
-            the
-            Supplier fails to deliver the Goods and/ or complete the Works by the Delivery Date and/or Completion Date,
-            as
-            applicable. Notwithstanding the aforementioned, the Supplier shall also be liable for all actual and
-            reasonable
-            costs and damages which Engseen incurs as a result of the late delivery of the Goods and/or late completion
-            of
-            the
-            Works.
-            <br>
-            6.6 Engseen may at any time instruct the Supplier to suspend the delivery of the Goods and/or execution of
-            the
-            Works
-            or any part thereof, provided that Engseen has reasonable cause to do so and Engseen in so doing, shall act
-            in
-            good
-            faith. The Supplier shall not be entitled to be paid any additional cost during the suspension period,
-            unless
-            otherwise agreed by the Parties.
-        </div>
-        <div><b>CLAUSE 7. TRANSFER OF TITLE AND RISK</b>
-            <br>
-            7.1 The transfer of title to the Goods takes place after delivery at the place specified in the Order.
-            Unless
-            expressly accepted by Engseen, any title retention clause shall be deemed invalid. If the Goods must be
-            manufactured
-            or performed over a certain period of time, the transfer of title to Engseen shall take place gradually
-            according to
-            the progression of the manufacturing operations or performance, with the exception of risks that shall
-            remain
-            the
-            responsibility of the Supplier according to the provisions hereunder.
-            <br>
-            7.2 If the Goods or any part thereof are nonconforming, the Supplier shall continue to bear the risk of loss
-            as
-            to
-            them until the cure of the defect or acceptance by Engseen, whichever is earlier.
-            <br>
-            7.3 Title to any Goods that are rejected on receipt or retention of which is refused by Engseen, or
-            acceptance
-            of
-            which is justifiably revoked, shall re-vest in the Supplier, whereupon the Supplier shall bear all
-            responsibility
-            for the Goods and liability under all applicable environmental laws, including liability for disposal
-            thereof,
-            against which the Supplier shall indemnify Engseen.
-        </div>
-        <div><b>CLAUSE 8. INSPECTION AND TESTING</b>
-            <br>
-            8.1 The Buyer reserves the right to inspect and test the Goods and/or the Works at any stage at the site at
-            which
-            the Works are to be executed (“Site”) and/or the Supplier’s premises and the Supplier shall give rights of
-            access to
-            premises and such facilities as Engseen may reasonably require for such inspection at the Supplier’s cost
-            and
-            expense.
-            <br>
-            8.2 The Supplier shall comply strictly and fully with the test requirements as stipulated by Engseen in
-            accordance
-            with the Specifications, drawings, instructions or standards supplied or agreed by Engseen, as specified in
-            the
-            Order and required under the law and shall furnish the test results to Engseen.
-            <br>
-            8.3 Passing of inspection and testing or acceptance of inspection and testing results in respect of the
-            Goods
-            and/or
-            Works will not constitute Engseen’s waiver of any of the Supplier’s obligations or prejudice any of
-            Engseen’s
-            rights
-            under the Contract.
-        </div>
-        <div><b>CLAUSE 9. ACCEPTANCE OR TAKING-OVER</b>
-            <br>
-            9.1 The receipt of Goods shall be made according to the applicable Site rules. Engseen shall not be deemed
-            to
-            have
-            accepted any Goods until it has had reasonable time to verify if they conform to the Specifications set out
-            in
-            the
-            Order. The release given at the time of receipt as evidenced by the delivery note signed by Engseen shall
-            not be
-            deemed as discharging the Supplier where later inspection reveal that the Goods delivered do not conform to
-            the
-            Order’s Specifications.
-            <br>
-            9.2 Engseen shall notify the Supplier when he considers that the Supplier has completed the Works in
-            accordance
-            with
-            this Contract stating the date accordingly (“Taking-Over Notice”).
-            <br>
-            9.3 Upon issuance of the Taking-Over Notice, Engseen shall take over the Works and subject to Clause 11, the
-            Supplier shall promptly complete any outstanding work, remove from the site at which the Works are to be
-            performed
-            any and all their equipment, materials, employees, wreckage, rubbish or temporary works no longer required
-            and
-            shall
-            make the Works ready for use and in a good working condition within the period specified by Engseen.
-            <br>
-            9.4 Any payment made in respect of Goods and/or Works provided by the Supplier prior to the inspection by
-            Engseen
-            shall not constitute acceptance of the Goods and/or Works. Acceptance shall be deemed to
-            have occurred after Engseen has tested and inspected the Goods and/or Works in accordance with this Clause.
-        </div>
-        <div><b>CLAUSE 10. WARRANTY</b>
-            <br>
-            10.1 The Supplier guarantees in all circumstances, including in the case of authorised subcontracting, that
-            the
-            Goods and/or Works delivered shall comply with the Specifications. In particular, it guarantees that the
-            Goods
-            and/or Works shall be free from defect in design, material and workmanship, that they shall satisfactorily
-            fulfil
-            the performance requirements expected by Engseen and that they shall meet all applicable laws and
-            regulations.
-            <br>
-            10.2 In the event of non-conformity of the Goods delivered or Works executed with the Specifications,
-            Engseen
-            reserves the right without prejudice to any potential claims for loss and damages, after sending written
-            notice
-            and
-            at any time, (i) to terminate all or part of the Order according to Clause 16 (return the Goods at the
-            Supplier’s
-            sole costs and risks), (ii) accept such Goods and/or Works with an equitable reduction in price, (iii) to
-            reject
-            the
-            non-conforming Goods and/or Works and require at the Supplier’s costs and risks, the delivery of replacement
-            Goods
-            or the re-performance of the Works or the making of necessary repairs to such Goods and/or Works as promptly
-            as
-            reasonably practicable.
-            <br>
-            10.3 The Supplier shall warrant that the Goods and/or Works executed pursuant to the performance of the
-            Works
-            shall
-            be free from defect within the period specified in the Order (“Warranty Period”). In the event of any
-            defects
-            found
-            within the Warranty Period, Clause 11 shall apply.
-            <br>
-            10.4 In the event of any part replaced or repaired during the Warranty Period suffers from recurrent defect,
-            the
-            Warranty Period for the Goods or the parts of the Works that suffer from such defect shall be deemed to
-            start
-            anew
-            and commence from the day on which such Goods or Works are changed, modified, remedied or replaced for and
-            additional period equivalent to the Warranty Period.
-        </div>
-        <div><b>CLAUSE 11. REMEDYING DEFECTS OR REPAIR AND REPLACEMENT</b>
-            <br>
-            11.1 In the event of a defect or failure or non-conformity with the Specifications in the Goods and/or Works
-            (“Defects”) which becomes apparent within the Warranty Period, the Supplier shall, within forty eight (48)
-            hours
-            after receipt of a written notice from Engseen, submit to Engseen a proposal for remedial actions. Upon
-            Engseen’s
-            approval, the Supplier shall with due diligence, make good or correct the Defects or replace the Goods, all
-            at
-            Supplier’s sole cost and expense within seven (7) days or such other period agreed by Engseen.
-            <br>
-            11.2 The rejected Goods and/or non-conforming or defective Works shall be held entirety at the risk of the
-            Supplier
-            and shall be removed by the Supplier at its own risk and expense. The Supplier shall reimburse and refund
-            Engseen
-            the whole or part of any payment made in respect of any rejected Goods and/or non- conforming Works or
-            Defects
-            which
-            cannot be rectified or repaired by the Supplier.
-            <br>
-            11.3 All costs and charges incurred in remedying the Defects, including but not limited to any costs
-            relating to
-            the
-            repair, replacement, packing, handling, transportation and delivery of Goods and/or Works shall be fully
-            borne
-            by
-            the Supplier.
-        </div>
-        <div><b>CLAUSE 12. INTELLECTUAL PROPERTY</b>
-            <br>
-            12.1 The Supplier represents and warrants that (i) any matter it furnishes for delivery of the Goods and/or
-            execution of the Works does not infringe or violate any trademarks, patents, registered design, copyright,
-            trademark
-            or trade name or other legal rights of any third parties; and (ii) it has all necessary permits and licences
-            to
-            allow it to sell the Goods and execute the Works to and for the Engseen.
-            <br>
-            12.2 The Supplier shall fully indemnify and hold Engseen harmless against all actions or claims, liability,
-            loss,
-            costs, attorney’s fees, expenses and damages due to or arising from any infringement of intellectual
-            property
-            rights. The Supplier shall, at its own expense, defend Engseen against all such claims, proceedings and
-            suits.
-            <br>
-            12.3 In case any item delivered by the Supplier under this GPTC is in any such suit held to constitute an
-            infringement, and its use is enjoined, the Supplier shall at its option and expense:(i) procure for Engseen
-            the
-            right to continue using the item concerned; or(ii) replace or modify the item so that it becomes non-
-            infringing
-            yet
-            remains functionally and substantially equivalent.
-        </div>
-        <div><b>CLAUSE 13. BUYER’S DRAWINGS AND DOCUMENTS</b>
-            <br>
-            13.1 The ownership and intellectual property rights in all documents and software including but not limited
-            to
-            all
-            drawings, blueprints, tracings and other items provided by Engseen to the Supplier or developed by the
-            Supplier
-            in
-            the course of executing the Works based on Engseen’s Specifications (collectively, “Documents”) shall be the
-            sole
-            property of the Engseen at all times. All Documents and any copies shall be delivered to Engseen upon the
-            delivery
-            of the Goods and/or completion of the Works regardless of whether payment has been made to the Supplier.
-        </div>
-        <div><b>CLAUSE 14. INSURANCE</b>
-            <br>
-            14.1 In addition to its legal liability, the Supplier remains automatically liable to Engseen as well as any
-            third
-            party for damages of any nature likely to be caused to them by the Supplier in the course of the supply of
-            the
-            Goods
-            and/or execution of the Works. These damages may be the direct and/or indirect consequences arising from the
-            supply
-            of the Goods and/or the execution of the Works. The Supplier also undertakes to fully indemnify Engseen for
-            any
-            recourse and/or any claim that third parties may bring against Engseen within the context of the Order and
-            to be
-            responsible for all financial consequences, which may result from such recourse and/or claim.
-            <br>
-            14.2 The Supplier shall procure all necessary insurance to cover for all the liabilities it incurs or may
-            incur
-            pursuant to the Order and as described in the foregoing Sub-Clause 14.1. The Supplier undertakes to provide
-            Engseen,
-            without delay, with all certificates for the insurance covers it has procured in accordance with this Clause
-            and
-            with the requirements of Engseen. These obligations do not release the Supplier in any event from its
-            liability.
-            In
-            particular, the Supplier remains liable for the damages for its account where the financial consequences may
-            not
-            be
-            covered, totally or in part, by its insurance.
-        </div>
-        <div><b>CLAUSE 15. CONFIDENTIALITY AND PUBLICITY</b>
-            <br>
-            15.1 The Supplier shall keep and cause to keep in confidence, all data it may receive at the time pursuant
-            to
-            the
-            Order. The Supplier agrees to refrain from disclosing any such data to third parties and/or using them in
-            any
-            form
-            whatsoever, for purposes other than carrying out the Order without the prior written consent of Engseen.
-            <br>
-            15.2 The Supplier shall not carry out any advertising or publicity in respect of the Order without the prior
-            written
-            approval of Engseen.
-        </div>
-        <div><b>CLAUSE 16. TERMINATION</b>
-            <br>
-            16.1 If the Supplier fails to perform or partially perform any of its obligations in respect of an Order,
-            including
-            in the event the Supplier‘s financial condition may reasonably be construed as preventing the proper
-            performance
-            of
-            the Order and the Supplier fails to remedy any such performance within the period prescribed in the formal
-            letter of
-            demand issued by Engseen to the Supplier notifying the Supplier of its default, such Order may be terminated
-            in
-            whole or part by Engseen by giving the Supplier a fifteen (15) days prior notice and such termination shall
-            take
-            effect upon expiry of such fifteen (15) days. Any termination shall be without prejudice to any liquidated
-            damages
-            and to any damages that could be claimed by Engseen from the Supplier.
-            <br>
-            16.2 Any breach of the confidentiality obligations provided in Clause 15 by the Supplier may automatically
-            give
-            rise
-            to the termination of the Order, at the demand of Engseen, without prejudice to any potential claims for
-            loss
-            and
-            damages by Engseen.
-            <br>
-            16.3 Engseen shall be entitled to charge to the Supplier any positive cost differential between the
-            replacement
-            Goods which Engseen is required to acquire from other suppliers and/or the appointment of a new contractor
-            to
-            execute the uncompleted Works due to the termination of the Order and the prices of the Goods and/or Works
-            as
-            stated
-            in the Order.
-            <br>
-            16.4 Engseen shall be entitled to terminate the Order or part thereof at its convenience provided always
-            that
-            the
-            Supplier shall be paid the amounts payable for any Goods delivered and accepted by the Engseen and/or Works
-            executed
-            up to the date of termination of the Order and all reasonable costs which have been committed by the
-            Supplier in
-            anticipation of the full delivery of the Goods and/ or the completion of the Works. Upon the termination of
-            the
-            Order pursuant to this Sub-Clause, the Supplier shall immediately cease the performance of the whole or part
-            of
-            the
-            work in progress and take all reasonable steps to minimize the incurrence of costs allocable to the work and
-            the
-            Engseen’s sole liability is to pay the Supplier the amounts payable for any Goods delivered and accepted by
-            the
-            Engseen and/or Works up to the date of termination of the Contract.
-            <br>
-            16.5 The termination of the Order shall be without prejudice to the rights and remedies of the parties which
-            have
-            accrued prior to the termination of the Order.
-            <br>
-            16.6 Relevant obligations of the parties set out in clauses of this GPTC relating to confidentiality,
-            ownership,
-            intellectual property rights, indemnities and any rights arising on termination shall survive the
-            termination.
-        </div>
-        <div><b>CLAUSE 17. SUB-CONTRACTING</b>
-            <br>
-            17.1 Any subcontracting of the whole or a part of the Order must have received the prior written agreement
-            of
-            Engseen. In any event, the Supplier remains solely liable for the performance of the Order and guarantees
-            that
-            its
-            subcontractor(s) shall conform to the terms hereof. The Supplier in particular undertakes to ensure that its
-            subcontractors adhere to the present GPTC.
-        </div>
-        <div><b>CLAUSE 18. ASSIGNMENT</b>
-            <br>
-            18.1 The Order is neither assignable nor transferable by the Supplier, whether in whole or in part, without
-            the
-            prior written and express approval of Engseen. The Supplier shall inform Engseen without delay of any
-            important
-            change to its legal structure or any change of control of its capital. In such cases, Engseen may terminate
-            the
-            Order as of right without any compensation to the Supplier if Engseen is of the reasonable view that any
-            such
-            change
-            shall adversely affect the proper performance of the Supplier in respect of the Order.
-        </div>
-        <div><b>CLAUSE 19. STAMP DUTY</b>
-            <br>
-            19.1 The stamp duty payable for the sale of the Goods and/or execution of the Works pursuant to or in
-            relation
-            to
-            this Order shall be borne by the Supplier.
-        </div>
-        <div><b>CLAUSE 20. ENTIRE AGREEMENT</b>
-            <br>
-            20.1 This Contract constitutes the entire agreement between Engseen and the Employer with respect to the
-            subject
-            matter of this Contract and supersedes all communications, negotiations and agreements whether made in
-            writing
-            or
-            orally of both parties made prior to the date of this Contract
-        </div>
-        <div><b>CLAUSE 21. GOVERNING LAW</b>
-            <br>
-            21.1 The Order shall be exclusively governed and construed in accordance with the laws of Malaysia.
-        </div>
-    </div>
-</div>
-</body>
+  </body>
 </html>
