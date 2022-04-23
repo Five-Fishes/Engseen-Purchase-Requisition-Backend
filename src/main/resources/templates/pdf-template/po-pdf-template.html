@@ -97,7 +97,7 @@
           <table>
             <tr>
               <td>DATE:</td>
-              <td th:text="${poHeader.originalPODate}">-</td>
+              <td th:text="${#temporals.format(poHeader.originalPODate, 'dd/MM/yyyy')}">-</td>
             </tr>
             <tr>
               <td>PO:</td>
