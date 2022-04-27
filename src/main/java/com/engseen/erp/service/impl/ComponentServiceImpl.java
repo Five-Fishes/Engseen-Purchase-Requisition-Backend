@@ -1,27 +1,31 @@
 package com.engseen.erp.service.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.engseen.erp.domain.Inventory;
+import com.engseen.erp.domain.ItemMaster;
 import com.engseen.erp.domain.VendorItem;
 import com.engseen.erp.domain.VendorMaster;
 import com.engseen.erp.repository.InventoryRepository;
+import com.engseen.erp.repository.ItemMasterRepository;
 import com.engseen.erp.repository.VendorItemRepository;
 import com.engseen.erp.repository.VendorMasterRepository;
 import com.engseen.erp.service.ComponentService;
 import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
 import com.engseen.erp.service.mapper.VendorItemMapper;
-import lombok.RequiredArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Service Implementation for managing {@link com.engseen.erp.domain.ItemMaster}.
@@ -36,6 +40,7 @@ public class ComponentServiceImpl implements ComponentService {
     private final VendorMasterRepository vendorMasterRepository;
     private final VendorItemMapper vendorItemMapper;
     private final InventoryRepository inventoryRepository;
+    private final ItemMasterRepository itemMasterRepository;
 
     @Override
     public List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize) {
@@ -77,6 +82,7 @@ public class ComponentServiceImpl implements ComponentService {
                 .stream()// Use stream(avoid parallel stream) because result sequence should be sorted
                 .map(vendorItemMapper::vendorItemToComponentDTO)
                 .peek(this::assignVendorName)
+                .peek(this::assignComponentName)
                 .peek(componentDTO -> assignPackingSize(componentDTO, packingSize))
                 .collect(Collectors.toList());
     }
@@ -87,6 +93,15 @@ public class ComponentServiceImpl implements ComponentService {
                 vendorMaster -> componentDTO.setVendorName(vendorMaster.getVendorName()),
                 () -> componentDTO.setVendorName("")
         );
+    }
+
+    private void assignComponentName(ComponentDTO componentDTO) {
+        ItemMaster itemMaster = itemMasterRepository.findOneByItem(componentDTO.getComponentCode());
+        if (itemMaster != null && itemMaster.getItemDescription() != null) {
+            componentDTO.setComponentName(itemMaster.getItemDescription());
+        } else {
+            componentDTO.setComponentName("");
+        }
     }
 
     private void assignPackingSize(ComponentDTO componentDTO, Integer packingSize) {
