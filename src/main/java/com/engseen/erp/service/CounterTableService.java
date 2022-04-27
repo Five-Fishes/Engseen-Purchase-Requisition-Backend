@@ -1,5 +1,7 @@
 package com.engseen.erp.service;
 
+import com.engseen.erp.domain.CounterTable;
+
 public interface CounterTableService {
 
     /**
@@ -8,5 +10,7 @@ public interface CounterTableService {
      * @return next number of the counter
      */
     Integer getNextCounterValue(String counterCode);
+
+    CounterTable getCounterTableByCounterCode(String counterCode);
 
 }

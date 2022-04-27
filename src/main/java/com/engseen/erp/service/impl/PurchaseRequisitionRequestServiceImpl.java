@@ -104,7 +104,7 @@ public class PurchaseRequisitionRequestServiceImpl implements PurchaseRequisitio
                                 purchaseRequisitionApprovalItem.getVendorId(),
                                 purchaseRequisitionApprovalItem.getComponentCode()
                         ).ifPresentOrElse(
-                                vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getvIUnitPrice()),
+                                vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getViUnitPrice()),
                                 () -> purchaseRequisitionApprovalItem.setItemCost(BigDecimal.ZERO)
                         );
                     })

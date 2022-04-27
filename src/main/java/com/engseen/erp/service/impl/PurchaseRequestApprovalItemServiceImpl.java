@@ -72,7 +72,7 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
                     purchaseRequestApprovalItemDto.getVendorId(),
                     purchaseRequestApprovalItemDto.getComponentCode()
             ).ifPresentOrElse(
-                    vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getvIUnitPrice()),
+                    vendorItem -> purchaseRequisitionApprovalItem.setItemCost(vendorItem.getViUnitPrice()),
                     () -> purchaseRequisitionApprovalItem.setItemCost(BigDecimal.ZERO)
             );
 

@@ -76,4 +76,11 @@ public class ItemMasterServiceImpl implements ItemMasterService {
             itemMaster.getModified(), itemMaster.getModifiedBy(), itemMaster.getAccessed(), itemMaster.getAccessedBy());
         return itemMasterRepository.findById(itemMaster.getId()).get();
     }
+
+    @Override
+    public ItemMaster findOneByItem(String item) {
+        log.info("Request to findOneByItem");
+        log.debug("Item value of Item Master to find: {}", item);
+        return itemMasterRepository.findOneByItem(item);
+    }
 }

@@ -97,7 +97,7 @@
           <table>
             <tr>
               <td>DATE:</td>
-              <td th:text="${poHeader.originalPODate}">-</td>
+              <td th:text="${#temporals.format(poHeader.originalPODate, 'dd/MM/yyyy')}">-</td>
             </tr>
             <tr>
               <td>PO:</td>
@@ -156,13 +156,13 @@
           </thead>
           <tbody>
             <tr th:each="poDetail,iter : ${poDetailList}">
-              <td th:text="${iter.index + 1}">-</td>
-              <td th:text="${poDetail.item}">-</td>
-              <td style="text-align: end" th:text="${poDetail.orderQuantity}">-</td>
-              <td th:text="${poDetail.printUOM}">-</td>
-              <td th:text="${poDetail.etaDate}">-</td>
-              <td style="text-align: end" th:text="${poDetail.unitPrice}">-</td>
-              <td style="text-align: end" th:text="${poDetail.extendedPrice}">-</td>
+                <td th:text="${iter.index + 1}">-</td>
+                <td th:text="${poDetail.item}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.orderQuantity, 1, 2)}">-</td>
+                <td th:text="${poDetail.printUOM}">-</td>
+                <td th:text="${#temporals.format(poDetail.etaDate, 'dd/MM/yyyy')}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.unitPrice, 1, 2)}">-</td>
+                <td style="text-align: end" th:text="${#numbers.formatDecimal(poDetail.extendedPrice, 1, 2)}">-</td>
             </tr>
           </tbody>
         </table>
