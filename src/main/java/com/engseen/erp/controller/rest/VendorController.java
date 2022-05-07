@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 
 /**
@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/vendor-master")
 @RestController
 public class VendorController {
-    private final Logger log = LoggerFactory.getLogger(ComponentController.class);
+    private final Logger log = LoggerFactory.getLogger(VendorController.class);
 
     private final VendorService vendorService;
 
@@ -41,11 +41,9 @@ public class VendorController {
             @RequestParam(required = false) String vendorId
     ) {
         log.info("Request to get List of Vendor Master");
-        log.debug("Pagination information: {}", pageable);
-        log.debug("vendorId: {}", Optional.of(vendorId).orElse(""));
-        if (pageable == null) {
-            pageable = Pageable.unpaged();
-        }
+        if (Objects.nonNull(pageable)) log.debug("Pagination information: {}", pageable);
+        if (Objects.nonNull(vendorId)) log.debug("vendorId: {}", vendorId);
+
         return ResponseEntity.ok(vendorService.findAll(pageable, vendorId));
     }
 }
