@@ -41,9 +41,11 @@ public class VendorController {
             @RequestParam(required = false) String vendorId
     ) {
         log.info("Request to get List of Vendor Master");
-        log.debug("Pagination information: {}", Optional.of(pageable).orElse(Pageable.unpaged()));
+        log.debug("Pagination information: {}", pageable);
         log.debug("vendorId: {}", Optional.of(vendorId).orElse(""));
-
+        if (pageable == null) {
+            pageable = Pageable.unpaged();
+        }
         return ResponseEntity.ok(vendorService.findAll(pageable, vendorId));
     }
 }
