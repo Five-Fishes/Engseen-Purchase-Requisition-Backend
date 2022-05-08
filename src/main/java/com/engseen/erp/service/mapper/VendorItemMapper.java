@@ -14,7 +14,7 @@ public interface VendorItemMapper {
     @Mappings({
             @Mapping(target = "id", source = "source.id"),
             @Mapping(target = "componentCode", source = "source.item"),
-            @Mapping(target = "componentName", source = "source.item"),
+            @Mapping(target = "componentName", source = "source.viDescription"),
             @Mapping(target = "vendorId", source = "source.vendorID"),
             @Mapping(target = "vendorName", ignore = true), // Need to retrieve from VendorMaster
             @Mapping(target = "packagingSize", ignore = true)
