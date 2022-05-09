@@ -3,6 +3,7 @@ package com.engseen.erp.service.impl;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.domain.Inventory;
@@ -25,7 +26,6 @@ import com.engseen.erp.service.dto.POReceiptDTO;
 import com.engseen.erp.service.dto.POReceiptHeaderDTO;
 import com.engseen.erp.service.dto.VendorMasterDTO;
 import com.engseen.erp.service.mapper.POReceiptHeaderMapper;
-import com.engseen.erp.util.TimestampUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +56,13 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
     private final CounterTableService counterTableService;
     private final VendorService vendorService;
     private final ItemMasterService itemMasterService;
+
+    @Override
+    public POReceiptHeaderDTO findOneByGrnNo(String grnNo) {
+        POReceiptHeader poReceiptHeader = poReceiptHeaderRepository.findOneByGrnNo(grnNo);
+        if(Objects.nonNull(poReceiptHeader)) return poReceiptHeaderMapper.toDto(poReceiptHeader);
+        return null;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -128,7 +135,7 @@ public class PurchaseOrderReceiptHeaderServiceImpl implements PurchaseOrderRecei
     @Override
     public POReceiptHeaderDTO createPOReceiptHeaderByVendorId(String vendorId) {
         log.info("Request to createPOReceiptHeaderByVendorId");
-        log.debug("Vendor Id for new PO Receipt Header", vendorId);
+        log.debug("Vendor Id for new PO Receipt Header: {}", vendorId);
         String counterCode = AppConstant.COUNTER_CODE_GRN;
         Integer nextGrnNo = counterTableService.getNextCounterValue(counterCode);
         String nextGrnNoValue = counterCode + nextGrnNo;

@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
  */
 public interface PurchaseOrderReceiptHeaderService {
 
+    POReceiptHeaderDTO findOneByGrnNo(String grnNo);
+
     /**
      * Get all the POReceiptHeader
      *

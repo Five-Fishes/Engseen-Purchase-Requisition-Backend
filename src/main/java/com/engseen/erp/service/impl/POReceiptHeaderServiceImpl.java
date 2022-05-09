@@ -20,6 +20,11 @@ public class POReceiptHeaderServiceImpl implements POReceiptHeaderService {
     private final POReceiptHeaderRepository poReceiptHeaderRepository;
 
     @Override
+    public POReceiptHeader findOneByGrnNo(String grnNo) {
+        return poReceiptHeaderRepository.findOneByGrnNo(grnNo);
+    }
+
+    @Override
     public POReceiptHeader insert(POReceiptHeader poReceiptHeader) {
         log.debug("Request to insert POReceiptHeader: {}", poReceiptHeader);
         poReceiptHeaderRepository.insertPOReceiptHeader(poReceiptHeader.getGrnNo(), TimestampUtil.fromInstant(poReceiptHeader.getGrnDate()), poReceiptHeader.getStatus(), poReceiptHeader.getVendorID(), poReceiptHeader.getExchangeRate(), poReceiptHeader.getTransportVia(), 
