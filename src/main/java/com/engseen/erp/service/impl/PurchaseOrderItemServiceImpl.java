@@ -50,7 +50,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         if (StringUtils.isBlank(vendorId)) {
             poDetailPage = poDetailRepository.findAllOutstandingItem(pageable);
         } else {
-            List<String> poNumberList = poHeaderRepository.findAllByVendorID(Pageable.unpaged(), vendorId)
+            List<String> poNumberList = poHeaderRepository.findAllByVendorID(pageable, vendorId)
                 .map(POHeader::getPoNumber)
                 .getContent();
             log.debug("{} total number of PO for VendorId: {}", poNumberList.size(), vendorId);

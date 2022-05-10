@@ -138,7 +138,7 @@ public class PurchaseOrderController {
      * @param vendorId VendorId of Purchase Order for filtering
      */
     @GetMapping(value="/outstanding-item")
-    public ResponseEntity<List<PurchaseOrderItemDto>> getAllOutstandingPOItem(Pageable pageable, @RequestParam(required = false, name = "vendorId") String vendorId) {
+    public ResponseEntity<List<PurchaseOrderItemDto>> getAllOutstandingPOItem(@RequestParam(required = false) Pageable pageable, @RequestParam(required = false, name = "vendorId") String vendorId) {
         log.info("REST Request to getAllOutstandingPOItem");
         log.debug("Pagination Info: {}", pageable);
         log.debug("Filter by Vendor Id: {}", vendorId);
