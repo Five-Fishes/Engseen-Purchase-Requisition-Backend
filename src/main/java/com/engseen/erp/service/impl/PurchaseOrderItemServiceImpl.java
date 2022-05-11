@@ -2,23 +2,17 @@ package com.engseen.erp.service.impl;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.enumeration.POReceiptStatus;
+import com.engseen.erp.domain.ItemMaster;
 import com.engseen.erp.domain.PODetail;
 import com.engseen.erp.domain.POHeader;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
-import com.engseen.erp.service.PODetailService;
-import com.engseen.erp.service.PurchaseOrderItemService;
-import com.engseen.erp.service.PurchaseOrderReceiptService;
-import com.engseen.erp.service.VendorService;
+import com.engseen.erp.service.*;
 import com.engseen.erp.service.dto.POReceiptDTO;
 import com.engseen.erp.service.dto.PurchaseOrderItemDto;
 import com.engseen.erp.service.dto.VendorMasterDTO;
@@ -44,6 +38,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private final POHeaderRepository poHeaderRepository;
     private final PODetailService poDetailService;
     private final VendorService vendorService;
+    private final ItemMasterService itemMasterService;
     private final PurchaseOrderReceiptService purchaseOrderReceiptService;
 
     @Override
@@ -55,7 +50,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         if (StringUtils.isBlank(vendorId)) {
             poDetailPage = poDetailRepository.findAllOutstandingItem(pageable);
         } else {
-            List<String> poNumberList = poHeaderRepository.findAllByVendorID(Pageable.unpaged(), vendorId)
+            List<String> poNumberList = poHeaderRepository.findAllByVendorID(pageable, vendorId)
                 .map(POHeader::getPoNumber)
                 .getContent();
             log.debug("{} total number of PO for VendorId: {}", poNumberList.size(), vendorId);
@@ -69,31 +64,49 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail, Map<String, VendorMasterDTO> vendorTemporaryCache) {
         log.debug("Request to constructPurchaseOrderItemDto");
         log.debug("PO Detail: {}", poDetail);
-        // TODO: complete construct of PO Item Dto
         PurchaseOrderItemDto purchaseOrderItemDto = new PurchaseOrderItemDto();
         purchaseOrderItemDto.setId(Long.valueOf(poDetail.getId()));
         purchaseOrderItemDto.setPoNumber(poDetail.getPoNumber());
         purchaseOrderItemDto.setRemarks(poDetail.getRemark());
         purchaseOrderItemDto.setDeliveryDate(Date.from(poDetail.getEtaDate()));
         purchaseOrderItemDto.setOrderQuantityPack(poDetail.getOrderQuantity());
-        // purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity());
         purchaseOrderItemDto.setReceivedQuantityPack(poDetail.getQuantityReceived());
-        // purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived());
-        BigDecimal oustandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
-        purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
-        // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
-        purchaseOrderItemDto.setReceivingQuantityPack(oustandingQuantity);
-        // purchaseOrderItemDto.setReceivingQuantity(oustandingQuantity);
+        BigDecimal outstandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
+        purchaseOrderItemDto.setOpenQuantityPack(outstandingQuantity);
+        purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantity);
         purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
-        // purchaseOrderItemDto.setUom(poDetail.getVIUnitOfMeasure());
-        // purchaseOrderItemDto.setUomPack(poDetail.getVIUnitOfMeasure());
-        String[] itemStrings = poDetail.getItem().split(" - ");
-        purchaseOrderItemDto.setComponentCode(itemStrings[0]);
-        if (itemStrings.length > 1) {
-            purchaseOrderItemDto.setComponentName(itemStrings[1]);
-        }
+        purchaseOrderItemDto.setComponentCode(getComponentCodeFromItem(poDetail.getItem()));
+        purchaseOrderItemDto.setComponentName(getComponentNameFromItem(poDetail.getItem()));
+
         mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber(), vendorTemporaryCache);
         return purchaseOrderItemDto;
+    }
+
+    private String getComponentNameFromItem(String item) {
+        /*
+        Check for Item field
+        - New style: itemCode - itemName
+        - Old style: itemCode
+         */
+        if (item.contains("-")) {
+            return item.split("-")[1].trim();
+        }
+
+        ItemMaster itemMaster = itemMasterService.findOneByItem(item);
+        return Objects.nonNull(itemMaster) ? itemMaster.getItemDescription() : "Item with code " + item + "not found in DB";
+    }
+
+    private String getComponentCodeFromItem(String item) {
+        /*
+        Check for Item field
+        - New style: itemCode - itemName
+        - Old style: itemCode
+         */
+        if (item.contains("-")) {
+            return item.split("-")[0].trim();
+        }
+
+        return item;
     }
 
     private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber, Map<String, VendorMasterDTO> vendorTemporaryCache) {
@@ -103,8 +116,19 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
             vendorTemporaryCache.put(poNumber, vendorMasterDTO);
         }
-        purchaseOrderItemDto.setVendorId(vendorMasterDTO.getVendorID());
-        purchaseOrderItemDto.setVendorName(vendorMasterDTO.getVendorName());
+
+        /*
+        Special Handling for null vendorMasterDTO
+        - We encountered case where the VendorID in poHeader does not exist in VendorMaster
+        - This will use the ID provided in purchaseOrderItemDto but assign vendor name with error message
+         */
+        if (Objects.isNull(vendorMasterDTO)) {
+            purchaseOrderItemDto.setVendorId(purchaseOrderItemDto.getVendorId());
+            purchaseOrderItemDto.setVendorName("This vendor does not exist in DB, please check");
+        } else {
+            purchaseOrderItemDto.setVendorId(vendorMasterDTO.getVendorID());
+            purchaseOrderItemDto.setVendorName(vendorMasterDTO.getVendorName());
+        }
     }
 
     @Override

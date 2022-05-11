@@ -3,6 +3,8 @@ package com.engseen.erp.service;
 import com.engseen.erp.domain.POReceiptHeader;
 
 public interface POReceiptHeaderService {
+
+    POReceiptHeader findOneByGrnNo(String grnNo);
     
     /**
      * Create new POReceiptHeader
