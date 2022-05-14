@@ -69,14 +69,28 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         purchaseOrderItemDto.setPoNumber(poDetail.getPoNumber());
         purchaseOrderItemDto.setRemarks(poDetail.getRemark());
         purchaseOrderItemDto.setDeliveryDate(Date.from(poDetail.getEtaDate()));
+
         purchaseOrderItemDto.setOrderQuantityPack(poDetail.getOrderQuantity());
+        // Derived OrderQuantity from OrderQuantity * VIUnitConversion
+        purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity().multiply(poDetail.getVIConversion()));
+
         purchaseOrderItemDto.setReceivedQuantityPack(poDetail.getQuantityReceived());
+        // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
+        purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived().multiply(poDetail.getVIConversion()));
+
         BigDecimal outstandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
         purchaseOrderItemDto.setOpenQuantityPack(outstandingQuantity);
+        // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
+        purchaseOrderItemDto.setOpenQuantity(outstandingQuantity.multiply(poDetail.getVIConversion()));
+
+        // Set the receiving quantity and unit to default automatically for easier UX
         purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantity);
+        purchaseOrderItemDto.setReceivingQuantity(poDetail.getVIConversion());
+
         purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
         purchaseOrderItemDto.setComponentCode(getComponentCodeFromItem(poDetail.getItem()));
         purchaseOrderItemDto.setComponentName(getComponentNameFromItem(poDetail.getItem()));
+        purchaseOrderItemDto.setItemCost(Objects.nonNull(poDetail.getVIUnitPrice()) ? poDetail.getVIUnitPrice().doubleValue() : 0); // FIXME: [LU] db should not allow 0 value VIUnitPrice, handling with 0 is only temporary fix
 
         mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber(), vendorTemporaryCache);
         return purchaseOrderItemDto;
@@ -170,7 +184,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         log.debug("PO Receipt DTO: {}", poReceiptDto);
         PODetail poDetail = poDetailRepository.findById(poReceiptDto.getPid())
             .orElseThrow(() -> new BadRequestException("PO Detail not found with ID: " + poReceiptDto.getPid()));
-        BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantity());
+        BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantityPack());
         if (totalReceivedQuantity.compareTo(poDetail.getOrderQuantity()) > 0) {
             throw new BadRequestException("Received Quantity cannot be more than Order Quantity");
         }
