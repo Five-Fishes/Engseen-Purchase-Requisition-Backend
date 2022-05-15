@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
     List<Inventory> findAllByItem(String item);
 
-    Inventory findOneByItemAndStoreNoAndStoreBinAndReceiptID(String item, String storeNo, String storeBin, Integer receiptID);
+    List<Inventory> findByItemAndStoreNoAndStoreBinAndReceiptID(String item, String storeNo, String storeBin, Integer receiptID);
 
     /*
     UnusedReturnValue warning is suppressed because return value works in SQL Server 2019, NOT in SQL Server 2005

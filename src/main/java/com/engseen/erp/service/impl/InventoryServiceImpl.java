@@ -1,6 +1,7 @@
 package com.engseen.erp.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.domain.Inventory;
@@ -39,6 +40,7 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setQuantity(poReceiptDto.getReceivingQuantity());
         inventory.setUnitCost(poReceiptDto.getUnitCost());
         inventory.setInspectionCode(AppConstant.INVENTORY_INSPECTION_CODE);
+        inventory.setReceiptID(poReceiptDto.getPid());
         inventory.setReceiptDate(Date.from(poReceiptHeader.getGrnDate()));
         inventory.setVendorID(poReceiptHeader.getVendorID());
         inventory.setgRNNo(poReceiptHeader.getGrnNo());
@@ -60,7 +62,8 @@ public class InventoryServiceImpl implements InventoryService {
             inventory.getReferenceNo(), inventory.getReferenceNo2(), inventory.getOrderType(), inventory.getOrderNumber(), inventory.getLineNumber(), inventory.getFromID(), 
             inventory.getToOrderType(), inventory.getToOrderNumber(), inventory.getToLineNumber(), inventory.getWeight(), inventory.getSellingPrice(), inventory.getfUnitCost(), 
             inventory.getfCurrencyCode(), inventory.getfExchangeRate(), TimestampUtil.fromInstant(inventory.getCreated().toInstant()), inventory.getCreatedBy());
-        return inventoryRepository.findOneByItemAndStoreNoAndStoreBinAndReceiptID(inventory.getItem(), inventory.getStoreNo(), inventory.getStoreBin(), inventory.getReceiptID());
+        List<Inventory> inventoryList = inventoryRepository.findByItemAndStoreNoAndStoreBinAndReceiptID(inventory.getItem(), inventory.getStoreNo(), inventory.getStoreBin(), inventory.getReceiptID());
+        return inventoryList.get(inventoryList.size() - 1);
     }
 
     @Override
