@@ -1,9 +1,11 @@
 package com.engseen.erp.service.impl;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.domain.Inventory;
@@ -17,6 +19,7 @@ import com.engseen.erp.repository.VendorMasterRepository;
 import com.engseen.erp.service.ComponentService;
 import com.engseen.erp.service.dto.ComponentBulkSearchDTO;
 import com.engseen.erp.service.dto.ComponentDTO;
+import com.engseen.erp.service.mapper.ItemMasterMapper;
 import com.engseen.erp.service.mapper.VendorItemMapper;
 
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ public class ComponentServiceImpl implements ComponentService {
     private final VendorItemMapper vendorItemMapper;
     private final InventoryRepository inventoryRepository;
     private final ItemMasterRepository itemMasterRepository;
+    private final ItemMasterMapper itemMasterMapper;
 
     @Override
     public List<ComponentDTO> findAll(Pageable pageable, String component, String vendor, Integer packingSize) {
@@ -151,5 +155,53 @@ public class ComponentServiceImpl implements ComponentService {
                 .stream()
                 .map(Inventory::getQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public List<ComponentDTO> findAllByComponentAndVendor(Pageable pageable, String component, String vendorId) {
+        log.debug("Request to findAllBy Component: {} And VendorId: {}", component, vendorId);
+        return itemMasterRepository.findAllByItemContainingOrItemDescriptionContaining(component, component)
+            .stream()
+            .filter(itemMaster -> {
+                Optional<VendorItem> vendorItemOptional = vendorItemRepository.findOneByVendorIDAndItem(vendorId, itemMaster.getItem());
+                return vendorItemOptional.isPresent();
+            })
+            .map(itemMasterMapper::itemMasterToComponentDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ComponentDTO> findAllByComponentOrVendor(Pageable pageable, String component, String vendor) {
+        log.debug("Request to findAllBy Component: {} Or Vendor: {}", component, vendor);
+        Set<ComponentDTO> componentDtoList = new HashSet<>();
+        log.debug("Start search on based on Component");
+        itemMasterRepository.findAllByItemContainingOrItemDescriptionContaining(component, component)
+            .stream()
+            .forEach(itemMaster -> {
+                vendorItemRepository.findAllByItemContaining(pageable, itemMaster.getItem())
+                    .map(vendorItemMapper::vendorItemToComponentDTO)
+                    .map(componentDTO -> {
+                        assignVendorName(componentDTO);
+                        componentDTO.setComponentName(itemMaster.getItemDescription());
+                        return componentDTO;
+                    })
+                    .forEach(componentDto -> componentDtoList.add(componentDto));
+            });
+        log.debug("Start search on based on Vendor");
+        vendorMasterRepository.findAllByVendorIDContainingOrVendorNameContaining(vendor, vendor)
+            .stream()
+            .forEach(vendorMaster -> {
+                vendorItemRepository.findAllByVendorIDContaining(pageable, vendorMaster.getVendorID())
+                    .map(vendorItemMapper::vendorItemToComponentDTO)
+                    .map(componentDTO -> {
+                        assignComponentName(componentDTO);
+                        componentDTO.setVendorName(vendorMaster.getVendorName());
+                        return componentDTO;
+                    })
+                    .forEach(componentDto -> componentDtoList.add(componentDto));
+            });
+        log.debug("Total number of Component matched: {}", componentDtoList.size());
+        return componentDtoList.stream()
+            .collect(Collectors.toList());
     }
 }

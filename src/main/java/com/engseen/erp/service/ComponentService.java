@@ -34,4 +34,24 @@ public interface ComponentService {
      * @return stock balance
      */
     BigDecimal getStockBalanceByComponentCode(String componentCode);
+
+    /**
+     * Find All components based on component keyword and vendorId
+     * 
+     * @param pageable
+     * @param component
+     * @param vendorId
+     * @return list of components DTO
+     */
+	List<ComponentDTO> findAllByComponentAndVendor(Pageable pageable, String component, String vendorId);
+
+    /**
+     * Find All components based on component keyword or vendor keyword
+     * 
+     * @param pageable
+     * @param component
+     * @param vendor
+     * @return list of components DTO
+     */
+    List<ComponentDTO> findAllByComponentOrVendor(Pageable pageable, String component, String vendor);
 }
