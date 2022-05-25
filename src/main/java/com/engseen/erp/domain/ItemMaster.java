@@ -1,18 +1,23 @@
 package com.engseen.erp.domain;
 
-import lombok.ToString;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
+
+import lombok.ToString;
+
 @Entity
 @ToString
-@Table(name = "ItemMasterViewLegacy", schema = "dbo")
+@Table(name = "ItemMasterViewLegacy", schema = "dbo", indexes = {
+    @Index(name = "i_itemMaster_item", columnList = "Item"),
+    @Index(name = "i_itemMaster_itemDescription", columnList = "ItemDescription")
+})
 public class ItemMaster implements Serializable {
 
     @Id
