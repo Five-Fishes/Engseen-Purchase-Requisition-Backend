@@ -29,4 +29,9 @@ public class ComponentDTO implements Serializable {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return 23;
+    }
 }

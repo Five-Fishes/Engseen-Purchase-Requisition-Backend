@@ -15,8 +15,8 @@ public interface ItemMasterMapper extends EntityMapper<ItemMasterDTO, ItemMaster
         @Mapping(target = "id", source = "source.id"),
         @Mapping(target = "componentCode", source = "source.item"),
         @Mapping(target = "componentName", source = "source.itemDescription"),
-        @Mapping(target = "vendorId", source = "source.vendorID"),
-        @Mapping(target = "vendorName", source = "source.vendorName")
+        @Mapping(target = "vendorId", ignore = true),
+        @Mapping(target = "vendorName", ignore = true)
     })
     ComponentDTO itemMasterToComponentDTO(ItemMaster source);
 }

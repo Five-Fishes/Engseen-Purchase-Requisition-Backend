@@ -63,7 +63,7 @@ public class ComponentController {
      * @param vendor    Id of Vendor that supply the component
      * @param pageable  Pagination Info
      */
-    @GetMapping(value = "")
+    @GetMapping(value = "/{component}/vendor/{vendorId}")
     public ResponseEntity<List<ComponentDTO>> getComponentsByComponentAndVendorId(
             @RequestParam(required = false) Pageable pageable,
             @PathVariable(name = "component") String component,
@@ -83,7 +83,7 @@ public class ComponentController {
      * @param keyword Code/Name of the component OR Id/Name of Vendor
      * @param pageable  Pagination Info
      */
-    @GetMapping(value = "")
+    @GetMapping(value = "/search")
     public ResponseEntity<List<ComponentDTO>> getComponentsByComponentOrVendor(
             @RequestParam(required = false) Pageable pageable,
             @RequestParam(required = false) String component,
