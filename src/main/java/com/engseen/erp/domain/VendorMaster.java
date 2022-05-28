@@ -12,10 +12,7 @@ import java.util.Date;
 
 @Entity
 @ToString
-@Table(name = "VendorMasterViewLegacy", schema = "dbo", indexes = {
-    @Index(name = "i_vendorMaster_vendorId", columnList = "VendorID"),
-    @Index(name = "i_vendorMaster_vendorName", columnList = "VendorName")
-})
+@Table(name = "VendorMasterViewLegacy", schema = "dbo")
 public class VendorMaster {
 
     @Id

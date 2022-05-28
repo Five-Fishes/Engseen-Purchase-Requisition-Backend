@@ -14,10 +14,7 @@ import lombok.ToString;
 
 @Entity
 @ToString
-@Table(name = "ItemMasterViewLegacy", schema = "dbo", indexes = {
-    @Index(name = "i_itemMaster_item", columnList = "Item"),
-    @Index(name = "i_itemMaster_itemDescription", columnList = "ItemDescription")
-})
+@Table(name = "ItemMasterViewLegacy", schema = "dbo")
 public class ItemMaster implements Serializable {
 
     @Id

@@ -13,10 +13,7 @@ import lombok.ToString;
 
 @Entity
 @ToString
-@Table(name = "VendorItemViewLegacy", schema = "dbo", indexes = {
-    @Index(name = "i_vendorItem_vendorId", columnList = "VendorID"),
-    @Index(name = "i_vendorItem_item", columnList = "Item")
-})
+@Table(name = "VendorItemViewLegacy", schema = "dbo")
 public class VendorItem {
 
     @Id
