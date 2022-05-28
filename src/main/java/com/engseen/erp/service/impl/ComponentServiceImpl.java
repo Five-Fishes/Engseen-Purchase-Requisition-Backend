@@ -162,11 +162,14 @@ public class ComponentServiceImpl implements ComponentService {
         log.debug("Request to findAllBy Component: {} And VendorId: {}", component, vendorId);
         return itemMasterRepository.findAllByItemContainingOrItemDescriptionContaining(component, component)
             .stream()
+            .map(itemMasterMapper::itemMasterToComponentDTO)
             .filter(itemMaster -> {
-                Optional<VendorItem> vendorItemOptional = vendorItemRepository.findOneByVendorIDAndItem(vendorId, itemMaster.getItem());
+                Optional<VendorItem> vendorItemOptional = vendorItemRepository.findOneByVendorIDAndItem(vendorId, itemMaster.getComponentCode());
+                if (vendorItemOptional.isPresent()) {
+                    itemMaster.setVendorId(vendorItemOptional.get().getVendorID());
+                }
                 return vendorItemOptional.isPresent();
             })
-            .map(itemMasterMapper::itemMasterToComponentDTO)
             .collect(Collectors.toList());
     }
 
