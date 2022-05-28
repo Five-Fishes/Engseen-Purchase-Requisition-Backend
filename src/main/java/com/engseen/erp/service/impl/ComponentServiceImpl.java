@@ -174,32 +174,36 @@ public class ComponentServiceImpl implements ComponentService {
     public List<ComponentDTO> findAllByComponentOrVendor(Pageable pageable, String component, String vendor) {
         log.debug("Request to findAllBy Component: {} Or Vendor: {}", component, vendor);
         Set<ComponentDTO> componentDtoList = new HashSet<>();
-        log.debug("Start search on based on Component");
-        itemMasterRepository.findAllByItemContainingOrItemDescriptionContaining(component, component)
-            .stream()
-            .forEach(itemMaster -> {
-                vendorItemRepository.findAllByItemContaining(pageable, itemMaster.getItem())
-                    .map(vendorItemMapper::vendorItemToComponentDTO)
-                    .map(componentDTO -> {
-                        assignVendorName(componentDTO);
-                        componentDTO.setComponentName(itemMaster.getItemDescription());
-                        return componentDTO;
-                    })
-                    .forEach(componentDto -> componentDtoList.add(componentDto));
-            });
-        log.debug("Start search on based on Vendor");
-        vendorMasterRepository.findAllByVendorIDContainingOrVendorNameContaining(vendor, vendor)
-            .stream()
-            .forEach(vendorMaster -> {
-                vendorItemRepository.findAllByVendorIDContaining(pageable, vendorMaster.getVendorID())
-                    .map(vendorItemMapper::vendorItemToComponentDTO)
-                    .map(componentDTO -> {
-                        assignComponentName(componentDTO);
-                        componentDTO.setVendorName(vendorMaster.getVendorName());
-                        return componentDTO;
-                    })
-                    .forEach(componentDto -> componentDtoList.add(componentDto));
-            });
+        if (component != null && component.trim() != "") {
+            log.debug("Start search on based on Component");
+            itemMasterRepository.findAllByItemContainingOrItemDescriptionContaining(component, component)
+                .stream()
+                .forEach(itemMaster -> {
+                    vendorItemRepository.findAllByItemContaining(pageable, itemMaster.getItem())
+                        .map(vendorItemMapper::vendorItemToComponentDTO)
+                        .map(componentDTO -> {
+                            assignVendorName(componentDTO);
+                            componentDTO.setComponentName(itemMaster.getItemDescription());
+                            return componentDTO;
+                        })
+                        .forEach(componentDto -> componentDtoList.add(componentDto));
+                });
+        }
+        if (vendor != null && vendor.trim() != "") {
+            log.debug("Start search on based on Vendor");
+            vendorMasterRepository.findAllByVendorIDContainingOrVendorNameContaining(vendor, vendor)
+                .stream()
+                .forEach(vendorMaster -> {
+                    vendorItemRepository.findAllByVendorIDContaining(pageable, vendorMaster.getVendorID())
+                        .map(vendorItemMapper::vendorItemToComponentDTO)
+                        .map(componentDTO -> {
+                            assignComponentName(componentDTO);
+                            componentDTO.setVendorName(vendorMaster.getVendorName());
+                            return componentDTO;
+                        })
+                        .forEach(componentDto -> componentDtoList.add(componentDto));
+                });
+        }
         log.debug("Total number of Component matched: {}", componentDtoList.size());
         return componentDtoList.stream()
             .collect(Collectors.toList());
