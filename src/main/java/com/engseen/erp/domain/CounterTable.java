@@ -35,7 +35,7 @@ public class CounterTable {
     @Column(name = "LastCounter", nullable = false)
     private Integer lastCounter;
 
-    @Column(name = "FileName", length = 10)
+    @Column(name = "FileName", length = 20)
     private String fileName;
 
 }

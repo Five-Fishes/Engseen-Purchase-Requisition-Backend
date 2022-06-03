@@ -18,7 +18,7 @@ public interface POHeaderRepository extends JpaRepository<POHeader, Integer> {
 
     Page<POHeader> findAllByPurchaseRequestApprovalId(Long purchaseRequestApprovalId, Pageable pageable);
 
-    POHeader findOneByPoNumber(String poNumber);
+    List<POHeader> findByPoNumber(String poNumber);
 
     /*
     UnusedReturnValue warning is suppressed because return value works in SQL Server 2019, NOT in SQL Server 2005

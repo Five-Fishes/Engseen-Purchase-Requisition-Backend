@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,8 @@ public class PODetailServiceImpl implements PODetailService {
             poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
             TimestampUtil.fromInstant(poDetail.getCreated()), poDetail.getCreatedBy(), TimestampUtil.fromInstant(poDetail.getModified()), poDetail.getModifiedBy(), poDetail.getPackReceived(), poDetail.getPack()
         );
-        return poDetailRepository.findOneByPoNumberAndItem(poDetail.getPoNumber(), poDetail.getItem());
+        List<PODetail> poDetailList = poDetailRepository.findByPoNumberAndItem(poDetail.getPoNumber(), poDetail.getItem());
+        return poDetailList.isEmpty() ? null : poDetailList.get(poDetailList.size() - 1);
     }
 
     @Override
@@ -39,7 +43,8 @@ public class PODetailServiceImpl implements PODetailService {
             poDetail.getVIOrderQuantity(), poDetail.getVIUnitPrice(), poDetail.getItemFailure(), poDetail.getPrintUOM(), poDetail.getDepartmentCode(), poDetail.getSegmentCode(), 
             TimestampUtil.fromInstant(poDetail.getCreated()), poDetail.getCreatedBy(), TimestampUtil.fromInstant(poDetail.getModified()), poDetail.getModifiedBy(), poDetail.getPackReceived(), poDetail.getPack()
         );
-        return poDetailRepository.findById(poDetail.getId()).get();
+        Optional<PODetail> poDetailOptional = poDetailRepository.findById(poDetail.getId());
+        return poDetailOptional.orElse(null);
     }
     
 }

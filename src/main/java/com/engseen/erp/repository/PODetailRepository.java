@@ -49,6 +49,6 @@ public interface PODetailRepository extends JpaRepository<PODetail, Integer> {
         + "AND pd.poNumber IN :poNumberList ")
     Page<PODetail> findAllOutstandingItemInPoNumberList(Pageable pageable, List<String> poNumberList);
 
-	PODetail findOneByPoNumberAndItem(String poNumber, String item);
+	List<PODetail> findByPoNumberAndItem(String poNumber, String item);
 
 }

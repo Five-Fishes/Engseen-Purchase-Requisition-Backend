@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,8 @@ public class POHeaderServiceImpl implements POHeaderService {
                 poHeader.getImported(), poHeader.getGst(), TimestampUtil.fromInstant(poHeader.getCreated()), poHeader.getCreatedBy(), TimestampUtil.fromInstant(poHeader.getModified()), poHeader.getModifiedBy(),
                 TimestampUtil.fromInstant(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
         );
-        return poHeaderRepository.findOneByPoNumber(poHeader.getPoNumber());
+        List<POHeader> poHeaderList = poHeaderRepository.findByPoNumber(poHeader.getPoNumber());
+        return poHeaderList.isEmpty() ? null : poHeaderList.get(poHeaderList.size() - 1);
     }
 
     @Override
@@ -44,6 +47,7 @@ public class POHeaderServiceImpl implements POHeaderService {
                 poHeader.getImported(), poHeader.getGst(), TimestampUtil.fromInstant(poHeader.getCreated()), poHeader.getCreatedBy(), TimestampUtil.fromInstant(poHeader.getModified()), poHeader.getModifiedBy(),
                 TimestampUtil.fromInstant(poHeader.getAccessed()), poHeader.getAccessedBy(), poHeader.getPurchaseRequestApprovalId(), poHeader.getEmailed(), poHeader.getDownloaded()
         );
-        return poHeaderRepository.findOneByPoNumber(poHeader.getPoNumber());
+        List<POHeader> poHeaderList = poHeaderRepository.findByPoNumber(poHeader.getPoNumber());
+        return poHeaderList.isEmpty() ? null : poHeaderList.get(poHeaderList.size() - 1);
     }
 }
