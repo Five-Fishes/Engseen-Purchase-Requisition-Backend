@@ -56,13 +56,13 @@ public class VendorServiceImpl implements VendorService {
         vendorId = Objects.isNull(vendorId) ? "" : vendorId;
         if (Objects.isNull(pageable)) {
             return vendorMasterRepository
-                    .findAllByVendorIDContaining(vendorId)
+                    .findAllByVendorIDContainingOrVendorNameContaining(vendorId, vendorId)
                     .parallelStream()
                     .map(vendorMasterMapper::toDto)
                     .collect(Collectors.toList());
         } else {
             return vendorMasterRepository
-                    .findAllByVendorIDContaining(pageable, vendorId)
+                    .findAllByVendorIDContainingOrVendorNameContaining(pageable, vendorId, vendorId)
                     .toList()
                     .parallelStream()
                     .map(vendorMasterMapper::toDto)

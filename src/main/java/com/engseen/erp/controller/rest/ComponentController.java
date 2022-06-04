@@ -57,6 +57,47 @@ public class ComponentController {
     }
 
     /**
+     * {@code GET /component/{component}/vendor/{vendorId} : Get all Component by filters
+     *
+     * @param component Code/Name of the component
+     * @param vendor    Id of Vendor that supply the component
+     * @param pageable  Pagination Info
+     */
+    @GetMapping(value = "/{component}/vendor/{vendorId}")
+    public ResponseEntity<List<ComponentDTO>> getComponentsByComponentAndVendorId(
+            @RequestParam(required = false) Pageable pageable,
+            @PathVariable(name = "component") String component,
+            @PathVariable(name = "vendorId") String vendorId
+    ) {
+        log.info("Rest Request to getComponentsByComponentAndVendor");
+        log.debug("Pagination Info: {}", pageable);
+        log.debug("Filter by Component: {}, VendorID: {}", component, vendorId);
+        List<ComponentDTO> componentDTOList = componentService.findAllByComponentAndVendor(pageable, component, vendorId);
+        return ResponseEntity.ok()
+                .body(componentDTOList);
+    }
+
+    /**
+     * {@code GET /component/search : Search all Component by keyword
+     *
+     * @param keyword Code/Name of the component OR Id/Name of Vendor
+     * @param pageable  Pagination Info
+     */
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<ComponentDTO>> getComponentsByComponentOrVendor(
+            @RequestParam(required = false) Pageable pageable,
+            @RequestParam(required = false) String component,
+            @RequestParam(required = false) String vendor
+    ) {
+        log.info("Rest Request to getComponentsByComponentOrVendor");
+        log.debug("Pagination Info: {}", pageable);
+        log.debug("Filter by component: {}, vendor: {}", component, vendor);
+        List<ComponentDTO> componentDTOList = componentService.findAllByComponentOrVendor(pageable, component, vendor);
+        return ResponseEntity.ok()
+                .body(componentDTOList);
+    }
+
+    /**
      * {@code GET /component/stock-balance/{componentCode}} : Get stock balance with component code
      *
      * @param componentCode component code from frontend
