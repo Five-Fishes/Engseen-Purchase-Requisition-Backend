@@ -21,4 +21,17 @@ public class ComponentDTO implements Serializable {
     private String vendorName;
 
     private BigDecimal packagingSize;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof ComponentDTO) {
+            return this.id == ((ComponentDTO) object).getId();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 23;
+    }
 }

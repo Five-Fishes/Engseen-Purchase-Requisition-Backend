@@ -1,13 +1,15 @@
 package com.engseen.erp.domain;
 
-import lombok.ToString;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import lombok.ToString;
 
 @Entity
 @ToString
