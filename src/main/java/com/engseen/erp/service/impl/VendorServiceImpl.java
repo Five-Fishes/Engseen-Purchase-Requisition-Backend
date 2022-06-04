@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VendorServiceImpl implements VendorService {
 
-    private final Logger log = LoggerFactory.getLogger(ComponentServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(VendorServiceImpl.class);
 
     private final VendorMasterMapper vendorMasterMapper;
     private final VendorMasterRepository vendorMasterRepository;

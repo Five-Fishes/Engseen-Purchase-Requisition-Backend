@@ -65,7 +65,6 @@ import com.engseen.erp.service.PurchaseRequestApprovalItemService;
 import com.engseen.erp.service.PurchaseRequestApprovalService;
 import com.engseen.erp.service.VendorService;
 import com.engseen.erp.repository.VendorMasterRepository;
-import com.engseen.erp.service.*;
 import com.engseen.erp.service.dto.EmailContent;
 import com.engseen.erp.service.dto.PODetailDTO;
 import com.engseen.erp.service.dto.PurchaseOrderDto;
@@ -81,6 +80,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
@@ -135,12 +135,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    @Transactional
     public List<PurchaseOrderDto> issuePO(Long purchaseRequestApprovalId) {
         log.debug("Request to issue PO by Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         log.debug("Get List of Purchase Approval Item with Confirmed status");
         List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList = purchaseRequestApprovalItemService.findAllByPurchaseRequestApprovalIdAndStatus(purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus.CONFIRMED, Pageable.unpaged());
-        if (purchaseRequestApprovalItemList == null || purchaseRequestApprovalItemList.size() < 1) {
+        if (purchaseRequestApprovalItemList == null || purchaseRequestApprovalItemList.isEmpty()) {
             log.error("No Confirmed Item Found to Issue PO for Id: {}", purchaseRequestApprovalId);
             throw new BadRequestException("No Confirmed Item Found to Issue PO");
         }
@@ -171,7 +170,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
             log.debug("Saved POHeader: {}", poHeader);
             log.debug("Saving PO Detail List: {}", poDetailList);
-            poDetailList.forEach(poDetail -> poDetailService.insert(poDetail));
+            poDetailList.forEach(poDetailService::insert);
             PurchaseOrderDto purchaseOrderDto = constructPurchaseOrderDto(poHeader);
             purchaseOrderDtoList.add(purchaseOrderDto);
         }
@@ -239,8 +238,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Request to generatePONumber for vendorId: {}", vendorId);
         String counterCode = AppConstant.COUNTER_CODE_PO;
         Integer nextPoNo = counterTableService.getNextCounterValue(counterCode);
-        String nextPoNoValue = counterCode + "-" + nextPoNo;
-        return nextPoNoValue;
+        return counterCode + "-" + nextPoNo;
     }
 
     private List<PODetail> constructPODetail(List<PurchaseRequestApprovalItemDto> purchaseRequestApprovalItemList, POHeader poHeader) {
@@ -359,7 +357,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Request to download PO by Purchase Order Id");
         markPOAsDownloaded(purchaseOrderId);
         File poPdf = generatePoPdfFile(purchaseOrderId);
-        return Base64.getEncoder().encodeToString(new FileInputStream(poPdf).readAllBytes());
+        try (FileInputStream fis = new FileInputStream(poPdf) ) {
+            return Base64.getEncoder().encodeToString(fis.readAllBytes());
+        }
     }
 
     @Override
@@ -384,7 +384,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
                     BigDecimal totalCost = poDetailList
                             .stream()
-                            .map((poDetail) -> poDetail.getOrderQuantity().multiply(poDetail.getUnitPrice()))
+                            .map(poDetail -> poDetail.getOrderQuantity().multiply(poDetail.getUnitPrice()))
                             .reduce(BigDecimal::add)
                             .orElse(BigDecimal.ZERO);
 
@@ -395,6 +395,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
+     * @deprecated
      * <p>Generate PO Pdf file:
      * <ul>
      *     <li>use {@code getPOPdfViaRestTemplate} instead
@@ -455,10 +456,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      */
     private String getVendorName(POHeader poHeader) {
         VendorMasterDTO vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
-        if (!Objects.isNull(vendorMasterDTO)) {
-            if (StringUtils.isNotBlank(vendorMasterDTO.getVendorName())) {
-                return vendorMasterDTO.getVendorName();
-            }
+        if (!Objects.isNull(vendorMasterDTO) && StringUtils.isNotBlank(vendorMasterDTO.getVendorName())) {
+            return vendorMasterDTO.getVendorName();
         }
         return "Dear Customer";
     }
@@ -475,7 +474,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 poHeader.setDownloaded(true);
                 POHeader updatedPoHeader = poHeaderService.update(poHeader);
                 log.debug("PO ID: {}", purchaseOrderId);
-                log.debug("Updated POHeader{}", updatedPoHeader.toString());
+                log.debug("Updated POHeader{}", updatedPoHeader);
             });
         } catch (Exception exception) {
             log.error("Error marking PO as downloaded", exception); // TODO: [LU] inspect why sql error is thrown but entity updated successfully (remove try catch block as exception should not be handled)

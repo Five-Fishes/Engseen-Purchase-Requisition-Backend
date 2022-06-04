@@ -126,7 +126,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber, Map<String, VendorMasterDTO> vendorTemporaryCache) {
         VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.get(poNumber);
         if (vendorMasterDTO == null) {
-            POHeader poHeader = poHeaderRepository.findOneByPoNumber(poNumber);
+            POHeader poHeader = poHeaderRepository.findByPoNumber(poNumber).get(0);
             vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
             vendorTemporaryCache.put(poNumber, vendorMasterDTO);
         }

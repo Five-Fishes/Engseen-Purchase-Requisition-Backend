@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestApprovalItemService {
 
@@ -45,7 +45,6 @@ public class PurchaseRequestApprovalItemServiceImpl implements PurchaseRequestAp
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<PurchaseRequestApprovalItemDto> findAllByPurchaseRequestApprovalIdAndStatus(Long purchaseRequestApprovalId, PurchaseRequisitionApprovalItemStatus status, Pageable pageable) {
         log.debug("Request to findAll Purchase Request Approval Item");
         log.debug("PurchaseRequestApprovalId: {}, status: {}", purchaseRequestApprovalId, status);
