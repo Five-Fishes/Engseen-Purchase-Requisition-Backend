@@ -46,31 +46,13 @@ import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.AppConstant;
 import com.engseen.erp.constant.enumeration.PurchaseRequisitionApprovalItemStatus;
-import com.engseen.erp.domain.CounterTable;
-import com.engseen.erp.domain.ItemMaster;
-import com.engseen.erp.domain.PODetail;
-import com.engseen.erp.domain.POHeader;
-import com.engseen.erp.domain.VendorItem;
+import com.engseen.erp.domain.*;
 import com.engseen.erp.exception.BadRequestException;
 import com.engseen.erp.repository.PODetailRepository;
 import com.engseen.erp.repository.POHeaderRepository;
-import com.engseen.erp.service.CounterTableService;
-import com.engseen.erp.service.EmailService;
-import com.engseen.erp.service.HtmlToPdfService;
-import com.engseen.erp.service.ItemMasterService;
-import com.engseen.erp.service.PODetailService;
-import com.engseen.erp.service.POHeaderService;
-import com.engseen.erp.service.PurchaseOrderService;
-import com.engseen.erp.service.PurchaseRequestApprovalItemService;
-import com.engseen.erp.service.PurchaseRequestApprovalService;
-import com.engseen.erp.service.VendorService;
+import com.engseen.erp.service.*;
 import com.engseen.erp.repository.VendorMasterRepository;
-import com.engseen.erp.service.dto.EmailContent;
-import com.engseen.erp.service.dto.PODetailDTO;
-import com.engseen.erp.service.dto.PurchaseOrderDto;
-import com.engseen.erp.service.dto.PurchaseOrderRequestApprovalDto;
-import com.engseen.erp.service.dto.PurchaseRequestApprovalItemDto;
-import com.engseen.erp.service.dto.VendorMasterDTO;
+import com.engseen.erp.service.dto.*;
 import com.engseen.erp.service.mapper.PODetailMapper;
 
 import org.apache.commons.lang3.StringUtils;
@@ -80,7 +62,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
@@ -112,6 +93,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final ItemMasterService itemMasterService;
     private final PODetailMapper poDetailMapper;
     private final RestTemplateBuilder restTemplateBuilder;
+    private final VendorAdditionalInfoService vendorAdditionalInfoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -295,7 +277,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseOrderDto.setVendorId(poHeader.getVendorID());
         VendorMasterDTO vendorMasterDto = vendorService.findOneByVendorId(poHeader.getVendorID());
         purchaseOrderDto.setVendorName(vendorMasterDto.getVendorName());
-        // purchaseOrderDto.setEmail();
         return purchaseOrderDto;
     }
 
@@ -310,16 +291,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             /*
             Get required info:
             - poHeader entity
+            - vendorDTO
             - vendorName
+            - vendorEmail
              */
             POHeader poHeader = poHeaderOptional.get();
-            String vendorName = getVendorName(poHeader);
+            VendorMasterDTO vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
+            VendorAdditionalInfoDTO vendorAdditionalInfoDTO = vendorAdditionalInfoService.findByVendorId(poHeader.getVendorID());
+            String vendorName = getVendorName(vendorMasterDTO);
 
             /*
             Instantiate email
              */
             EmailContent emailContent = new EmailContent();
-            emailContent.setToEmailList(List.of("xianze_98@hotmail.com"));
+            if (vendorAdditionalInfoDTO != null && vendorAdditionalInfoDTO.getEmail() != null) {
+                emailContent.setToEmailList(List.of(vendorAdditionalInfoDTO.getEmail()));
+            }
             emailContent.setSubject("Purchase Order Request");
 
             /*
@@ -357,7 +344,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         log.debug("Request to download PO by Purchase Order Id");
         markPOAsDownloaded(purchaseOrderId);
         File poPdf = generatePoPdfFile(purchaseOrderId);
-        try (FileInputStream fis = new FileInputStream(poPdf) ) {
+        try (FileInputStream fis = new FileInputStream(poPdf)) {
             return Base64.getEncoder().encodeToString(fis.readAllBytes());
         }
     }
@@ -395,16 +382,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
-     * @deprecated
-     * <p>Generate PO Pdf file:
+     * @param purchaseOrderId PO ID
+     * @return Generated PDF File
+     * @throws IOException IO exception while creating poPdf
+     * @deprecated <p>Generate PO Pdf file:
      * <ul>
      *     <li>use {@code getPOPdfViaRestTemplate} instead
      *     <li>this uses IText which is less powerful in rendering PDF with HTML
      * </ul>
-     *
-     * @param purchaseOrderId PO ID
-     * @return Generated PDF File
-     * @throws IOException IO exception while creating poPdf
      */
     @Deprecated(forRemoval = true)
     private File generatePoPdfFile(Long purchaseOrderId) throws IOException {
@@ -414,15 +399,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         poHeaderRepository.findById(purchaseOrderId.intValue()).ifPresentOrElse(poHeader -> {
             List<PODetailDTO> poDetailList = poDetailRepository.findAllByPoNumber(poHeader.getPoNumber())
-                .stream()
-                .map(poDetail -> {
-                    PODetailDTO poDetailDto = poDetailMapper.toDto(poDetail);
-                    ItemMaster itemMaster = itemMasterService.findOneByItem(poDetail.getItem());
-                    poDetailDto.setItemDescription(itemMaster.getItemDescription());
-                    poDetailDto.setPrintUOM(itemMaster.getUnitOfMeasure());
-                    return poDetailDto;
-                })
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(poDetail -> {
+                        PODetailDTO poDetailDto = poDetailMapper.toDto(poDetail);
+                        ItemMaster itemMaster = itemMasterService.findOneByItem(poDetail.getItem());
+                        poDetailDto.setItemDescription(itemMaster.getItemDescription());
+                        poDetailDto.setPrintUOM(itemMaster.getUnitOfMeasure());
+                        return poDetailDto;
+                    })
+                    .collect(Collectors.toList());
             poPDFContext.setVariable("poDetailList", poDetailList);
             poPDFContext.setVariable("poHeader", poHeader);
         }, () -> log.warn("PO have no details"));
@@ -451,11 +436,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     /**
      * Get vendor name, default to "Dear Customer if it doesn't exist"
      *
-     * @param poHeader poHeader
-     * @return name of vendor based on poHeader
+     * @param vendorMasterDTO@return name of vendor based on poHeader
      */
-    private String getVendorName(POHeader poHeader) {
-        VendorMasterDTO vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
+    private String getVendorName(VendorMasterDTO vendorMasterDTO) {
         if (!Objects.isNull(vendorMasterDTO) && StringUtils.isNotBlank(vendorMasterDTO.getVendorName())) {
             return vendorMasterDTO.getVendorName();
         }
