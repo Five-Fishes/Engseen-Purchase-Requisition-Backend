@@ -51,14 +51,14 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             poDetailPage = poDetailRepository.findAllOutstandingItem(pageable);
         } else {
             List<String> poNumberList = poHeaderRepository.findAllByVendorID(pageable, vendorId)
-                .map(POHeader::getPoNumber)
-                .getContent();
+                    .map(POHeader::getPoNumber)
+                    .getContent();
             log.debug("{} total number of PO for VendorId: {}", poNumberList.size(), vendorId);
             log.debug("PO Number List: {}", poNumberList);
             poDetailPage = poDetailRepository.findAllOutstandingItemInPoNumberList(pageable, poNumberList);
         }
         return poDetailPage.map(poDetail -> constructPurchaseOrderItemDto(poDetail, vendorTemporaryCache))
-            .getContent();
+                .getContent();
     }
 
     private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail, Map<String, VendorMasterDTO> vendorTemporaryCache) {
@@ -72,20 +72,20 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
 
         purchaseOrderItemDto.setOrderQuantityPack(poDetail.getOrderQuantity());
         // Derived OrderQuantity from OrderQuantity * VIUnitConversion
-        purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity().multiply(poDetail.getVIConversion()));
+        purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity().multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
 
         purchaseOrderItemDto.setReceivedQuantityPack(poDetail.getQuantityReceived());
         // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
-        purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived().multiply(poDetail.getVIConversion()));
+        purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived().multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
 
         BigDecimal outstandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
         purchaseOrderItemDto.setOpenQuantityPack(outstandingQuantity);
         // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
-        purchaseOrderItemDto.setOpenQuantity(outstandingQuantity.multiply(poDetail.getVIConversion()));
+        purchaseOrderItemDto.setOpenQuantity(outstandingQuantity.multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
 
         // Set the receiving quantity and unit to default automatically for easier UX
         purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantity);
-        purchaseOrderItemDto.setReceivingQuantity(poDetail.getVIConversion());
+        purchaseOrderItemDto.setReceivingQuantity(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE);
 
         purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
         purchaseOrderItemDto.setComponentCode(getComponentCodeFromItem(poDetail.getItem()));
@@ -124,12 +124,10 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     }
 
     private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber, Map<String, VendorMasterDTO> vendorTemporaryCache) {
-        VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.get(poNumber);
-        if (vendorMasterDTO == null) {
-            POHeader poHeader = poHeaderRepository.findByPoNumber(poNumber).get(0);
-            vendorMasterDTO = vendorService.findOneByVendorId(poHeader.getVendorID());
-            vendorTemporaryCache.put(poNumber, vendorMasterDTO);
-        }
+        VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.computeIfAbsent(poNumber, pn -> {
+            POHeader poHeader = poHeaderRepository.findByPoNumber(pn).get(0);
+            return vendorService.findOneByVendorId(poHeader.getVendorID());
+        });
 
         /*
         Special Handling for null vendorMasterDTO
@@ -148,11 +146,10 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     @Override
     public List<PurchaseOrderItemDto> findAllReceivedPurchaseOrderItemByGrnNo(Pageable pageable, String grnNo) {
         log.debug("Request to findAll ReceivedPurchaseOrderItem ByGrnNo: {}", grnNo);
-        List<PurchaseOrderItemDto> purchaseOrderItemDtoList = purchaseOrderReceiptService.findAllByGrnNo(pageable, grnNo)
-            .parallelStream()
-            .map(this::convertToPurchaseOrderItemDto)
-            .collect(Collectors.toList());
-        return purchaseOrderItemDtoList;
+        return purchaseOrderReceiptService.findAllByGrnNo(pageable, grnNo)
+                .parallelStream()
+                .map(this::convertToPurchaseOrderItemDto)
+                .collect(Collectors.toList());
     }
 
     private PurchaseOrderItemDto convertToPurchaseOrderItemDto(POReceiptDTO poReceiptDto) {
@@ -167,11 +164,9 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             log.debug("Constructed Purchase Order Item Dto: {}", purchaseOrderItemDto);
             BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityReceived());
             purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
-            // purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
         }
         purchaseOrderItemDto.setItemCost(poReceiptDto.getUnitCost().doubleValue());
         purchaseOrderItemDto.setReceivedQuantityPack(poReceiptDto.getQuantityReceived());
-        // purchaseOrderItemDto.setReceivedQuantity(poReceiptDto.getQuantityReceived());
         purchaseOrderItemDto.setReceivingQuantityPack(BigDecimal.ZERO);
         purchaseOrderItemDto.setReceivingQuantity(BigDecimal.ZERO);
         purchaseOrderItemDto.setStatus(POReceiptStatus.RECEIVED.name());
@@ -183,7 +178,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         log.info("Request to updatePODetailForPOReceipt");
         log.debug("PO Receipt DTO: {}", poReceiptDto);
         PODetail poDetail = poDetailRepository.findById(poReceiptDto.getPid())
-            .orElseThrow(() -> new BadRequestException("PO Detail not found with ID: " + poReceiptDto.getPid()));
+                .orElseThrow(() -> new BadRequestException("PO Detail not found with ID: " + poReceiptDto.getPid()));
         BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantityPack());
         if (totalReceivedQuantity.compareTo(poDetail.getOrderQuantity()) > 0) {
             throw new BadRequestException("Received Quantity cannot be more than Order Quantity");
@@ -197,5 +192,5 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         poDetail.setDateLastReceipt(Instant.now());
         return poDetailService.update(poDetail);
     }
-    
+
 }

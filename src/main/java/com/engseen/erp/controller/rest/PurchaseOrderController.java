@@ -86,7 +86,7 @@ public class PurchaseOrderController {
     @PostMapping(value="/email/{purchaseOrderId}")
     public ResponseEntity<Void> emailPurchaseOrder(@PathVariable Long purchaseOrderId) throws Exception {
         log.info("REST Request to emailPurchaseOrder with Id: {}", purchaseOrderId);
-        Boolean emailSent = purchaseOrderService.emailPO(purchaseOrderId);
+        purchaseOrderService.emailPO(purchaseOrderId);
         return ResponseEntity.ok()
             .build();
     }
@@ -115,12 +115,12 @@ public class PurchaseOrderController {
      * @param purchaseRequestApprovalId Id of Purchase Request Approval
      */
     @PostMapping(value="/download-email/{purchaseRequestApprovalId}")
-    public ResponseEntity<?> downloadAndEmailByPurchaseRequestApprvoalId(@PathVariable Long purchaseRequestApprovalId) throws Exception {
+    public ResponseEntity<Resource> downloadAndEmailByPurchaseRequestApprvoalId(@PathVariable Long purchaseRequestApprovalId) throws Exception {
         log.info("REST Request to downloadAndEmailByPurchaseRequestApprvoalId with Purchase Request Approval Id: {}", purchaseRequestApprovalId);
         List<PurchaseOrderDto> purchaseOrderDtoList = purchaseOrderService.findAllByPurchaseRequestApprovalId(purchaseRequestApprovalId, Pageable.unpaged()              );
         for (PurchaseOrderDto purchaseOrderDto : purchaseOrderDtoList) {
-            Boolean emailSent = purchaseOrderService.emailPO(purchaseOrderDto.getId());
-            String fileBase64String = purchaseOrderService.downloadPOPdfBase64String(purchaseOrderDto.getId());
+            purchaseOrderService.emailPO(purchaseOrderDto.getId());
+            purchaseOrderService.downloadPOPdfBase64String(purchaseOrderDto.getId());
         }
         return ResponseEntity.ok()
             .body(null);
