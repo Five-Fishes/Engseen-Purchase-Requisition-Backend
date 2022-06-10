@@ -19,6 +19,10 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springBootAdminVersion', "2.6.5")
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -27,9 +31,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'de.codecentric:spring-boot-admin-starter-client'
 	implementation 'com.itextpdf:itextpdf:5.5.13.3'
-	implementation 'com.itextpdf:html2pdf:4.0.1'
-	implementation 'com.h2database:h2:2.1.210'
+	implementation 'com.itextpdf:html2pdf:4.0.2'
+	implementation 'com.h2database:h2:2.1.212'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	compileOnly 'org.projectlombok:lombok'
@@ -39,6 +44,12 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
+	}
 }
 
 test {
