@@ -34,14 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.engseen.erp.constant.AppConstant;
@@ -283,7 +276,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public Boolean emailPO(Long purchaseOrderId) throws Exception {
         log.debug("Request to email PO by Purchase Order Id");
-        // TODO: Sample Email PO for testing email service
 
         Optional<POHeader> poHeaderOptional = poHeaderRepository.findById(purchaseOrderId.intValue());
 
@@ -305,7 +297,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
              */
             EmailContent emailContent = new EmailContent();
             if (vendorAdditionalInfoDTO != null && vendorAdditionalInfoDTO.getEmail() != null) {
-                emailContent.setToEmailList(List.of(vendorAdditionalInfoDTO.getEmail()));
+                String[] emailArr = vendorAdditionalInfoDTO.getEmail().split(",");
+                List<String> emailList = Arrays.asList(emailArr)
+                        .parallelStream()
+                        .map(String::trim)
+                        .collect(Collectors.toList());
+
+                emailContent.setToEmailList(emailList);
             }
             emailContent.setSubject("Purchase Order Request");
 
@@ -424,7 +422,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                         byte[].class
                 );
 
-        File file = File.createTempFile("PDF", "pdf");
+        File file = File.createTempFile("PDF", ".pdf");
         try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
             assert bytes != null;
             outputStream.write(bytes);
