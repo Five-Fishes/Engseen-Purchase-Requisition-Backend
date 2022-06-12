@@ -6,6 +6,6 @@ CREATE TABLE [dbo].[VendorAdditionalInfo]
 (
     [VendorId]    VARCHAR(50) NOT NULL PRIMARY KEY,
     [IsFavourite] BIT     NOT NULL DEFAULT 0,
-    [Email]       VARCHAR(50)
+    [Email]       VARCHAR(500)
 );
 GO
