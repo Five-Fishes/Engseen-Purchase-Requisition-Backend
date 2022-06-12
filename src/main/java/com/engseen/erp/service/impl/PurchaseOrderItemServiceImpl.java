@@ -45,7 +45,6 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     @Transactional(readOnly = true)
     public List<PurchaseOrderItemDto> findAllOutstandingPurchaseOrderItemByVendorId(Pageable pageable, String vendorId) {
         log.debug("Request to findAll Outstanding Purchase Order Item by Vendor Id: {}", vendorId);
-        Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
         Page<PODetail> poDetailPage;
         if (StringUtils.isBlank(vendorId)) {
             poDetailPage = poDetailRepository.findAllOutstandingItem(pageable);
@@ -57,8 +56,23 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             log.debug("PO Number List: {}", poNumberList);
             poDetailPage = poDetailRepository.findAllOutstandingItemInPoNumberList(pageable, poNumberList);
         }
-        return poDetailPage.map(poDetail -> constructPurchaseOrderItemDto(poDetail, vendorTemporaryCache))
+        /* Compute Vendor Details */
+        Map<String, VendorMasterDTO> vendorTemporaryCache = getVendorsRelatedToPO(poDetailPage.getContent());
+
+        return poDetailPage
+                .map(poDetail -> constructPurchaseOrderItemDto(poDetail, vendorTemporaryCache))
                 .getContent();
+    }
+
+    private Map<String, VendorMasterDTO> getVendorsRelatedToPO(List<PODetail> poDetailList) {
+        Map<String, VendorMasterDTO> vendorTemporaryCache = new HashMap<>();
+
+        poDetailList.forEach(poDetail -> vendorTemporaryCache.computeIfAbsent(poDetail.getPoNumber(), pn -> {
+            POHeader poHeader = poHeaderRepository.findByPoNumber(pn).get(0);
+            return vendorService.findOneByVendorId(poHeader.getVendorID());
+        }));
+
+        return vendorTemporaryCache;
     }
 
     private PurchaseOrderItemDto constructPurchaseOrderItemDto(PODetail poDetail, Map<String, VendorMasterDTO> vendorTemporaryCache) {
@@ -92,7 +106,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         purchaseOrderItemDto.setComponentName(getComponentNameFromItem(poDetail.getItem()));
         purchaseOrderItemDto.setItemCost(Objects.nonNull(poDetail.getVIUnitPrice()) ? poDetail.getVIUnitPrice().doubleValue() : 0); // FIXME: [LU] db should not allow 0 value VIUnitPrice, handling with 0 is only temporary fix
 
-        mapVendorInfo(purchaseOrderItemDto, poDetail.getPoNumber(), vendorTemporaryCache);
+        mapVendorInfo(purchaseOrderItemDto, vendorTemporaryCache);
         return purchaseOrderItemDto;
     }
 
@@ -123,11 +137,8 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         return item;
     }
 
-    private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, String poNumber, Map<String, VendorMasterDTO> vendorTemporaryCache) {
-        VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.computeIfAbsent(poNumber, pn -> {
-            POHeader poHeader = poHeaderRepository.findByPoNumber(pn).get(0);
-            return vendorService.findOneByVendorId(poHeader.getVendorID());
-        });
+    private void mapVendorInfo(PurchaseOrderItemDto purchaseOrderItemDto, Map<String, VendorMasterDTO> vendorTemporaryCache) {
+        VendorMasterDTO vendorMasterDTO = vendorTemporaryCache.get(purchaseOrderItemDto.getPoNumber());
 
         /*
         Special Handling for null vendorMasterDTO

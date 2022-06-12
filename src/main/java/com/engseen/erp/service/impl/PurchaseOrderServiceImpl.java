@@ -92,13 +92,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Transactional(readOnly = true)
     public List<PurchaseOrderRequestApprovalDto> findAllGroupByPurchaseRequestApproval(Pageable pageable) {
         log.debug("Request to findAll Purchase Order group by Purchase Request Approval");
-        return purchaseRequestApprovalService.findAll(pageable).stream().map(purchaseRequestApproval -> {
-            PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
-            purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
-            purchaseOrderRequestApprovalDto.setCreatedDate(purchaseRequestApproval.getCreatedDate());
-            purchaseOrderRequestApprovalDto.setPurchaseOrders(findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged()));
-            return purchaseOrderRequestApprovalDto;
-        }).collect(Collectors.toList());
+        return purchaseRequestApprovalService
+                .findAll(pageable)
+                .stream()
+                .map(purchaseRequestApproval -> {
+                    PurchaseOrderRequestApprovalDto purchaseOrderRequestApprovalDto = new PurchaseOrderRequestApprovalDto();
+                    purchaseOrderRequestApprovalDto.setPurchaseRequisitionApprovalId(purchaseRequestApproval.getId());
+                    purchaseOrderRequestApprovalDto.setCreatedDate(purchaseRequestApproval.getCreatedDate());
+                    purchaseOrderRequestApprovalDto.setPurchaseOrders(findAllByPurchaseRequestApprovalId(purchaseRequestApproval.getId(), Pageable.unpaged()));
+                    return purchaseOrderRequestApprovalDto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
