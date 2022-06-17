@@ -99,7 +99,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
 
         // Set the receiving quantity and unit to default automatically for easier UX
         purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantity);
-        purchaseOrderItemDto.setReceivingQuantity(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE);
+        purchaseOrderItemDto.setReceivingQuantity(outstandingQuantity.multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
 
         purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
         purchaseOrderItemDto.setComponentCode(getComponentCodeFromItem(poDetail.getItem()));
