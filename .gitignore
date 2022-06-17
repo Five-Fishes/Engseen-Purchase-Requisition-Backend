@@ -43,3 +43,5 @@ out/
 
 ### Mac OS
 .DS_Store
+/src/main/resources/application-prod.properties
+/src/main/resources/application-staging.properties

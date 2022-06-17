@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
-    List<Inventory> findAllByItem(String item);
+    List<Inventory> findAllByItemAndQuantityGreaterThan(String item, BigDecimal quantity);
 
     List<Inventory> findByItemAndStoreNoAndStoreBinAndReceiptID(String item, String storeNo, String storeBin, Integer receiptID);
 

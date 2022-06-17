@@ -64,7 +64,7 @@ public class PurchaseRequestApprovalServiceImpl implements PurchaseRequestApprov
     private PurchaseRequisitionApproval mapComponentStockBalance(PurchaseRequisitionApproval purchaseRequestApproval) {
         log.debug("Request to mapComponentStockBalance");
         List<PurchaseRequisitionApprovalItem> purchaseRequestApprovalItems = purchaseRequestApproval.getPurchaseRequisitionApprovalItems()
-            .stream()
+            .parallelStream()
             .map(item -> {
                 BigDecimal balance = componentService.getStockBalanceByComponentCode(item.getComponentCode());
                 item.setBalance(balance);
