@@ -1,6 +1,7 @@
 package com.engseen.erp.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,26 +86,25 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         purchaseOrderItemDto.setDeliveryDate(Date.from(poDetail.getEtaDate()));
 
         purchaseOrderItemDto.setOrderQuantityPack(poDetail.getOrderQuantity());
-        // Derived OrderQuantity from OrderQuantity * VIUnitConversion
         purchaseOrderItemDto.setOrderQuantity(poDetail.getOrderQuantity().multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
 
-        purchaseOrderItemDto.setReceivedQuantityPack(poDetail.getQuantityReceived());
-        // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
-        purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived().multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
+        purchaseOrderItemDto.setReceivedQuantityPack(BigDecimal.valueOf(Optional.ofNullable(poDetail.getPackReceived()).orElse(0)));
+        purchaseOrderItemDto.setReceivedQuantity(poDetail.getQuantityReceived());
 
         BigDecimal outstandingQuantity = poDetail.getOrderQuantity().subtract(poDetail.getQuantityReceived());
+        BigDecimal outstandingQuantityPack = BigDecimal.valueOf(Optional.ofNullable(poDetail.getPack()).orElse(0)).subtract(BigDecimal.valueOf(Optional.ofNullable(poDetail.getPackReceived()).orElse(0)));
+
         purchaseOrderItemDto.setOpenQuantityPack(outstandingQuantity);
-        // Derived ReceivedQuantityPack from QuantityReceived * VIUnitConversion
-        purchaseOrderItemDto.setOpenQuantity(outstandingQuantity.multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
+        purchaseOrderItemDto.setOpenQuantity(outstandingQuantity);
 
         // Set the receiving quantity and unit to default automatically for easier UX
-        purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantity);
-        purchaseOrderItemDto.setReceivingQuantity(outstandingQuantity.multiply(Objects.nonNull(poDetail.getVIConversion()) ? poDetail.getVIConversion() : BigDecimal.ONE));
+        purchaseOrderItemDto.setReceivingQuantityPack(outstandingQuantityPack);
+        purchaseOrderItemDto.setReceivingQuantity(outstandingQuantity);
 
         purchaseOrderItemDto.setStatus(POReceiptStatus.PENDING.name());
         purchaseOrderItemDto.setComponentCode(getComponentCodeFromItem(poDetail.getItem()));
         purchaseOrderItemDto.setComponentName(getComponentNameFromItem(poDetail.getItem()));
-        purchaseOrderItemDto.setItemCost(Objects.nonNull(poDetail.getVIUnitPrice()) ? poDetail.getVIUnitPrice().doubleValue() : 0); // FIXME: [LU] db should not allow 0 value VIUnitPrice, handling with 0 is only temporary fix
+        purchaseOrderItemDto.setItemCost(Optional.ofNullable(poDetail.getVIUnitPrice()).orElse(BigDecimal.ZERO).doubleValue());
 
         mapVendorInfo(purchaseOrderItemDto, vendorTemporaryCache);
         return purchaseOrderItemDto;
@@ -173,11 +173,12 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
             log.debug("PO Detail: {}", poDetail.get());
             purchaseOrderItemDto = constructPurchaseOrderItemDto(poDetail.get(), vendorTemporaryCache);
             log.debug("Constructed Purchase Order Item Dto: {}", purchaseOrderItemDto);
-            BigDecimal oustandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityReceived());
-            purchaseOrderItemDto.setOpenQuantityPack(oustandingQuantity);
+            BigDecimal outstandingQuantity = purchaseOrderItemDto.getOrderQuantityPack().subtract(poReceiptDto.getQuantityReceived());
+            purchaseOrderItemDto.setOpenQuantityPack(outstandingQuantity);
         }
         purchaseOrderItemDto.setItemCost(poReceiptDto.getUnitCost().doubleValue());
-        purchaseOrderItemDto.setReceivedQuantityPack(poReceiptDto.getQuantityReceived());
+        purchaseOrderItemDto.setReceivedQuantityPack(BigDecimal.valueOf(Optional.ofNullable(poReceiptDto.getPackReceived()).orElse(0)));
+        purchaseOrderItemDto.setReceivedQuantity(Optional.ofNullable(poReceiptDto.getQuantityReceived()).orElse(BigDecimal.ZERO));
         purchaseOrderItemDto.setReceivingQuantityPack(BigDecimal.ZERO);
         purchaseOrderItemDto.setReceivingQuantity(BigDecimal.ZERO);
         purchaseOrderItemDto.setStatus(POReceiptStatus.RECEIVED.name());
@@ -190,14 +191,14 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
         log.debug("PO Receipt DTO: {}", poReceiptDto);
         PODetail poDetail = poDetailRepository.findById(poReceiptDto.getPid())
                 .orElseThrow(() -> new BadRequestException("PO Detail not found with ID: " + poReceiptDto.getPid()));
-        BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantityPack());
+        BigDecimal totalReceivedQuantity = poDetail.getQuantityReceived().add(poReceiptDto.getReceivingQuantity());
         if (totalReceivedQuantity.compareTo(poDetail.getOrderQuantity()) > 0) {
             throw new BadRequestException("Received Quantity cannot be more than Order Quantity");
         }
         poDetail.setQuantityReceived(totalReceivedQuantity);
         BigDecimal totalQuantityOnHand = poDetail.getQuantityOnHand().add(poReceiptDto.getReceivingQuantity());
         poDetail.setQuantityOnHand(totalQuantityOnHand);
-        Integer totalReceivedQuantityPack = poDetail.getPackReceived() == null ? 0 : poDetail.getPackReceived();
+        int totalReceivedQuantityPack = Optional.ofNullable(poDetail.getPackReceived()).orElse(0);
         totalReceivedQuantityPack += poReceiptDto.getReceivingQuantityPack().intValue();
         poDetail.setPackReceived(totalReceivedQuantityPack);
         poDetail.setDateLastReceipt(Instant.now());
